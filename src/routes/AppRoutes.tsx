@@ -1,10 +1,10 @@
 import { Routes, Route } from "react-router-dom";
-import HomePage from "../pages/homePage";
-import Login from "../pages/loginPage";
-import PostDetail from "../pages/postDetail";
-import SignUpPage from "../pages/signUpPage";
-import PostWrite from "../pages/postWrite";
-import MyPage from "../pages/myPage";
+import HomePage from "../Pages/home/homePage";
+import Login from "../Pages/login/loginPage";
+import PostDetail from "../Pages/detail/postDetail";
+import SignUpPage from "../Pages/signUp/signUpPage";
+import PostWrite from "../Pages/post/postWrite";
+import MyPage from "../Pages/myPage/myPage";
 
 const AppRoutes: React.FC = () => {
     return (
