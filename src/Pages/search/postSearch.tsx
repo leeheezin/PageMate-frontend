@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import CarouselSwiper from "../../common/component/CarouselSwiper"
+import "./postSearch.style.css"
 interface PostSearchProps {
   onSearch: (query: string) => void; // 검색어를 상위 컴포넌트로 전달
 }
@@ -63,7 +64,7 @@ const PostSearch: React.FC<PostSearchProps> = ({ onSearch }) => {
           검색
         </button>
       </form>
-      <div>
+      <div className="carousel">
         <h1>메인 팝업 슬라이드</h1>
         <CarouselSwiper />
       </div>
