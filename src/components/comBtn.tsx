@@ -1,4 +1,7 @@
 import styled from 'styled-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faComment as faRegComment } from '@fortawesome/free-regular-svg-icons'; 
+
 
 const CommentContainer = styled.div`
     display: flex;
@@ -12,7 +15,7 @@ interface CommentButtonProps {
 const CommentButton: React.FC<CommentButtonProps> = ({ count, onClick }) => {
     return (
         <CommentContainer onClick={onClick}>
-            <span>💬</span>
+            <FontAwesomeIcon icon={faRegComment} />
             <span style={{ marginLeft: '5px' }}>{count}</span>
         </CommentContainer>
     );

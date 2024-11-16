@@ -7,6 +7,7 @@ const Wrap = styled.div`
 
 const Title = styled.h1`
     width: 100%;
+    margin: 0;
     font-size: 50px;
     font-weight: bold;
     text-align: center;
