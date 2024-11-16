@@ -5,10 +5,11 @@
 }
 
 body {
-  background-color: var(--bg-color); /* 변수로 배경색 설정 */
+  background-color: var(--bg-color) !important; /* 변수로 배경색 설정 */
   font-family: 'Pretendard', sans-serif; /* 전역 폰트 */
   margin: 0;
   padding: 0;
+  height: 100vh;
 }
 
 .App {
