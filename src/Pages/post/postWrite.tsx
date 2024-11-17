@@ -19,10 +19,8 @@ const PostWrite: React.FC = () => {
         setIsDialogOpen(false);
     };
     
-
     return (
-        <div className='.post-area'>
-            
+        <div className='write-area'>
             <div className="form-container">
                 <form>
                     <input type="text" placeholder="제목을 입력해 주세요" className="input-field" name="title" />
