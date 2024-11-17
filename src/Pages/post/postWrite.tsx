@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import "./post.style.css";
+import "./component/postWrite.style.css";
 import BookSearchDialog from './bookSearchDialog';
-import Header from '../../components/header';
 
 const PostWrite: React.FC = () => {
 
@@ -23,7 +22,7 @@ const PostWrite: React.FC = () => {
 
     return (
         <div className='.post-area'>
-        <Header />
+            
             <div className="form-container">
                 <form>
                     <input type="text" placeholder="제목을 입력해 주세요" className="input-field" name="title" />
@@ -33,7 +32,7 @@ const PostWrite: React.FC = () => {
                         onClick={openDialog}
                         className="input-field"
                         readOnly
-                      />
+                        />
                     <textarea placeholder="내용을 입력해 주세요" className="textarea-field" name="content"></textarea>
                     <button type="submit" className="submit-btn">작성하기</button>
                 </form>
