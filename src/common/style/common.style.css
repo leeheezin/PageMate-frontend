@@ -73,6 +73,7 @@
   align-items: center;
   padding: 10px 0;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
 }
 .top-buttons {
   display: flex;
@@ -208,5 +209,10 @@
 @media (min-width: 481px) {
   .mobile-navbar {
     display: none; /* 데스크탑에서는 숨김 */
+  }
+}
+@media (max-width: 480px) {
+  .desktop-navbar {
+    display: none;
   }
 }

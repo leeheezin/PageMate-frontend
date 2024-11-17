@@ -18,7 +18,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       {shouldShowLayout && <Navbar/>}
 
       {/* 메인 콘텐츠 영역 */}
-      <div style={{marginTop: shouldShowLayout ? '60px' : '0px'}}>  {/*Navbar 높이에 따라 간격 추가*/}
+      <div className="main-contents" style={{marginTop: shouldShowLayout ? '60px' : '0px'}}>  {/*Navbar 높이에 따라 간격 추가*/}
         {children}
       </div>
 
