@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createPost } from "../../features/post/postsSlice";
-import "./post.style.css";
+import "./component/postWrite.style.css";
 import BookSearchDialog from "./bookSearchDialog";
 import { AppDispatch, RootState } from "../../features/store";
 import styled from "styled-components";
@@ -41,8 +41,8 @@ const PostWrite: React.FC = () => {
             createPost({
                 title,
                 text,
-                // bookTitle: selectedBookTitle,
-                // bookAuthor: selectedBookAuthor,
+                bookTitle: selectedBookTitle,
+                bookAuthor: selectedBookAuthor,
             })
         );
     } else {
@@ -85,9 +85,9 @@ return (
         {error && <Error>{error}</Error>}
     </form>
     </div>
-    {/* {isDialogOpen && (
+    {isDialogOpen && (
     <BookSearchDialog onClose={closeDialog} onSelect={handleSelectBook} />
-    )} */}
+    )}
 </div>
 );
 };

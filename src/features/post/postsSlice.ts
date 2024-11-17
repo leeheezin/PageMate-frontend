@@ -21,8 +21,8 @@ interface Post {
 interface NewPost {
     title: string;
     text: string;
-    // bookTitle: string;
-    // bookAuthor: string;
+    bookTitle: string;
+    bookAuthor: string;
 }
 interface PostsState {
     posts: Post[];
