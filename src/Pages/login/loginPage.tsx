@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import GoogleLogin  from './component/google';
+import Logo from "../../assets/images/icon-logo1_big.png"
+
 const Container = styled.div`
     display: flex;
     align-items: center;
@@ -11,7 +13,6 @@ const Container = styled.div`
 const LoginArea = styled.div`
     height: 600px;
     width: 980px;
-    border: 1px solid black;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -19,11 +20,11 @@ const LoginArea = styled.div`
 const Title = styled.div`
     width: 960px;
     height: 100px;
-    border: 1px solid black;
     display: flex;
     justify-content: center;
     font-size: 50px;
     font-weight: 700;
+    padding-bottom: 12px;
 `;
 const LoginForm = styled.form`
     width: 500px;
@@ -44,7 +45,6 @@ const LoginTitle = styled.div`
     font-weight: 600;
 `;
 const InputArea = styled.div`
-    /* height: 280px; */
     width: calc(100% - 100px);
     padding-top: 25px;
     border-bottom: 1px solid #D4D4D4;
@@ -106,7 +106,7 @@ const Login: React.FC = () => {
     return (
         <Container>
             <LoginArea>
-                <Title>PageMate</Title>
+                <Title><img src={Logo} alt="Logo"/>PageMate</Title>
                 <LoginForm>
                     <LoginTitle>로그인</LoginTitle>
                     <InputArea>
