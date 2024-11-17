@@ -144,6 +144,7 @@ const SignUpPage: React.FC = () => {
                     <SignUpTitle>회원가입</SignUpTitle>
                     <InputArea>
                         <Input type='email' placeholder='아이디를 입력하세요.' required/>
+                        {/* <ErrorMessage>{errorMessage}</ErrorMessage> */}
                         <Input type='nickName' placeholder='이름을 입력하세요.' required/>
                         <Input type='password' placeholder='비밀번호를 입력하세요.' required/>
                         <Input type='password' placeholder='비밀번호를 재입력하세요.' required/>
