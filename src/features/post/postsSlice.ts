@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import axios from "axios";
 
 interface Comment {
     author: string;
@@ -8,6 +9,8 @@ interface Comment {
 interface Post {
     id: number;
     bookTitle: string;
+    bookAuthor: string;
+    title: string;
     content: string;
     date: string;
     author: string;
@@ -18,140 +21,48 @@ interface Post {
 
 interface PostsState {
     posts: Post[];
-    loading: boolean; 
+    loading: boolean;
+    error: string | null;
 }
 
+// 초기 상태
 const initialState: PostsState = {
-    posts: [
-        {
-            id: 1,
-            bookTitle: "제목 1",
-            content: "포스트 내용 1",
-            date: "2024-11-15 10:30",
-            author: "작성자 1",
-            profilePhoto: "profile-image-url.jpg",
-            likes: 5,
-            comments: [
-                { author: "사용자1", text: "정말 유익해요!" },
-                { author: "사용자2", text: "좋은 정보 감사합니다." },
-            ],
-        },
-        {
-            id: 2,
-            bookTitle: "제목 2",
-            content: "포스트 내용 2",
-            date: "2024-11-15 11:00",
-            author: "작성자 2",
-            profilePhoto: "profile-image-url.jpg",
-            likes: 3,
-            comments: [{ author: "사용자3", text: "재미있어요!" }],
-        },
-        {
-            id: 3,
-            bookTitle: "제목 3",
-            content: "포스트 내용 3",
-            date: "2024-11-15 11:30",
-            author: "작성자 3",
-            profilePhoto: "profile-image-url.jpg",
-            likes: 8,
-            comments: [{ author: "사용자4", text: "유용한 정보예요." }],
-        },
-        {
-            id: 4,
-            bookTitle: "제목 4",
-            content: "포스트 내용 4",
-            date: "2024-11-15 12:00",
-            author: "작성자 4",
-            profilePhoto: "profile-image-url.jpg",
-            likes: 10,
-            comments: [{ author: "사용자5", text: "훌륭합니다!" }],
-        },
-        {
-            id: 5,
-            bookTitle: "제목 5",
-            content: "포스트 내용 4",
-            date: "2024-11-15 12:00",
-            author: "작성자 4",
-            profilePhoto: "profile-image-url.jpg",
-            likes: 10,
-            comments: [{ author: "사용자5", text: "훌륭합니다!" }],
-        },
-        {
-            id: 6,
-            bookTitle: "제목 6",
-            content: "포스트 내용 4",
-            date: "2024-11-15 12:00",
-            author: "작성자 4",
-            profilePhoto: "profile-image-url.jpg",
-            likes: 10,
-            comments: [{ author: "사용자5", text: "훌륭합니다!" }],
-        },
-        {
-            id: 6,
-            bookTitle: "제목 6",
-            content: "포스트 내용 4",
-            date: "2024-11-15 12:00",
-            author: "작성자 4",
-            profilePhoto: "profile-image-url.jpg",
-            likes: 10,
-            comments: [{ author: "사용자5", text: "훌륭합니다!" }],
-        },
-        {
-            id: 6,
-            bookTitle: "제목 6",
-            content: "포스트 내용 4",
-            date: "2024-11-15 12:00",
-            author: "작성자 4",
-            profilePhoto: "profile-image-url.jpg",
-            likes: 10,
-            comments: [{ author: "사용자5", text: "훌륭합니다!" }],
-        },
-        {
-            id: 6,
-            bookTitle: "제목 6",
-            content: "포스트 내용 4",
-            date: "2024-11-15 12:00",
-            author: "작성자 4",
-            profilePhoto: "profile-image-url.jpg",
-            likes: 10,
-            comments: [{ author: "사용자5", text: "훌륭합니다!" }],
-        },
-        {
-            id: 6,
-            bookTitle: "제목 6",
-            content: "포스트 내용 4",
-            date: "2024-11-15 12:00",
-            author: "작성자 4",
-            profilePhoto: "profile-image-url.jpg",
-            likes: 10,
-            comments: [{ author: "사용자5", text: "훌륭합니다!" }],
-        },
-        {
-            id: 6,
-            bookTitle: "제목 6",
-            content: "포스트 내용 4",
-            date: "2024-11-15 12:00",
-            author: "작성자 4",
-            profilePhoto: "profile-image-url.jpg",
-            likes: 10,
-            comments: [{ author: "사용자5", text: "훌륭합니다!" }],
-        },
-        {
-            id: 6,
-            bookTitle: "제목 6",
-            content: "포스트 내용 4",
-            date: "2024-11-15 12:00",
-            author: "작성자 4",
-            profilePhoto: "profile-image-url.jpg",
-            likes: 10,
-            comments: [{ author: "사용자5", text: "훌륭합니다!" }],
-        },
-    ],
-    loading: false, 
+    posts: [],
+    loading: false,
+    error: null,
 };
 
+export const fetchPosts = createAsyncThunk<Post[]>(
+    "posts/fetchPosts",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axios.get("/api/post");
+            return response.data.data; 
+        } catch (error: any) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const createPost = createAsyncThunk<Post, Omit<Post, "id">>(
+    "posts/createPost",
+    async (newPost, { rejectWithValue }) => {
+        try {
+            const response = await axios.post("/api/post/write", newPost, {
+                headers: {
+                    "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+                },
+            });
+            return response.data.data; 
+        } catch (error: any) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+
 const postsSlice = createSlice({
-    name: "posts",
+    name: "post",
     initialState,
     reducers: {
         startLoading(state) {
@@ -160,11 +71,35 @@ const postsSlice = createSlice({
         stopLoading(state) {
             state.loading = false;
         },
-        addPost(state, action: PayloadAction<Post>) {
-            state.posts.push(action.payload);
-        },
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchPosts.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchPosts.fulfilled, (state, action: PayloadAction<Post[]>) => {
+                state.posts = action.payload;
+                state.loading = false;
+            })
+            .addCase(fetchPosts.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+            .addCase(createPost.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(createPost.fulfilled, (state, action: PayloadAction<Post>) => {
+                state.posts.push(action.payload);
+                state.loading = false;
+            })
+            .addCase(createPost.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            });
     },
 });
 
-export const { startLoading, stopLoading, addPost } = postsSlice.actions;
+export const { startLoading, stopLoading } = postsSlice.actions;
 export default postsSlice.reducer;

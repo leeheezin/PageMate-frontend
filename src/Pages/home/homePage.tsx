@@ -38,7 +38,6 @@ if (nextPosts.length > 0) {
 
 return (
 <HomePageContainer>
-    <Header />
     {loading ? (
     <Spinner />
     ) : (
@@ -52,6 +51,7 @@ return (
         <Post
             key={post.id}
             bookTitle={post.bookTitle}
+            title={post.title}
             content={post.content}
             date={post.date}
             author={post.author}

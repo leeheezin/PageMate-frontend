@@ -6,17 +6,13 @@ import { useEffect, useState } from "react";
 
 interface PostProps {
     bookTitle: string;
+    title: string;
     content: string;
     date: string;
     author: string;
     profilePhoto: string;
     likes: number;
     comments: { author: string; text: string }[];
-    }
-
-    interface BookInfo {
-    title: string;
-    author: string;
     }
     const StyledPost = styled.div`
     width: 100%;
@@ -98,6 +94,7 @@ interface PostProps {
         color: #A4A4A4;
     `;
     const Post: React.FC<PostProps> = ({
+    title,
     bookTitle,
     content,
     date,
@@ -107,22 +104,15 @@ interface PostProps {
     comments,
     }) => {
     const [commentsVisible, setCommentsVisible] = useState(false);
-    const [bookInfo, setBookInfo] = useState<BookInfo>({ title: "", author: "" });
 
     const toggleCommentsVisibility = () => {
         setCommentsVisible(!commentsVisible);
     };
-    useEffect(() => {
-        setBookInfo({
-            title: "미국주식 처음공부",
-            author: "수미숨(상의민) 외 1명 지음 | 이레미디어 퍼냄",
-        });
-    }, []);
     return (
         <StyledPost>
         <Header>
             <TitleDate>
-            <Title>{bookTitle}</Title>
+            <Title>{title}</Title>
             <Date>{date}</Date>
             </TitleDate>
             <ProfileInfo>
@@ -140,8 +130,8 @@ interface PostProps {
                 />
             </Inner>
             <BookTit>
-                <BTitle>{bookInfo.title}</BTitle>
-                <BAuthor>{bookInfo.author}</BAuthor>
+                <BTitle>{bookTitle}</BTitle>
+                <BAuthor>{author}</BAuthor>
             </BookTit>
         </Footer>
         {commentsVisible && (
