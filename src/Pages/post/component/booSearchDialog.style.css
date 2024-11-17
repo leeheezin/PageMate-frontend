@@ -126,7 +126,9 @@
     margin-bottom: 5px;
 }
 
-.dialog-content ul li div .book-author {
+.dialog-content ul li div .book-author,
+.dialog-content ul li div .book-publisher
+{
     font-size: 14px;
     color: gray;
 }
