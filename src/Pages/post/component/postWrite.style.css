@@ -1,10 +1,10 @@
 /* postWrite css */
 
-.write-area {
+.post-area {
     display: flex; /* Flexbox 레이아웃 */
     justify-content: center; /* 가로 중앙 정렬 */
     align-items: center; /* 세로 중앙 정렬 */
-    min-height: 100vh; /* 화면 전체 높이를 기준으로 중앙 정렬 */
+    min-height: 80vh; /* 화면 전체 높이를 기준으로 중앙 정렬 */
     padding: 20px; /* 모바일에서 양 끝 여백 */
     box-sizing: border-box; /* 패딩 포함 크기 계산 */
 }
