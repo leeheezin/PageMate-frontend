@@ -9,13 +9,20 @@ const Container = styled.div`
     align-items: center;
     justify-content: center;
     height: 100vh;
+    padding: 20px;
 `;
+
+
 const LoginArea = styled.div`
     height: 600px;
     width: 980px;
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
 `;
 const Title = styled.div`
     width: 960px;
@@ -25,7 +32,23 @@ const Title = styled.div`
     font-size: 50px;
     font-weight: 700;
     padding-bottom: 12px;
+
+    @media (max-width: 768px) {
+        img {
+            margin-left: 10px;
+            width: 60px;
+            height: 60px;
+            margin-right: 10px;
+        }
+        font-size: 32px; 
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+    }
 `;
+
 const LoginForm = styled.form`
     width: 500px;
     height: 500px;
@@ -36,13 +59,25 @@ const LoginForm = styled.form`
     align-items: center;
     background-color: white;
     border-radius: 20px;
+
+    @media (max-width: 768px) {
+        width: 100%;
+        background-color: transparent;
+        border: none;
+    }
 `;
+
 const LoginTitle = styled.div`
     width: calc(100% - 100px);
     height: 55px;
     border-bottom: 1px solid #D4D4D4;
     font-size: 30px;
     font-weight: 600;
+    
+    @media (max-width: 768px) {
+        width: 100%;
+        display: none;
+    }
 `;
 const InputArea = styled.div`
     width: calc(100% - 100px);
@@ -51,6 +86,10 @@ const InputArea = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
 `;
 const Input = styled.input`
     width: 100%;
@@ -99,6 +138,10 @@ const Google = styled.div`
     height: auto;
     width: calc(100% - 100px);
     padding-top: 25px;
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
 `;
     
 
