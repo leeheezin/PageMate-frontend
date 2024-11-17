@@ -1,55 +1,83 @@
-import React from 'react';
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import type { AppDispatch } from "../../features/store";
 import "./component/booSearchDialog.style.css";
+import { fetchBooks, clearBooks } from "../../features/bookSearch/bookSearchSlice";
 
 interface BookSearchDialogProps {
     onClose: () => void; // onClose prop 타입 추가
+    onSelect: (bookTitle: string, bookAuthor: string) => void; // onSelect prop 타입 추가
 }
 
-const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose }) => {
+const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }) => {
+    const [searchTerm, setSearchTerm] = useState("");
+    const dispatch = useDispatch<AppDispatch>();
+    const { books, loading, error } = useSelector((state: any) => state.bookSearch);
 
-    // 배경 클릭 시 닫기 이벤트 처리
-    const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (e.target === e.currentTarget) {
-            onClose(); // 배경 클릭 시 다이얼로그 닫기
+    const handleSearch = () => {
+        if (searchTerm.trim() === "") return;
+        dispatch(fetchBooks(searchTerm));
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            handleSearch();
         }
     };
 
-    const books = [
-        { id: 1, title: "소년이 온다", author: "한강", cover: "https://via.placeholder.com/50x75" },
-        { id: 2, title: "소년이 온다 특별판", author: "한강", cover: "https://via.placeholder.com/50x75" },
-        { id: 3, title: "소년이 온다", author: "한강", cover: "https://via.placeholder.com/50x75" },
-        { id: 4, title: "소년이 온다 특별판", author: "한강", cover: "https://via.placeholder.com/50x75" },
-    ];
+    const handleSelectBook = (bookTitle: string, bookAuthor: string) => {
+        onSelect(bookTitle, bookAuthor); // 부모 컴포넌트로 데이터 전달
+        onClose(); // 선택 후 다이얼로그 닫기
+    };
+
+    const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (e.target === e.currentTarget) {
+            onClose();
+        }
+    };
 
     return (
         <div className="dialog-overlay" onClick={handleOverlayClick}>
             <div className="dialog-content" onClick={(e) => e.stopPropagation()}>
-                
                 {/* 검색창 */}
                 <div className="search-header">
                     <input
                         type="text"
                         placeholder="책 제목을 입력하세요"
                         className="search-input"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyDown={handleKeyDown}
                     />
-                    {/* 닫기 버튼 */}
                     <button onClick={onClose} className="dialog-close-btn">
                         ✕
                     </button>
                 </div>
 
-                {/* 책 리스트 */}
-                <ul>
-                    {books.map((book) => (
-                        <li key={book.id}>
-                            <img src={book.cover} alt={book.title} />
-                            <div>
-                                <span className="book-title">{book.title}</span>
-                                <span className="book-author">{book.author}</span>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
+                {/* 검색 결과 */}
+                {loading ? (
+                    <p>검색 중...</p>
+                ) : error ? (
+                    <p style={{ color: "red" }}>{error}</p>
+                ) : (
+                    <ul>
+                        {books.map((book: any) => (
+                            <li key={book.id} onClick={() => handleSelectBook(book.title, book.author)}>
+                                <img src={book.thumbnail} alt={book.title} />
+                                <div>
+                                    <span className="book-title">{book.title}</span>
+                                    <span className="book-author">
+                                        {book.authors.length > 0 ? book.authors.join(", ") : "저자 정보 없음"} 지음
+                                    </span>
+                                    <span className="book-publisher">
+                                        {book.publisher ? book.publisher : "출판사 정보 없음"} 펴냄
+                                    </span>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
         </div>
     );
