@@ -11,14 +11,19 @@ interface Post {
     bookTitle: string;
     bookAuthor: string;
     title: string;
-    content: string;
+    text: string;
     date: string;
     author: string;
     profilePhoto: string;
     likes: number;
     comments: Comment[];
 }
-
+interface NewPost {
+    title: string;
+    text: string;
+    // bookTitle: string;
+    // bookAuthor: string;
+}
 interface PostsState {
     posts: Post[];
     loading: boolean;
@@ -36,7 +41,7 @@ export const fetchPosts = createAsyncThunk<Post[]>(
     "posts/fetchPosts",
     async (_, { rejectWithValue }) => {
         try {
-            const response = await axios.get("/api/post");
+            const response = await axios.get("http://localhost:5001/api/post");
             return response.data.data; 
         } catch (error: any) {
             return rejectWithValue(error.message);
@@ -44,25 +49,31 @@ export const fetchPosts = createAsyncThunk<Post[]>(
     }
 );
 
-export const createPost = createAsyncThunk<Post, Omit<Post, "id">>(
+export const createPost = createAsyncThunk<Post, NewPost>(
     "posts/createPost",
     async (newPost, { rejectWithValue }) => {
         try {
-            const response = await axios.post("/api/post/write", newPost, {
+            // const token = sessionStorage.getItem("token");
+            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzM5ZmMxNzRhOTg1OWRjMDM0YzFmOTgiLCJpYXQiOjE3MzE4NTY3MDgsImV4cCI6MTczMTg3ODMwOH0.PSXR7CDGylbzkGCd9GQQvYKiBEB3rL4HQj7XoJ3xVak"
+            if (!token) throw new Error("토큰이 없습니다.");
+
+            const response = await axios.post("http://localhost:5001/api/post/write", newPost, {
                 headers: {
-                    "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+                    "Authorization": `Bearer ${token}`,
                 },
             });
             return response.data.data; 
         } catch (error: any) {
-            return rejectWithValue(error.message);
+            console.log(error.response.data.error)
+            return rejectWithValue(error.response.data.error);
         }
     }
 );
 
 
+
 const postsSlice = createSlice({
-    name: "post",
+    name: "posts",
     initialState,
     reducers: {
         startLoading(state) {
