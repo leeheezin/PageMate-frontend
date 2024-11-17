@@ -8,6 +8,8 @@ const Container = styled.div`
     align-items: center;
     justify-content: center;
     height: 100vh;
+    padding: 20px;
+
 `;
 const SignUpArea = styled.div`
     height: 600px;
@@ -15,6 +17,10 @@ const SignUpArea = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
 `;
 const Title = styled.div`
     width: 960px;
@@ -24,6 +30,20 @@ const Title = styled.div`
     font-size: 50px;
     font-weight: 700;
     padding-bottom: 12px;
+
+    @media (max-width: 768px) {
+        img {
+            width: 60px;
+            height: 60px;
+            margin-right: 10px;
+        }
+        font-size: 32px; 
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+    }
 `;
 const SignUpForm = styled.form`
     width: 500px;
@@ -35,6 +55,12 @@ const SignUpForm = styled.form`
     align-items: center;
     background-color: white;
     border-radius: 20px;
+
+    @media (max-width: 768px) {
+        width: 100%;
+        background-color: transparent;
+        border: none;
+    }
 `;
 const SignUpTitle = styled.div`
     width: calc(100% - 100px);
@@ -42,6 +68,10 @@ const SignUpTitle = styled.div`
     border-bottom: 1px solid #D4D4D4;
     font-size: 30px;
     font-weight: 600;
+    
+    @media (max-width: 768px) {
+        display: none;
+    }
 `;
 const InputArea = styled.div`
     width: calc(100% - 100px);
@@ -49,6 +79,11 @@ const InputArea = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
+
 `;
 const Input = styled.input`
     width: 100%;
@@ -103,7 +138,7 @@ const SignUpPage: React.FC = () => {
     return (
         <Container>
             <SignUpArea>
-                <Title><img src={Logo} alt="Logo"/>PageMate</Title>
+                <Title><img src={Logo} alt="Logo"/><div>PageMate</div></Title>
                 <SignUpForm>
                     <SignUpTitle>회원가입</SignUpTitle>
                     <InputArea>

@@ -35,13 +35,16 @@ const Title = styled.div`
 
     @media (max-width: 768px) {
         img {
-            width: 50px; /* 모바일에서 로고 크기 조정 */
-            height: 50px;
+            width: 60px;
+            height: 60px;
             margin-right: 10px;
         }
         font-size: 32px; 
         width: 100%;
+        flex-direction: column;
         align-items: center;
+        justify-content: center;
+        margin-top: 20px;
     }
 `;
 
@@ -85,7 +88,6 @@ const InputArea = styled.div`
 
     @media (max-width: 768px) {
         width: 100%;
-        margin-top: 10px;
     }
 `;
 const Input = styled.input`
