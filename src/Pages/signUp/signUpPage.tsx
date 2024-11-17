@@ -33,6 +33,7 @@ const Title = styled.div`
 
     @media (max-width: 768px) {
         img {
+            margin-left: 10px;
             width: 60px;
             height: 60px;
             margin-right: 10px;
