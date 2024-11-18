@@ -39,6 +39,7 @@ const fetchMorePosts = () => {
         setHasMore(false); 
     }
 };
+console.log(displayedPosts)
 return (
 <HomePageContainer>
     {loading ? (
@@ -52,7 +53,8 @@ return (
     >
         {displayedPosts.map((post) => (
         <Post
-            key={post.id}
+            _id={post._id}
+            key={post._id}
             bookTitle={post.bookTitle}
             bookAuthor={post.bookAuthor}
             title={post.title}

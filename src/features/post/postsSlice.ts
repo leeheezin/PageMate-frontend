@@ -7,7 +7,8 @@ interface Comment {
 }
 
 interface Post {
-    id: number;
+    _id: string;
+    id: string;
     bookTitle: string;
     bookAuthor: string;
     title: string;
@@ -55,7 +56,7 @@ export const createPost = createAsyncThunk<Post, NewPost>(
     async (newPost, { rejectWithValue }) => {
         try {
             // const token = sessionStorage.getItem("token");
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzM5ZmMxNzRhOTg1OWRjMDM0YzFmOTgiLCJpYXQiOjE3MzE5MTM5NzEsImV4cCI6MTczMTkzNTU3MX0.O3J6z9ArMYSE28C4uAld0SpxmzJJoKdLoOH07_SaWPU"
+            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzNiMzJlYzkxMjNmNTNlMzc3ZGIzOWYiLCJpYXQiOjE3MzE5MzI5MjMsImV4cCI6MTczMTk1NDUyM30.a3Ds-YirsxFxo0Gw43gDFu2f7eFOOpwyAQW5ptKEUtU"
             if (!token) throw new Error("토큰이 없습니다.");
 
             const response = await axios.post("http://localhost:5001/api/post/write", newPost, {
@@ -67,6 +68,28 @@ export const createPost = createAsyncThunk<Post, NewPost>(
         } catch (error: any) {
             console.log(error.response.data.error)
             return rejectWithValue(error.response.data.error);
+        }
+    }
+);
+export const updatePost = createAsyncThunk<Post, { id: number; title: string; text: string; bookTitle: string; bookAuthor: string }>(
+    "posts/updatePost",
+    async ({ id, title, text, bookTitle, bookAuthor }, { rejectWithValue }) => {
+        try {
+            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzNiMzJlYzkxMjNmNTNlMzc3ZGIzOWYiLCJpYXQiOjE3MzE5MzI5MjMsImV4cCI6MTczMTk1NDUyM30.a3Ds-YirsxFxo0Gw43gDFu2f7eFOOpwyAQW5ptKEUtU";
+            if (!token) throw new Error("토큰이 없습니다.");
+
+            const response = await axios.put(
+                `http://localhost:5001/api/post/${id}`,
+                { title, text, bookTitle, bookAuthor },
+                {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    },
+                }
+            );
+            return response.data.data; 
+        } catch (error: any) {
+            return rejectWithValue(error.message);
         }
     }
 );
@@ -108,6 +131,22 @@ const postsSlice = createSlice({
                 state.loading = false;
             })
             .addCase(createPost.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+            .addCase(updatePost.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updatePost.fulfilled, (state, action: PayloadAction<Post>) => {
+                const index = state.posts.findIndex((post) => post.id === action.payload.id);
+                if (index !== -1) {
+                    state.posts[index] = action.payload; 
+                }
+                console.log(action.payload)
+                state.loading = false;
+            })
+            .addCase(updatePost.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
             });
