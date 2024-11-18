@@ -5,7 +5,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import Header from '../../components/header';
 import styled from 'styled-components';
 import { AppDispatch, RootState } from '../../features/store';
-import { startLoading, stopLoading } from '../../features/post/postsSlice';
+import { fetchPosts, startLoading, stopLoading } from '../../features/post/postsSlice';
 import Post from '../../components/post';
 
 const HomePageContainer = styled.div`
@@ -21,11 +21,9 @@ const [displayedPosts, setDisplayedPosts] = useState(posts.slice(0, 5)); // ì´ˆê
 const [hasMore, setHasMore] = useState(true);
 
 useEffect(() => {
-dispatch(startLoading());
-setTimeout(() => {
-    dispatch(stopLoading());
-}, 1500);
+    dispatch(fetchPosts());
 }, [dispatch]);
+
 
 const fetchMorePosts = () => {
 const nextPosts = posts.slice(displayedPosts.length, displayedPosts.length + 5);
@@ -52,7 +50,7 @@ return (
             key={post.id}
             bookTitle={post.bookTitle}
             title={post.title}
-            content={post.content}
+            content={post.text}
             date={post.date}
             author={post.author}
             profilePhoto={post.profilePhoto}
