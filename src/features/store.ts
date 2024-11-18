@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import postsSlice from './post/postsSlice';
+import bookSearchReducer from "./bookSearch/bookSearchSlice";
 
 const store = configureStore({
     reducer: {
         posts: postsSlice,
+        bookSearch: bookSearchReducer,
     },
 });
 

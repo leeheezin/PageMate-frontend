@@ -1,23 +1,83 @@
-import React from 'react';
-import "./post.style.css";
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import type { AppDispatch } from "../../features/store";
+import "./component/booSearchDialog.style.css";
+import { fetchBooks, clearBooks } from "../../features/bookSearch/bookSearchSlice";
 
 interface BookSearchDialogProps {
     onClose: () => void; // onClose prop 타입 추가
+    onSelect: (bookTitle: string, bookAuthor: string) => void; // onSelect prop 타입 추가
 }
 
-const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose }) => {
+const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }) => {
+    const [searchTerm, setSearchTerm] = useState("");
+    const dispatch = useDispatch<AppDispatch>();
+    const { books, loading, error } = useSelector((state: any) => state.bookSearch);
+
+    const handleSearch = () => {
+        if (searchTerm.trim() === "") return;
+        dispatch(fetchBooks(searchTerm));
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            handleSearch();
+        }
+    };
+
+    const handleSelectBook = (bookTitle: string, bookAuthor: string) => {
+        onSelect(bookTitle, bookAuthor); // 부모 컴포넌트로 데이터 전달
+        onClose(); // 선택 후 다이얼로그 닫기
+    };
+
+    const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (e.target === e.currentTarget) {
+            onClose();
+        }
+    };
+
     return (
-        <div className="dialog-overlay">
-            <div className="dialog-content">
-                <button onClick={onClose}>닫기</button>
-                {/* 책 검색 기능 및 결과 표시 */}
-                <h2>책 검색</h2>
-                {/* 검색 결과 예시 */}
-                <ul>
-                    <li>책 제목 1</li>
-                    <li>책 제목 2</li>
-                    <li>책 제목 3</li>
-                </ul>
+        <div className="dialog-overlay" onClick={handleOverlayClick}>
+            <div className="dialog-content" onClick={(e) => e.stopPropagation()}>
+                {/* 검색창 */}
+                <div className="search-header">
+                    <input
+                        type="text"
+                        placeholder="책 제목을 입력하세요"
+                        className="search-input"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                    />
+                    <button onClick={onClose} className="dialog-close-btn">
+                        ✕
+                    </button>
+                </div>
+
+                {/* 검색 결과 */}
+                {loading ? (
+                    <p>검색 중...</p>
+                ) : error ? (
+                    <p style={{ color: "red" }}>{error}</p>
+                ) : (
+                    <ul>
+                        {books.map((book: any) => (
+                            <li key={book.id} onClick={() => handleSelectBook(book.title, book.author)}>
+                                <img src={book.thumbnail} alt={book.title} />
+                                <div>
+                                    <span className="book-title">{book.title}</span>
+                                    <span className="book-author">
+                                        {book.authors.length > 0 ? book.authors.join(", ") : "저자 정보 없음"} 지음
+                                    </span>
+                                    <span className="book-publisher">
+                                        {book.publisher ? book.publisher : "출판사 정보 없음"} 펴냄
+                                    </span>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
         </div>
     );
