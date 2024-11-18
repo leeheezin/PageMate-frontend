@@ -17,7 +17,7 @@
   color: #878787;
 }
 
-.search-input {
+.searchPage-search-input {
   padding: 10px 10px 10px 30px;
   font-size: 16px;
   border: 1px solid #ccc;
@@ -26,18 +26,18 @@
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-.search-input:focus {
+.searchPage-search-input:focus {
   outline: none;
   border-color: #878787;
   box-shadow: 0 0 5px #ccc;
 }
 
-.search-input::placeholder {
+.searchPage-search-input::placeholder {
   color: #aaa;
   font-style: italic;
 }
 
-.search-input:focus::placeholder {
+.searchPage-search-input:focus::placeholder {
   color: transparent; /* 포커스 상태에서 placeholder 숨기기 */
 }
 
