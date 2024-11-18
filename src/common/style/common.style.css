@@ -137,6 +137,7 @@
 
 
 .desktop-navbar {
+  background-color: var(--bg-color);
   position: fixed;
   top: 0;
   left: 0;
@@ -167,6 +168,7 @@
 
 /* mobile Navbar style */
 .mobile-navbar {
+  background-color: var(--bg-color);
   position: fixed;
   top: 0;
   left: 0;
@@ -194,6 +196,7 @@
 .navbar-title {
   position: absolute;
   left: 50%;
+  left: calc((100% - 60px) / 2); /* 부모 요소의 전체 너비에서 사이드바를 제외한 중앙 */
   transform: translateX(-50%);
   font-size: 1.7rem;
   font-weight: bold;
@@ -214,5 +217,8 @@
 @media (max-width: 480px) {
   .desktop-navbar {
     display: none;
+  }
+  .navbar-title {
+    left: 50%;
   }
 }
