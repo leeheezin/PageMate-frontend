@@ -42,6 +42,7 @@ export const fetchPosts = createAsyncThunk<Post[]>(
     async (_, { rejectWithValue }) => {
         try {
             const response = await axios.get("http://localhost:5001/api/post");
+            console.log("API response data:", response.data); 
             return response.data.data; 
         } catch (error: any) {
             return rejectWithValue(error.message);
@@ -54,7 +55,7 @@ export const createPost = createAsyncThunk<Post, NewPost>(
     async (newPost, { rejectWithValue }) => {
         try {
             // const token = sessionStorage.getItem("token");
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzM5ZmMxNzRhOTg1OWRjMDM0YzFmOTgiLCJpYXQiOjE3MzE4NTY3MDgsImV4cCI6MTczMTg3ODMwOH0.PSXR7CDGylbzkGCd9GQQvYKiBEB3rL4HQj7XoJ3xVak"
+            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzM5ZmMxNzRhOTg1OWRjMDM0YzFmOTgiLCJpYXQiOjE3MzE5MTM5NzEsImV4cCI6MTczMTkzNTU3MX0.O3J6z9ArMYSE28C4uAld0SpxmzJJoKdLoOH07_SaWPU"
             if (!token) throw new Error("토큰이 없습니다.");
 
             const response = await axios.post("http://localhost:5001/api/post/write", newPost, {
@@ -91,6 +92,7 @@ const postsSlice = createSlice({
             })
             .addCase(fetchPosts.fulfilled, (state, action: PayloadAction<Post[]>) => {
                 state.posts = action.payload;
+                console.log("Posts fetched:", action.payload);
                 state.loading = false;
             })
             .addCase(fetchPosts.rejected, (state, action) => {
