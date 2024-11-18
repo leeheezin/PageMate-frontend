@@ -50,3 +50,9 @@ body {
     transform: rotate(360deg);
   }
 }
+
+@media (min-width: 481px) {
+  .main-contents {
+    margin-right: 60px; /* 데스크탑 sidebar 공간 확보 */
+  }
+}

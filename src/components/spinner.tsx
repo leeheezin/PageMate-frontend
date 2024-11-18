@@ -11,7 +11,7 @@ const SpinnerContainer = styled.div`
 
 const Spinner: React.FC = () => (
     <SpinnerContainer>
-        <ClipLoader color="#3498db" size={40} />
+        <ClipLoader size={40} />
     </SpinnerContainer>
 );
 
