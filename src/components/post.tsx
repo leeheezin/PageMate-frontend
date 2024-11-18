@@ -6,8 +6,9 @@ import { useEffect, useState } from "react";
 
 interface PostProps {
     bookTitle: string;
+    bookAuthor: string;
     title: string;
-    content: string;
+    text: string;
     date: string;
     author: string;
     profilePhoto: string;
@@ -96,13 +97,15 @@ interface PostProps {
     const Post: React.FC<PostProps> = ({
     title,
     bookTitle,
-    content,
+    bookAuthor,
+    text,
     date,
     author,
     profilePhoto,
     likes,
     comments,
     }) => {
+        console.log(bookAuthor)
     const [commentsVisible, setCommentsVisible] = useState(false);
 
     const toggleCommentsVisibility = () => {
@@ -120,7 +123,7 @@ interface PostProps {
             <Name>{author}</Name>
             </ProfileInfo>
         </Header>
-        <Content>{content}</Content>
+        <Content>{text}</Content>
         <Footer>
             <Inner>
                 <LikeButton count={likes} />
@@ -131,7 +134,7 @@ interface PostProps {
             </Inner>
             <BookTit>
                 <BTitle>{bookTitle}</BTitle>
-                <BAuthor>{author}</BAuthor>
+                <BAuthor>{bookAuthor}</BAuthor>
             </BookTit>
         </Footer>
         {commentsVisible && (

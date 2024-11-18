@@ -24,16 +24,21 @@ useEffect(() => {
     dispatch(fetchPosts());
 }, [dispatch]);
 
+useEffect(() => {
+    if (!loading && posts.length > 0) {
+        setDisplayedPosts(posts.slice(0, 5)); // 데이터가 있으면 초기 5개 설정
+        setHasMore(true); // 추가 데이터가 있다고 가정
+    }
+}, [posts, loading]);
 
 const fetchMorePosts = () => {
-const nextPosts = posts.slice(displayedPosts.length, displayedPosts.length + 5);
-if (nextPosts.length > 0) {
-    setDisplayedPosts((prevPosts) => [...prevPosts, ...nextPosts]);
-} else {
-    setHasMore(false); 
-}
+    const nextPosts = posts.slice(displayedPosts.length, displayedPosts.length + 5);
+    if (nextPosts.length > 0) {
+        setDisplayedPosts((prevPosts) => [...prevPosts, ...nextPosts]);
+    } else {
+        setHasMore(false); 
+    }
 };
-
 return (
 <HomePageContainer>
     {loading ? (
@@ -49,8 +54,9 @@ return (
         <Post
             key={post.id}
             bookTitle={post.bookTitle}
+            bookAuthor={post.bookAuthor}
             title={post.title}
-            content={post.text}
+            text={post.text}
             date={post.date}
             author={post.author}
             profilePhoto={post.profilePhoto}

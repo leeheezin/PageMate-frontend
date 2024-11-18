@@ -26,8 +26,10 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
         }
     };
 
-    const handleSelectBook = (bookTitle: string, bookAuthor: string) => {
-        onSelect(bookTitle, bookAuthor); // 부모 컴포넌트로 데이터 전달
+    const handleSelectBook = (bookTitle: string, bookAuthor: string[]) => {
+        const formatAuthor = bookAuthor && bookAuthor.length > 0 ? bookAuthor.join(", ") : "저자 정보 없음"; 
+        onSelect(bookTitle, formatAuthor);
+        console.log(formatAuthor)
         onClose(); // 선택 후 다이얼로그 닫기
     };
 
@@ -36,7 +38,7 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
             onClose();
         }
     };
-
+    console.log(books)
     return (
         <div className="dialog-overlay" onClick={handleOverlayClick}>
             <div className="dialog-content" onClick={(e) => e.stopPropagation()}>
@@ -63,12 +65,12 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
                 ) : (
                     <ul>
                         {books.map((book: any) => (
-                            <li key={book.id} onClick={() => handleSelectBook(book.title, book.author)}>
+                            <li key={book.id} onClick={() => handleSelectBook(book.title, book.authors)}>
                                 <img src={book.thumbnail} alt={book.title} />
                                 <div>
                                     <span className="book-title">{book.title}</span>
                                     <span className="book-author">
-                                        {book.authors.length > 0 ? book.authors.join(", ") : "저자 정보 없음"} 지음
+                                    {book.authors && book.authors.length > 0 ? book.authors.join(", ") : "저자 정보 없음"} 지음
                                     </span>
                                     <span className="book-publisher">
                                         {book.publisher ? book.publisher : "출판사 정보 없음"} 펴냄
