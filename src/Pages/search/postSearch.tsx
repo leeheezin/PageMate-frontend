@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import CarouselSwiper from "./CarouselSwiper";
 import { fetchBooks } from "../../features/book/bookSlice";
-import { AppDispatch } from "../../features/store"; // AppDispatch 타입 임포트
+import { AppDispatch, RootState } from "../../features/store"; // AppDispatch 타입 임포트
 import "./postSearch.style.css"
 interface PostSearchProps {
   onSearch: (query: string) => void; // 검색어를 상위 컴포넌트로 전달
@@ -15,7 +15,7 @@ const PostSearch: React.FC<PostSearchProps> = ({ onSearch }) => {
 
   // Redux 상태에서 books 데이터를 가져옵니다.
   const dispatch = useDispatch<AppDispatch>();  // dispatch 타입 지정
-  const { books, loading, error } = useSelector((state: any) => state.books);
+  const { books, loading, error } = useSelector((state: RootState) => state.book);
 
   // 베스트셀러 데이터를 가져오기 위해 useEffect 수정
   useEffect(() => {
@@ -33,13 +33,16 @@ const PostSearch: React.FC<PostSearchProps> = ({ onSearch }) => {
     onSearch(query); // 검색어 전달
   };
 
+  // books에서 cover만 추출하여 CarouselSwiper로 전달
+  const covers = books.map((book) => book.cover);
+  console.log('covers', covers)
   return (
     <>
       <div className="search-box">
         <form onSubmit={handleSubmit} className="search-form">
           <input
             type="search"
-            className="search-input"
+            className="searchPage-search-input"
             placeholder="도서 제목 검색"
             value={query}
             onChange={handleInputChange}
@@ -62,10 +65,8 @@ const PostSearch: React.FC<PostSearchProps> = ({ onSearch }) => {
           </p>
         </div>
         {/* Carousel */}
-        <CarouselSwiper />
+        <CarouselSwiper covers={covers}/>
       </div>
-
-
     </>
   );
 };
