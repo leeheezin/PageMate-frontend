@@ -1,3 +1,17 @@
+:root {
+  --bg-color: #F9F4F0; /* 배경색 */
+  --main-color: #014421; /* 메인 텍스트 색상 */
+  --sub-color: #EAC109; /* 서브 색상 */
+}
+
+body {
+  background-color: var(--bg-color) !important; /* 변수로 배경색 설정 */
+  font-family: 'Pretendard', sans-serif; /* 전역 폰트 */
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
 .App {
   text-align: center;
 }
@@ -34,5 +48,11 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (min-width: 481px) {
+  .main-contents {
+    margin-right: 60px; /* 데스크탑 sidebar 공간 확보 */
   }
 }

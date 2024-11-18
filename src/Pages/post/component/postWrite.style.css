@@ -1,0 +1,62 @@
+/* postWrite css */
+
+.post-area {
+    display: flex; /* Flexbox 레이아웃 */
+    justify-content: center; /* 가로 중앙 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    min-height: 80vh; /* 화면 전체 높이를 기준으로 중앙 정렬 */
+    padding: 20px; /* 모바일에서 양 끝 여백 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+
+.form-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.input-field,
+.textarea-field {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    resize: none;
+}
+
+.textarea-field {
+    height: 200px;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #014421; /* 버튼 색상 */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.submit-btn:hover {
+    background-color: #003300; /* 호버 시 버튼 색상 */
+}
+
+@media (max-width: 480px) {
+    .form-container {
+        margin: 10px;
+        padding: 10px;
+    }
+
+    .submit-btn {
+        padding: 8px;
+        font-size: 14px;
+    }
+}
