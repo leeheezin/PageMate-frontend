@@ -5,6 +5,7 @@ import "./component/postWrite.style.css";
 import BookSearchDialog from "./bookSearchDialog";
 import { AppDispatch, RootState } from "../../features/store";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const Error = styled.div`
     color: red;
@@ -13,28 +14,28 @@ const Error = styled.div`
 `
 const PostWrite: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-  const [title, setTitle] = useState("");
-  const [text, setText] = useState("");
-  const [selectedBookTitle, setSelectedBookTitle] = useState("");
-  const [selectedBookAuthor, setSelectedBookAuthor] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const error = useSelector((state: RootState) => state.posts.error);
+    const [title, setTitle] = useState("");
+    const [text, setText] = useState("");
+    const [selectedBookTitle, setSelectedBookTitle] = useState("");
+    const [selectedBookAuthor, setSelectedBookAuthor] = useState("");
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const error = useSelector((state: RootState) => state.posts.error);
+    const navigate = useNavigate()
+    const openDialog = () => {
+        setIsDialogOpen(true);
+    };
 
-  const openDialog = () => {
-    setIsDialogOpen(true);
-  };
+    const closeDialog = () => {
+        setIsDialogOpen(false);
+    };
 
-  const closeDialog = () => {
-    setIsDialogOpen(false);
-  };
+    const handleSelectBook = (bookTitle: string, bookAuthor: string) => {
+        setSelectedBookTitle(bookTitle);
+        setSelectedBookAuthor(bookAuthor);
+        closeDialog();
+    };
 
-  const handleSelectBook = (bookTitle: string, bookAuthor: string) => {
-    setSelectedBookTitle(bookTitle);
-    setSelectedBookAuthor(bookAuthor);
-    closeDialog();
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (title && text) {
         dispatch(
@@ -45,9 +46,10 @@ const PostWrite: React.FC = () => {
                 bookAuthor: selectedBookAuthor,
             })
         );
+        navigate('/');
     } else {
         alert("모든 필수 정보를 입력해 주세요.");
-    }
+    };
 };
 
 
