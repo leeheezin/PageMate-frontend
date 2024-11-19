@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { AppDispatch } from "../../features/store";
-import "./component/booSearchDialog.style.css";
+import "./component/bookSearchDialog.style.css";
 import { fetchBooks, clearBooks } from "../../features/bookSearch/bookSearchSlice";
 
 interface BookSearchDialogProps {
