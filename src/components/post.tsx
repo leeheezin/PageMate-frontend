@@ -19,11 +19,13 @@ interface PostProps {
   title: string;
   text: string;
   date: string;
+  createdAt?: string;
   author: string;
   profilePhoto: string | null;
   likes: string[];
   comments: { author: string; text: string }[];
 }
+
 const StyledPost = styled.div`
   position: relative;
   width: 100%;
@@ -132,6 +134,7 @@ const Post: React.FC<PostProps> = ({
     author,
     profilePhoto,
     likes,
+    createdAt,
     comments,
     }) => {
     const [commentsVisible, setCommentsVisible] = useState(false);
@@ -140,9 +143,10 @@ const Post: React.FC<PostProps> = ({
     const dispatch = useDispatch<AppDispatch>();
     const [localError, setLocalError] = useState<string | null>(null);
     // const currentUser = useSelector((state: RootState) => 사용자정보 갖고오기
-      const currentUserId = '673b32ec9123f53e377db39f'
+    const currentUser = useSelector((state: RootState) => state.user.user);
+      // const currentUserId = '673b32ec9123f53e377db39f'
     // 게시글 작성자가 현재 로그인한 사용자인지 확인
-    // const isOwner = currentUser?.username === author;
+    const isOwner = currentUser?._id !== author;
 
     const handleDialogOpen = () => {
         setIsDialogOpen(true);
@@ -188,7 +192,7 @@ const Post: React.FC<PostProps> = ({
             <ProfilePhoto src={profilePhoto || DefaultImg} alt="Profile" />
             <Name>{author}</Name>
             {/* 게시글 작성자만 메뉴 볼수있게 조건 */}
-            {/* {isOwner && ( */} 
+            {isOwner && ( 
                 <>
                     <OptionsIcon onClick={handleDialogOpen} />
                     {isDialogOpen && (
@@ -200,14 +204,14 @@ const Post: React.FC<PostProps> = ({
                         </Dialog>
                     )}
                 </>
-            {/* )} */}
+            )} 
             </ProfileInfo>
 
         </Header>
         <Content>{text}</Content>
         <Footer>
             <Inner>
-            <LikeButton postId={_id} likes={likes} userId={currentUserId} />
+            <LikeButton postId={_id} userId={currentUser?._id || ""} />
             <CommentButton
                 count={comments.length}
                 onClick={toggleCommentsVisibility}

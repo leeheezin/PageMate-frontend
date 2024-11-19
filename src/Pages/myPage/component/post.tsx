@@ -137,7 +137,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
         <Content>{text}</Content>
         <Footer>
           <Inner>
-            <LikeButton count={likes} />
+            {/* <LikeButton count={likes} /> */}
             <CommentButton
               count={comments.length}
               onClick={toggleCommentsVisibility}
