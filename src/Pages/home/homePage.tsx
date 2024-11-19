@@ -53,6 +53,7 @@ return (
         {displayedPosts.map((post) => (
         <Post
             key={post.id}
+            _id={post._id}
             bookTitle={post.bookTitle}
             bookAuthor={post.bookAuthor}
             title={post.title}

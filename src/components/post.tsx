@@ -5,6 +5,7 @@ import Comment from "./comment";
 import { useEffect, useState } from "react";
 
 interface PostProps {
+    _id: string;
     bookTitle: string;
     bookAuthor: string;
     title: string;
@@ -95,6 +96,7 @@ interface PostProps {
         color: #A4A4A4;
     `;
     const Post: React.FC<PostProps> = ({
+    _id,
     title,
     bookTitle,
     bookAuthor,
@@ -139,7 +141,7 @@ interface PostProps {
         </Footer>
         {commentsVisible && (
             <CommentSectionContainer>
-            <Comment comments={comments} visible={commentsVisible} />
+            <Comment comments={comments} visible={commentsVisible} postId={_id}/>
             </CommentSectionContainer>
         )}
         </StyledPost>

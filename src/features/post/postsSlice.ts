@@ -8,6 +8,7 @@ interface Comment {
 
 interface Post {
     id: number;
+    _id: string;
     bookTitle: string;
     bookAuthor: string;
     title: string;

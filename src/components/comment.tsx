@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { addComment } from '../features/comment/commentSlice'; // Import the action
+import { RootState, AppDispatch } from '../features/store'; // Import the types
 
 const CommentContainer = styled.div`
     margin-top: 8px;
@@ -38,11 +41,13 @@ const SubmitButton = styled.button`
 interface CommentProps {
     comments: { author: string; text: string }[];
     visible: boolean;
+    postId: string; // 해당 게시물의 ID
 }
 
-const Comment: React.FC<CommentProps> = ({ comments, visible }) => {
+const Comment: React.FC<CommentProps> = ({ comments, visible, postId }) => {
     const [inputValue, setInputValue] = useState('');
-    const [newComments, setNewComments] = useState<{ author: string; text: string }[]>([]);
+    const { loading, error } = useSelector((state: RootState) => state.comments);
+    const dispatch = useDispatch<AppDispatch>();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(e.target.value);
@@ -50,7 +55,7 @@ const Comment: React.FC<CommentProps> = ({ comments, visible }) => {
 
     const handleAddComment = () => {
         if (inputValue.trim() !== '') {
-            setNewComments([...newComments, { author: '나', text: inputValue }]);
+            dispatch(addComment({ postId, text: inputValue }));
             setInputValue('');
         }
     };
@@ -66,11 +71,6 @@ const Comment: React.FC<CommentProps> = ({ comments, visible }) => {
                     <strong>{comment.author}:</strong> {comment.text}
                 </CommentItem>
             ))}
-            {newComments.map((comment, index) => (
-                <CommentItem key={comments.length + index}>
-                    <strong>{comment.author}:</strong> {comment.text}
-                </CommentItem>
-            ))}
             <InputContainer>
                 <CommentInput 
                     type="text" 
@@ -78,8 +78,11 @@ const Comment: React.FC<CommentProps> = ({ comments, visible }) => {
                     onChange={handleInputChange} 
                     placeholder="댓글 달기" 
                 />
-                <SubmitButton onClick={handleAddComment}>^</SubmitButton>
+                <SubmitButton onClick={handleAddComment} disabled={loading}>
+                    {loading ? '...' : '^'}
+                </SubmitButton>
             </InputContainer>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
         </CommentContainer>
     );
 };
