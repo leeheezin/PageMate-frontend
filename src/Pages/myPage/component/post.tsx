@@ -3,6 +3,7 @@ import LikeButton from "../../../components/likeBtn";
 import CommentButton from "../../../components/comBtn";
 import Comment from "../../../components/comment";
 import { useEffect, useState } from "react";
+import ProfileIcon from "../../../assets/images/icon-user.png"
 
 interface Comment {
     author: string;
@@ -33,7 +34,7 @@ const StyledPost = styled.div`
   border-radius: 16px;
   margin: auto;
   margin-bottom: 28px;
-  padding: 16px;
+  padding: 16px 16px 5px 16px;
 
   @media (max-width: 480px) {
     max-width: 330px;
@@ -47,56 +48,55 @@ const Header = styled.div`
   align-items: center;
   margin-bottom: 8px;
 `;
-
 const ProfileInfo = styled.div`
   display: flex;
   align-items: center;
 `;
-
 const ProfilePhoto = styled.img`
   width: 40px;
   height: 40px;
   border-radius: 50%;
   margin-right: 8px;
 `;
-
 const Name = styled.span`
   font-weight: bold;
   font-size: 16px;
 `;
-
 const TitleDate = styled.div``;
 
 const Date = styled.div`
   font-size: 12px;
   color: #666;
 `;
-
-const Title = styled.h4`
+const Title = styled.div`
+    font-size: 20px;
+    font-weight: 600;
   text-align: left;
   margin: 0;
 `;
-
 const Content = styled.p`
   color: #014421;
-  font-size: 14px;
+  font-size: 20px;
   margin-bottom: 16px;
+  min-height: 70px;
 `;
-
 const Footer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 5px;
   margin-bottom: 8px;
+  
 `;
 const Inner = styled.div`
   display: flex;
   gap: 10px;
+  align-self: flex-end;
 `;
 const CommentSectionContainer = styled.div`
   width: 100%;
   margin-top: 8px;
+  margin-bottom: 10px;
 `;
 const BookTit = styled.div``;
 const BTitle = styled.div``;
@@ -130,7 +130,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
             <Date>{date}</Date>
           </TitleDate>
           <ProfileInfo>
-            <ProfilePhoto src={profilePhoto} alt="Profile" />
+            <ProfilePhoto src={ProfileIcon} alt="Profile" />
             <Name>{author}</Name>
           </ProfileInfo>
         </Header>
