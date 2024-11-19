@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, isRejectedWithValue, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../../utils/api";
 import { NavigateFunction } from "react-router-dom";
 
 
@@ -40,13 +40,13 @@ export const registerUser = createAsyncThunk<User, RegisterPayload, {rejectValue
     "user/registerUser",
     async({email, name, password, navigate} ,{rejectWithValue}) => {
         try {
-            const response = await axios.post("/api/user",{email, name, password})
+            const response = await api.post("/user",{email, name, password})
             navigate("/login")
 
             return response.data
             
         } catch (error: any) {
-            return rejectWithValue(error.message);
+            return rejectWithValue(error.response.data.error);
         }
     }
 )
@@ -54,8 +54,13 @@ export const registerUser = createAsyncThunk<User, RegisterPayload, {rejectValue
 export const loginWithEmail = createAsyncThunk<User, LoginPayload, {rejectValue:string}>(
     "user/loginWithEmail",
     async ({email, password}, {rejectWithValue}) => {
+        
         try {
-            const response = await axios.post("/auth/login",{email, password})
+            const response = await api.post("/auth/login",{email, password})
+
+            const token = response.data.token;
+            sessionStorage.setItem("token", token);
+
             return response.data
         } catch (error: any) {
             return rejectWithValue(error.message);
@@ -63,6 +68,18 @@ export const loginWithEmail = createAsyncThunk<User, LoginPayload, {rejectValue:
     }
 );
 
+export const loginWithToken = createAsyncThunk<User,void, {rejectValue:string}>(
+    "user/loginWithToken",
+    async (_, {rejectWithValue}) => {
+        try {
+            const response = await api.get("/user/me");
+            console.log("토큰 로그인!")
+            return response.data
+        } catch (error:any) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
 
 const userSlice = createSlice({
     name: "user",
@@ -98,7 +115,11 @@ const userSlice = createSlice({
         .addCase(loginWithEmail.rejected, (state, action)=>{
             state.loading = false;
             state.loginError = action.payload || "login failed";
-        });
+        })
+        .addCase(loginWithToken.fulfilled, (state, action)=>{
+            state.user = action.payload;
+        })
+        ;
     },
 })
 

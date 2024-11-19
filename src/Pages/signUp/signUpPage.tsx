@@ -97,6 +97,8 @@ const Input = styled.input`
 const ErrorMessage = styled.div`
   color: red;
   width: 100%;
+  height: auto;
+  padding-bottom: 10px;
 `;
 const Button = styled.button`
   width: 100%;
@@ -152,7 +154,7 @@ const SignUpPage: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (registrationError && registrationError !== "이미 가입된 이메일입니다") {
+    if (registrationError && registrationError !== "이미 가입된 이메일입니다.") {
       alert(registrationError);
     }
   }, [registrationError]);
@@ -197,7 +199,7 @@ const SignUpPage: React.FC = () => {
               required
               onChange={handleChange}
             />
-            {registrationError === "이미 가입된 이메일입니다" && (
+            {registrationError === "이미 가입된 이메일입니다." && (
               <ErrorMessage>{registrationError}</ErrorMessage>
             )}
             <Input
