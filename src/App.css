@@ -9,7 +9,7 @@ body {
   font-family: 'Pretendard', sans-serif; /* 전역 폰트 */
   margin: 0;
   padding: 0;
-  height: 100vh;
+  /* height: 100vh; */
 }
 
 .App {
