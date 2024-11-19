@@ -158,8 +158,8 @@
 }
 
 .navbar-icon img {
-  width: 40px;
-  /* height: 28px; */
+  width: 28px;
+  height: 28px;
 }
 
 .fontup {
@@ -208,6 +208,77 @@
   display: flex;
   align-items: center;
 }
+
+/* 검색 UI 스타일 */
+.search-ui {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--bg-color);
+  z-index: 9999;
+  /* padding: 10px; */
+}
+
+.search-input-box {
+  
+  display: flex;
+  align-items: center;
+  /* justify-content: space-between; */
+  padding: 10px 10px 0 10px;
+}
+
+.nav-search-input {
+  /* flex-grow: 1; */
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-left: 10px;
+  padding-left: 40px;
+  width: 327px;
+}
+.nav-search-input:focus {
+  outline: none;
+  border-color: #878787;
+  box-shadow: 0 0 5px #ccc;
+}
+
+.nav-search-input::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+.nav-search-input:focus::placeholder {
+  color: transparent; /* 포커스 상태에서 placeholder 숨기기 */
+}
+
+.nav-search-icon {
+  position: absolute;
+  margin-left: 44px;
+  font-size: 22px;
+  color: #878787;
+}
+.nav-icon {
+  position: absolute;
+  margin-left: 322px;
+  color: #878787;
+}
+.nav-search-icon img,
+.nav-icon img {
+  width: 25px;
+  height: 25px;
+}
+.navbar-back-icon {
+  height: 30px;
+
+}
+.search-input-box button.nav-search-icon,
+.search-input-box button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
 
 @media (min-width: 481px) {
   .mobile-navbar {
