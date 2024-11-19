@@ -20,6 +20,7 @@ const initialState: UserState = {
 }
 
 interface User {
+    _id: string;
     email: string;
     name: string;
 }

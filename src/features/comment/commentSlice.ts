@@ -3,13 +3,18 @@ import axios from 'axios';
 
 interface Comment {
     _id: string;
+    userId:string;
     author: string;
     commentText: string;
     isDeleted: boolean;
+    commentDate: Date;
+    profilePhoto: string;
   }
   
   interface CommentState {
-    comments: { id: string; author: string; text: string }[];
+    comments: {
+        commentDate: Date; id: string; author: string; text: string; userId: string; profilePhoto: string; 
+}[];
     loading: boolean;
     error: string | null;
   }
@@ -25,7 +30,6 @@ export const addComment = createAsyncThunk(
     'comments/addComment',
     async ({ postId, text }: { postId: string; text: string }, thunkAPI) => {
         try {
-            console.log("text",text);
             const response = await axios.post('http://localhost:5001/api/comment/write', { postId, text });
             return response.data;
         } catch (error: any) {
@@ -46,6 +50,19 @@ export const fetchComments = createAsyncThunk(
       }
     }
   );
+
+  // 비동기 작업: 댓글 삭제
+export const deleteComment = createAsyncThunk(
+  'comments/deleteComment',
+  async ({ postId, commentId }: { postId: string; commentId: string }, { rejectWithValue }) => {
+      try {
+          const response = await axios.delete(`http://localhost:5001/api/comment/${commentId}`);
+          return response;
+      } catch (error: any) {
+          return rejectWithValue(error.response?.data?.message || '댓글 삭제에 실패했습니다.');
+      }
+  }
+);
 
 const commentSlice = createSlice({
     name: 'comments',
@@ -75,9 +92,24 @@ const commentSlice = createSlice({
                     id: comment._id,
                     author: comment.author, // userId를 author로 변환
                     text: comment.commentText, // commentText를 text로 변환
+                    userId: comment.userId,
+                    commentDate: new Date(comment.commentDate),
+                    profilePhoto: comment.profilePhoto,
                 }));
             })
             .addCase(fetchComments.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+            .addCase(deleteComment.fulfilled, (state, action) => {
+              state.loading = false;
+              state.error = null;
+            })
+            .addCase(deleteComment.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(deleteComment.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
             });

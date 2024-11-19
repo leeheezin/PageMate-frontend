@@ -20,8 +20,12 @@ const loading = useSelector((state: RootState) => state.posts.loading);
 const [displayedPosts, setDisplayedPosts] = useState(posts.slice(0, 5)); // 초기 5개만
 const [hasMore, setHasMore] = useState(true);
 
+const [activeCommentPostId, setActiveCommentPostId] = useState<string | null>(null); // 열려 있는 댓글 영역의 포스트 ID
+
 useEffect(() => {
-    dispatch(fetchPosts());
+    if (posts.length === 0) {  // posts가 비어있을 때만 데이터를 가져오도록
+        dispatch(fetchPosts());
+    }
 }, [dispatch]);
 
 useEffect(() => {
@@ -39,6 +43,12 @@ const fetchMorePosts = () => {
         setHasMore(false); 
     }
 };
+
+const handleCommentToggle = (postId: string) => {
+    // 같은 포스트 클릭 시 닫고, 다른 포스트 클릭 시 열기
+    setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
+};
+
 return (
 <HomePageContainer>
     {loading ? (
@@ -52,8 +62,8 @@ return (
     >
         {displayedPosts.map((post) => (
         <Post
-            key={post.id}
             _id={post._id}
+            key={post._id}
             bookTitle={post.bookTitle}
             bookAuthor={post.bookAuthor}
             title={post.title}
@@ -63,6 +73,8 @@ return (
             profilePhoto={post.profilePhoto}
             likes={post.likes}
             comments={post.comments}
+            isCommentVisible={activeCommentPostId === post._id} // 댓글 영역이 열려 있는지 여부 전달
+            onCommentToggle={handleCommentToggle} // 댓글 토글 핸들러 전달
         />
         ))}
     </InfiniteScroll>
