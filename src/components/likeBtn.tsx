@@ -20,7 +20,7 @@ const LikeButton: React.FC<{ count: number }> = ({ count }) => {
 
     return (
         <LikeContainer onClick={handleToggleLike}>
-            <FontAwesomeIcon icon={liked ? faHeart : faRegHeart} color={liked ? 'red' : 'black'} />
+            <FontAwesomeIcon icon={liked ? faHeart : (faRegHeart as any)} color={liked ? 'red' : 'black'} />
             <span style={{ marginLeft: '8px' }}>{plusCount}</span>
         </LikeContainer>
     );

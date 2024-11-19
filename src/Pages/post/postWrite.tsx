@@ -1,11 +1,17 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createPost } from "../../features/post/postsSlice";
 import "./component/postWrite.style.css";
+import "./component/gptModal.css";
 import BookSearchDialog from "./bookSearchDialog";
 import { AppDispatch, RootState } from "../../features/store";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { styleChange, contentCorrection, spellingCorrection ,aiRequest } from "../../features/gpt/gptSlice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import getCaretCoordinates from 'textarea-caret';
+
 
 const Error = styled.div`
     color: red;
@@ -20,11 +26,18 @@ const PostWrite: React.FC = () => {
     const [selectedBookAuthor, setSelectedBookAuthor] = useState("");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const error = useSelector((state: RootState) => state.posts.error);
+    const [gptResultModal, setGptResultModal] = useState(false);    
+    const gptResultText = useSelector((state: RootState) => state.gpt.gptResultText);       
     
     const [selectedText, setSelectedText] = useState("");
     const [miniBarPosition, setMiniBarPosition] = useState({ top: 0, left: 0, visible: false });
     const titleInputRef = useRef<HTMLInputElement | null>(null);
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+    const [selectionStart, setSelectionStart] = useState<number | null>(null);
+    const [selectionEnd, setSelectionEnd] = useState<number | null>(null);
+    const [aiRequestText, setAiRequestText] = useState("");
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate()
     const openDialog = () => {
@@ -58,36 +71,31 @@ const PostWrite: React.FC = () => {
     };
 };
 
+
+
+
 const handleTextSelection = (
-  event: React.MouseEvent<HTMLInputElement | HTMLTextAreaElement>
+  event: React.SyntheticEvent<HTMLTextAreaElement>
 ) => {
-  const target = event.target as HTMLInputElement | HTMLTextAreaElement;
-  const selectionStart = target.selectionStart;
-  const selectionEnd = target.selectionEnd;
+  const target = event.target as HTMLTextAreaElement;
+  const start = target.selectionStart;
+  const end = target.selectionEnd;
 
-  if (selectionStart !== null && selectionEnd !== null && selectionStart !== selectionEnd) {
-      const selectedText = target.value.substring(selectionStart, selectionEnd);
+  if (start !== null && end !== null && start !== end) {
+      const selectedText = target.value.substring(start, end);
       setSelectedText(selectedText);
+      setSelectionStart(start);
+      setSelectionEnd(end);
 
-      // Create a temporary span to measure text width
-      const span = document.createElement("span");
-      const computedStyle = window.getComputedStyle(target);
-      span.style.font = computedStyle.font;
-      span.style.visibility = "hidden";
-      span.style.whiteSpace = "pre";
-      span.textContent = target.value.substring(0, selectionStart);
-      document.body.appendChild(span);
+      // 커서 좌표 계산
+      const coordinates = getCaretCoordinates(target, start);
 
-      const textWidth = span.offsetWidth;
-      document.body.removeChild(span);
-
-      const { top, left } = target.getBoundingClientRect();
-      const cursorTop = top + window.scrollY; // 필드의 상단 위치
-      const cursorLeft = left + textWidth + 5 + window.scrollX; // 선택된 텍스트 바로 뒤 위치
+      // 텍스트 영역의 위치
+      const textareaRect = target.getBoundingClientRect();
 
       setMiniBarPosition({
-          top: cursorTop,
-          left: cursorLeft,
+          top: textareaRect.top + coordinates.top + window.scrollY - 30, // 오프셋 조정
+          left: textareaRect.left + coordinates.left + window.scrollX,
           visible: true,
       });
   } else {
@@ -95,13 +103,108 @@ const handleTextSelection = (
   }
 };
 
-const handleMiniBarAction = (action: string, event: React.MouseEvent<HTMLButtonElement>) => {
-  event.preventDefault(); // 기본 동작 방지
-  event.stopPropagation(); // 클릭 이벤트가 다른 곳으로 전파되지 않도록 처리
-
+  
+  
+  
+// style, text 는 선택적 인자
+const handleMiniBarAction = (action: string, style?: string, aiRequestText?: string) => {
+  const review_object = {title:selectedBookTitle, author:selectedBookAuthor, review:selectedText};
+  setIsLoading(true); // 로딩 시작
+  if (action === "문체 변경" && style) {
+    setGptResultModal(true);
+    dispatch(styleChange({style:style,review_object:review_object})).finally(() => setIsLoading(false));
+  } else if (action === "내용 첨삭") {
+    setGptResultModal(true);
+    dispatch(contentCorrection({review_object:review_object})).finally(() => setIsLoading(false));
+  } else if (action === "맞춤법 교정") {
+    setGptResultModal(true);
+    dispatch(spellingCorrection({review_object:review_object})).finally(() => setIsLoading(false));
+  } else if (action === "AI 요청" && aiRequestText) {
+    setGptResultModal(true);
+    dispatch(aiRequest({aiRequestText:aiRequestText,review_object:review_object })).finally(() => setIsLoading(false));
+  }
   console.log(`${action}: ${selectedText}`);
-  // 미니바 그대로 유지 & 선택 영역 유지
 };
+
+const closeGptResultModal = () => {
+  setGptResultModal(false);
+};
+
+const applyGptResult = () => {
+  if (selectionStart !== null && selectionEnd !== null) {
+    const beforeText = text.substring(0, selectionStart);
+    const afterText = text.substring(selectionEnd);
+    const newText = beforeText + gptResultText + afterText;
+    setText(newText);
+  }
+  miniBarPosition.visible=false;
+  setAiRequestText("");
+  setGptResultModal(false);
+  setIsDropdownOpen(false);
+  // 미니바 닫기
+};
+
+const toggleDropdown = () => {
+  setIsDropdownOpen(!isDropdownOpen);
+};
+
+useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+        const target = event.target as HTMLElement;
+        if (target.classList.contains('post-area')) {
+            setIsDropdownOpen(false);
+            setMiniBarPosition((prev) => ({ ...prev, visible: false }));
+        }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+    };
+}, []);
+
+useEffect(() => {
+    if (!miniBarPosition.visible) {
+        setIsDropdownOpen(false);
+    }
+}, [miniBarPosition.visible]);
+
+const GptResultModal = ({gptResultText, isLoading}:{gptResultText:string, isLoading: boolean}) => (
+  <div
+    className="gpt-modal"
+    style={{
+      position: 'absolute',
+      top: `${miniBarPosition.top + 60}px`, // miniBarPosition 바로 아래에 위치
+      left: `${miniBarPosition.left}px`,
+      backgroundColor: 'white',
+      padding: '20px',
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+      zIndex: 1000,
+    }}
+  >
+    <div className="gpt-modal-content">
+      {isLoading ? (
+        <div className="loading-spinner">로딩 중...</div>
+      ) : (
+        <>
+          <textarea
+            className="gpt-modal-textarea" 
+            value={gptResultText}
+            readOnly
+          ></textarea>
+          <div className="gpt-modal-buttons">
+            <button className="gpt-apply-btn" onClick={applyGptResult}>
+              적용하기
+            </button>
+            <button className="gpt-cancel-btn" onClick={closeGptResultModal}>
+              취소
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  </div>
+);
 
 return (
 <div className="post-area">
@@ -115,10 +218,10 @@ return (
         name="title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        onMouseUp={handleTextSelection} // 텍스트 드래그 후 이벤트 처리
+        // onMouseUp={handleTextSelection} // 텍스트 드래그 후 이벤트 처리
         />
         <input
-        type="text"
+        type="text" 
         placeholder="책을 선택해 주세요"
         value={selectedBookTitle}
         onClick={openDialog}
@@ -134,6 +237,7 @@ return (
         value={text}
         onChange={(e) => setText(e.target.value)}
         onMouseUp={handleTextSelection} // 텍스트 드래그 후 이벤트 처리
+        onSelect={handleTextSelection} // 키보드로 텍스트 선택 시 이벤트 처리
         ></textarea>
         <button type="submit" className="submit-btn">
         작성하기
@@ -152,28 +256,79 @@ return (
             style={{
                 top: `${miniBarPosition.top}px`,
                 left: `${miniBarPosition.left}px`,
+                display: 'flex',
+                flexDirection: 'column',
             }}
         >
-            <button
-                className="mini-bar-btn"
-                onClick={(e) => handleMiniBarAction("AI 첨삭받기 1", e)}
-            >
-                AI 첨삭받기 1
-            </button>
-            <button
-                className="mini-bar-btn"
-                onClick={(e) => handleMiniBarAction("AI 첨삭받기 2",e)}
-            >
-                AI 첨삭받기 2
-            </button>
-            <button
-                className="mini-bar-btn"
-                onClick={(e) => handleMiniBarAction("AI 첨삭받기 3",e)}
-            >
-                AI 첨삭받기 3
-            </button>
+            <div className="mini-bar-row">
+                <input
+                    type="text"
+                    className="mini-bar-input"
+                    placeholder="AI에게 요청 내용"
+                    value={aiRequestText}
+                    onChange={(e) => setAiRequestText(e.target.value)}
+                />
+                <button
+                    className="mini-bar-btn"
+                    onClick={() => handleMiniBarAction("AI 요청", undefined, aiRequestText)}
+                >
+                    요청하기
+                </button>
+            </div>
+            <div className="mini-bar-row">
+                <button
+                    className="mini-bar-btn"
+                    onClick={toggleDropdown}
+                >
+                    문체 변경 <FontAwesomeIcon icon={faChevronDown} />
+                </button>
+
+                <button
+                    className="mini-bar-btn"
+                    onClick={() => handleMiniBarAction("내용 첨삭")}
+                >
+                    내용 첨삭
+                </button>
+                <button
+                    className="mini-bar-btn"
+                    onClick={() => handleMiniBarAction("맞춤법 교정")}
+                >
+                    맞춤법 교정
+                </button>
+            </div>
         </div>
     )}
+    {isDropdownOpen && (
+    <div className="mini-bar"
+            style={{
+                top: `${miniBarPosition.top+120}px`,
+                left: `${miniBarPosition.left}px`,
+                display: 'flex',
+                flexDirection: 'column',
+            }}>
+        <button
+            className="mini-bar-btn2"
+            onClick={() => handleMiniBarAction("문체 변경", "구어체")}
+        >
+            구어체
+        </button>
+        <button
+            className="mini-bar-btn2"
+            onClick={() => handleMiniBarAction("문체 변경", "문어체")}
+        >
+            문어체
+        </button>
+        <button
+            className="mini-bar-btn2"
+            onClick={() => handleMiniBarAction("문체 변경", "격식체")}
+        >
+            격식체
+        </button>
+    </div>
+)}
+
+    {/* 모달 창 표시 */}
+    {gptResultModal && <GptResultModal gptResultText={gptResultText} isLoading={isLoading} />}
 </div>
 );
 };
