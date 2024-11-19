@@ -54,8 +54,10 @@ export const registerUser = createAsyncThunk<User, RegisterPayload, {rejectValue
 export const loginWithEmail = createAsyncThunk<User, LoginPayload, {rejectValue:string}>(
     "user/loginWithEmail",
     async ({email, password}, {rejectWithValue}) => {
+        
         try {
             const response = await api.post("/auth/login",{email, password})
+            console.log("🚀 ~ response:", response)
             return response.data
         } catch (error: any) {
             return rejectWithValue(error.message);
