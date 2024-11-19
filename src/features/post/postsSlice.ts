@@ -56,7 +56,7 @@ export const createPost = createAsyncThunk<Post, NewPost>(
     async (newPost, { rejectWithValue }) => {
         try {
             // const token = sessionStorage.getItem("token");
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzNiMzJlYzkxMjNmNTNlMzc3ZGIzOWYiLCJpYXQiOjE3MzE5MzI5MjMsImV4cCI6MTczMTk1NDUyM30.a3Ds-YirsxFxo0Gw43gDFu2f7eFOOpwyAQW5ptKEUtU"
+            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzNiMzJlYzkxMjNmNTNlMzc3ZGIzOWYiLCJpYXQiOjE3MzE5OTAxMDQsImV4cCI6MTczMjAxMTcwNH0.hEP6r1IUk324p6vFo7n2psWFfAMycEdvlZx5oK-gKNE"
             if (!token) throw new Error("토큰이 없습니다.");
 
             const response = await axios.post("http://localhost:5001/api/post/write", newPost, {
@@ -71,11 +71,11 @@ export const createPost = createAsyncThunk<Post, NewPost>(
         }
     }
 );
-export const updatePost = createAsyncThunk<Post, { id: number; title: string; text: string; bookTitle: string; bookAuthor: string }>(
+export const updatePost = createAsyncThunk<Post, { id: string; title: string; text: string; bookTitle: string; bookAuthor: string }>(
     "posts/updatePost",
     async ({ id, title, text, bookTitle, bookAuthor }, { rejectWithValue }) => {
         try {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzNiMzJlYzkxMjNmNTNlMzc3ZGIzOWYiLCJpYXQiOjE3MzE5MzI5MjMsImV4cCI6MTczMTk1NDUyM30.a3Ds-YirsxFxo0Gw43gDFu2f7eFOOpwyAQW5ptKEUtU";
+            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzNiMzJlYzkxMjNmNTNlMzc3ZGIzOWYiLCJpYXQiOjE3MzE5OTAxMDQsImV4cCI6MTczMjAxMTcwNH0.hEP6r1IUk324p6vFo7n2psWFfAMycEdvlZx5oK-gKNE";
             if (!token) throw new Error("토큰이 없습니다.");
 
             const response = await axios.put(
@@ -88,6 +88,25 @@ export const updatePost = createAsyncThunk<Post, { id: number; title: string; te
                 }
             );
             return response.data.data; 
+        } catch (error: any) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+export const deletePost = createAsyncThunk<Post, { id: string }>(
+    "posts/deletePost",
+    async ({ id }, { dispatch, rejectWithValue }) => {
+        try {
+            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzNiMzJlYzkxMjNmNTNlMzc3ZGIzOWYiLCJpYXQiOjE3MzE5OTAxMDQsImV4cCI6MTczMjAxMTcwNH0.hEP6r1IUk324p6vFo7n2psWFfAMycEdvlZx5oK-gKNE";
+            if (!token) throw new Error("토큰이 없습니다.");
+
+            const res = await axios.delete(`http://localhost:5001/api/post/${id}`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+            dispatch(fetchPosts())
+            return res.data.data;
         } catch (error: any) {
             return rejectWithValue(error.message);
         }
@@ -149,7 +168,20 @@ const postsSlice = createSlice({
             .addCase(updatePost.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
-            });
+            })
+            .addCase(deletePost.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(deletePost.fulfilled, (state, action: PayloadAction<Post>) => {
+                state.posts = state.posts.filter((post) => post.id !== action.payload.id);
+                state.loading = false;
+            })
+            .addCase(deletePost.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+            
     },
 });
 

@@ -2,11 +2,14 @@ import styled from "styled-components";
 import LikeButton from "./likeBtn";
 import CommentButton from "./comBtn";
 import Comment from "./comment";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import DefaultImg from "../assets/images/DefaultImg.svg";
 import { FaEllipsisV } from "react-icons/fa";
 import Dialog from "./dialog";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../features/store";
+import { deletePost } from "../features/post/postsSlice";
 
 interface PostProps {
   _id: string;
@@ -134,6 +137,7 @@ const Post: React.FC<PostProps> = ({
     const [commentsVisible, setCommentsVisible] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch<AppDispatch>();
 
     const handleDialogOpen = () => {
         setIsDialogOpen(true);
@@ -158,6 +162,9 @@ const Post: React.FC<PostProps> = ({
             },
         });
     };
+    const handleDelete = (id:string) => {
+        dispatch(deletePost({id}))
+    }
     return (
         <StyledPost>
         <Header>
@@ -171,10 +178,10 @@ const Post: React.FC<PostProps> = ({
             <OptionsIcon onClick={handleDialogOpen} />
             </ProfileInfo>
             {isDialogOpen && (
-            <Dialog isOpen={isDialogOpen} onClose={handleDialogClose} position="absolute" top="70px">
+            <Dialog isOpen={isDialogOpen} onClose={handleDialogClose} position="absolute" top="45px">
                 <DialogContainer>
                     <ActionButton onClick={handleEdit}>수정</ActionButton>
-                    <ActionButton>삭제</ActionButton>
+                    <ActionButton onClick={() => handleDelete(_id)}>삭제</ActionButton>
                 </DialogContainer>
             </Dialog>
             )}
