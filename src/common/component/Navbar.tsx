@@ -15,7 +15,7 @@ const Navbar: React.FC = () => {
 
   // 검색 UI 상태 관리
   const [isSearching, setIsSearching] = useState(false);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState<string>("");
 
   const handleSearchClick = () => {
     setIsSearching(true); // 검색 UI 표시
@@ -27,7 +27,20 @@ const Navbar: React.FC = () => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('검색', e.target.value);
     setQuery(e.target.value); // 검색어 입력 상태 업데이트
+  };
+
+  const handleSearchSubmit = () => {
+    if (query.trim()) {
+      navigate(`/search?query=${encodeURIComponent(query)}`); // 검색어를 URL로 전달
+    }
+  };
+  // 엔터 키로 검색을 제출하는 함수
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearchSubmit(); // 엔터 키를 누르면 검색어 제출
+    }
   };
   return (
     <>
@@ -80,6 +93,7 @@ const Navbar: React.FC = () => {
               placeholder="도서 제목으로 리뷰 검색"
               value={query}
               onChange={handleInputChange}
+              onKeyDown={handleKeyDown}  // 엔터 키 감지
               className="nav-search-input"
             />
             {/* 검색 아이콘 */}

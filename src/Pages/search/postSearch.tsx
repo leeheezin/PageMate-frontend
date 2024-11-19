@@ -11,6 +11,8 @@ import HomePage from "../home/homePage";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import "./postSearch.style.css"
 
+
+
 const PostSearch: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const [searched, setSearched] = useState<boolean>(false); // 검색 여부 상태 추가
@@ -23,12 +25,26 @@ const PostSearch: React.FC = () => {
   const location = useLocation(); // 현재 URL 정보 가져오기
   const navigate = useNavigate(); // 네비게이션 훅 초기화
 
-  useEffect(() => { // search page로 다시 돌아오면 초기화
-    if (!location.search) {
-      setSearched(false);
-      setQuery("");
-    }  
-  }, [location.search]);
+  // URL 파라미터에서 검색어 추출
+  const queryParams = new URLSearchParams(location.search);
+  const urlQuery = queryParams.get("query");
+
+
+  useEffect(() => {
+    if (urlQuery) {
+      setQuery(urlQuery); // URL에서 검색어가 있으면 입력란에 넣기
+      setSearched(true);
+      dispatch(fetchPosts({ bookTitle: urlQuery })); // 해당 검색어로 게시물 검색
+    }
+  }, [location.search, dispatch]);
+
+
+  // useEffect(() => { // search page로 다시 돌아오면 초기화
+  //   if (!location.search) {
+  //     setSearched(false);
+  //     setQuery("");
+  //   }  
+  // }, [location.search]);
 
 
   // 베스트셀러 데이터를 가져오기 위해 useEffect 수정
