@@ -11,11 +11,13 @@ interface BookSearchDialogProps {
 
 const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }) => {
     const [searchTerm, setSearchTerm] = useState("");
+    const [hasSearched, setHasSearched] = useState(false); // 검색 여부 추가
     const dispatch = useDispatch<AppDispatch>();
     const { books, loading, error } = useSelector((state: any) => state.bookSearch);
 
     const handleSearch = () => {
         if (searchTerm.trim() === "") return;
+        setHasSearched(true); // 검색 수행 여부 업데이트
         dispatch(fetchBooks(searchTerm));
     };
 
@@ -30,15 +32,21 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
         const formatAuthor = bookAuthor && bookAuthor.length > 0 ? bookAuthor.join(", ") : "저자 정보 없음"; 
         onSelect(bookTitle, formatAuthor);
         console.log(formatAuthor)
-        onClose(); // 선택 후 다이얼로그 닫기
+        handleClose(); // 선택 후 다이얼로그 닫기
     };
 
     const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
         if (e.target === e.currentTarget) {
-            onClose();
+            handleClose();
         }
     };
-    console.log(books)
+
+    const handleClose = () => {
+        dispatch(clearBooks()); // 검색 결과 초기화
+        setSearchTerm(""); // 검색어 초기화
+        onClose(); // 다이얼로그 닫기
+    };
+
     return (
         <div className="dialog-overlay" onClick={handleOverlayClick}>
             <div className="dialog-content" onClick={(e) => e.stopPropagation()}>
@@ -62,6 +70,8 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
                     <p>검색 중...</p>
                 ) : error ? (
                     <p style={{ color: "red" }}>{error}</p>
+                ) : hasSearched && books.length === 0 ? (
+                    <p>검색 결과가 없습니다.</p>
                 ) : (
                     <ul>
                         {books.map((book: any) => (
