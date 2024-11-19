@@ -1,8 +1,11 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import GoogleLogin  from './component/google';
 import Logo from "../../assets/images/icon-logo1_big.png"
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../features/store';
+import { clearErrors, loginWithEmail } from '../../features/user/userSlice';
 
 const Container = styled.div`
     display: flex;
@@ -11,8 +14,6 @@ const Container = styled.div`
     height: 100vh;
     padding: 20px;
 `;
-
-
 const LoginArea = styled.div`
     height: 600px;
     width: 980px;
@@ -48,7 +49,6 @@ const Title = styled.div`
         margin-top: 20px;
     }
 `;
-
 const LoginForm = styled.form`
     width: 500px;
     height: 500px;
@@ -66,7 +66,6 @@ const LoginForm = styled.form`
         border: none;
     }
 `;
-
 const LoginTitle = styled.div`
     width: calc(100% - 100px);
     height: 55px;
@@ -102,7 +101,7 @@ const Input = styled.input`
 const ErrorMessage = styled.div`
     color: red;
     width: 100%;
-`
+`;
 const Button = styled.button`
     width: 100%;
     padding: 10px;
@@ -124,7 +123,7 @@ const SignUp = styled.div`
     width: 100%;
     padding: 17px;
     text-align: center;
-`
+`;
 const SignUpLink = styled(Link)`
     color: #014421;
     text-decoration: none;
@@ -133,7 +132,7 @@ const SignUpLink = styled(Link)`
     &:hover {
         text-decoration: underline;
     }
-`
+`;
 const Google = styled.div`
     height: auto;
     width: calc(100% - 100px);
@@ -146,16 +145,50 @@ const Google = styled.div`
     
 
 const Login: React.FC = () => {
+    const {loginError, user} = useSelector((state:RootState) => state.user)
+    const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+
+    const handleEvent = (event:any) => {
+        event.preventDefault();
+        const {type, value} = event.target
+        if (type === "email") {
+            setEmail(value);
+        }
+        else{
+            setPassword(value);
+        }
+    }
+
+    const handleSubmit = (event:any) => {
+        event.preventDefault();
+        dispatch(loginWithEmail({email, password}));
+    }
+
+    useEffect(() => {
+        if(loginError){
+            clearErrors()
+        }
+    },[dispatch])
+
+    useEffect(() => {
+        if(user){
+            // navigate("/")
+        }
+    },[user])
+
     return (
         <Container>
             <LoginArea>
                 <Title><img src={Logo} alt="Logo"/>PageMate</Title>
-                <LoginForm>
+                <LoginForm onSubmit={handleSubmit}>
                     <LoginTitle>로그인</LoginTitle>
                     <InputArea>
-                        <Input type='email' placeholder='아이디를 입력하세요.' required/>
-                        <Input type='password' placeholder='비밀번호를 입력하세요.' required/>
-                        {/* <ErrorMessage>아이디 혹은 비밀번호를 확인해 주세요</ErrorMessage> */}
+                        <Input type='email' placeholder='아이디를 입력하세요.' required onChange={handleEvent}/>
+                        <Input type='password' placeholder='비밀번호를 입력하세요.' required onChange={handleEvent}/>
+                        {loginError &&(<ErrorMessage>아이디 혹은 비밀번호를 확인해 주세요</ErrorMessage>)}
                         <Button type='submit'>로그인</Button>
                         <SignUp>계정이 없으신가요? <SignUpLink to="/signup">회원가입</SignUpLink></SignUp>
                     </InputArea>
