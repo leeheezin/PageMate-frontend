@@ -28,6 +28,9 @@ interface LoginPayload {
     email:string;
     password:string;
 }
+interface LoginResponse {
+    token: string;
+}
 
 interface RegisterPayload {
     email: string;
@@ -57,7 +60,10 @@ export const loginWithEmail = createAsyncThunk<User, LoginPayload, {rejectValue:
         
         try {
             const response = await api.post("/auth/login",{email, password})
-            console.log("🚀 ~ response:", response)
+
+            const token = response.data.token;
+            sessionStorage.setItem("token", "Bearer "+token);
+
             return response.data
         } catch (error: any) {
             return rejectWithValue(error.message);

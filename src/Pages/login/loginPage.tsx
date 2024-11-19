@@ -175,7 +175,7 @@ const Login: React.FC = () => {
 
     useEffect(() => {
         if(user){
-            // navigate("/signup")
+            // navigate("/")
         }
     },[user])
 
@@ -188,7 +188,7 @@ const Login: React.FC = () => {
                     <InputArea>
                         <Input type='email' placeholder='아이디를 입력하세요.' required onChange={handleEvent}/>
                         <Input type='password' placeholder='비밀번호를 입력하세요.' required onChange={handleEvent}/>
-                        {/* <ErrorMessage>아이디 혹은 비밀번호를 확인해 주세요</ErrorMessage> */}
+                        {loginError &&(<ErrorMessage>아이디 혹은 비밀번호를 확인해 주세요</ErrorMessage>)}
                         <Button type='submit'>로그인</Button>
                         <SignUp>계정이 없으신가요? <SignUpLink to="/signup">회원가입</SignUpLink></SignUp>
                     </InputArea>
