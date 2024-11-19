@@ -11,12 +11,12 @@
 }
 
 .form-container {
-    max-width: 600px;
+    max-width: 765px;
     margin: 50px auto;
-    padding: 20px;
-    background-color: #fff;
+    padding: 15px;
+    /* background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
 }
 
 .input-field,
@@ -25,18 +25,18 @@
     margin-bottom: 15px;
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 8px;
     box-sizing: border-box;
     font-family: Arial, sans-serif;
     resize: none;
 }
 
 .textarea-field {
-    height: 200px;
+    height: 350px;
 }
 
 .submit-btn {
-    width: 100%;
+    width: 15%;
     padding: 10px;
     background-color: #014421; /* 버튼 색상 */
     color: #fff;
@@ -44,6 +44,7 @@
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
+    float: right;
 }
 
 .submit-btn:hover {
@@ -57,6 +58,7 @@
     }
 
     .submit-btn {
+        width: 30%;
         padding: 8px;
         font-size: 14px;
     }

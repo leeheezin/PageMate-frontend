@@ -56,3 +56,9 @@ body {
     margin-right: 60px; /* 데스크탑 sidebar 공간 확보 */
   }
 }
+
+@media (max-width: 480px) {
+  .main-contents {
+    margin-right: 0 !important; /* 초기화 */
+  }
+}
