@@ -9,7 +9,7 @@ body {
   font-family: 'Pretendard', sans-serif; /* 전역 폰트 */
   margin: 0;
   padding: 0;
-  height: 100vh;
+  /* height: 100vh; */
 }
 
 .App {
@@ -55,4 +55,5 @@ body {
   .main-contents {
     margin-right: 60px; /* 데스크탑 sidebar 공간 확보 */
   }
+
 }

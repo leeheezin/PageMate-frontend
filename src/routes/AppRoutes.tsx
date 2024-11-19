@@ -5,11 +5,16 @@ import PostDetail from "../Pages/detail/postDetail";
 import SignUpPage from "../Pages/signUp/signUpPage";
 import PostWrite from "../Pages/post/postWrite";
 import MyPage from "../Pages/myPage/myPage";
+import PostSearch from "../Pages/search/postSearch";
 import { useSelector } from "react-redux";
 import { RootState } from "../features/store";
 import PrivateRoute from "./privateRoute";
 
 const AppRoutes: React.FC = () => {
+    const handleSearch = (keyword: string) => {
+        console.log("keyword", keyword);
+
+    }
     const {user} = useSelector((state:RootState)=> state.user);
     const isAuthenticated = !!user;
 
@@ -20,6 +25,7 @@ const AppRoutes: React.FC = () => {
             {/* <Route element={<PrivateRoute isAuthenticated={isAuthenticated}/>}> */}
                 <Route path="/" element={<HomePage/>} />
                 <Route path="/mypage" element={<MyPage/>} />
+                <Route path="/search" element={<PostSearch onSearch={handleSearch}/>} />
                 <Route path="/post/write" element={<PostWrite/>} />
                 <Route path="/post/:id" element={<PostDetail/>} />    
             {/* </Route> */}

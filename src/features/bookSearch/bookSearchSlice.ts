@@ -24,7 +24,7 @@ export const fetchBooks = createAsyncThunk(
     "bookSearch/fetchBooks",
     async (searchTerm: string, thunkAPI) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/book/search?query=${searchTerm}`);
+            const response = await fetch(`http://localhost:5001/api/book/search?query=${searchTerm}`);
             if (!response.ok) {
                 const errorData = await response.json();
                 return thunkAPI.rejectWithValue(errorData.error || "API 요청 중 오류가 발생했습니다.");
