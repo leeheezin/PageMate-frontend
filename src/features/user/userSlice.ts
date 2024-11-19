@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, isRejectedWithValue, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../../utils/api";
 import { NavigateFunction } from "react-router-dom";
 
 
@@ -40,13 +40,13 @@ export const registerUser = createAsyncThunk<User, RegisterPayload, {rejectValue
     "user/registerUser",
     async({email, name, password, navigate} ,{rejectWithValue}) => {
         try {
-            const response = await axios.post("/api/user",{email, name, password})
+            const response = await api.post("/user",{email, name, password})
             navigate("/login")
 
             return response.data
             
         } catch (error: any) {
-            return rejectWithValue(error.message);
+            return rejectWithValue(error.response.data.error);
         }
     }
 )
@@ -55,7 +55,7 @@ export const loginWithEmail = createAsyncThunk<User, LoginPayload, {rejectValue:
     "user/loginWithEmail",
     async ({email, password}, {rejectWithValue}) => {
         try {
-            const response = await axios.post("/auth/login",{email, password})
+            const response = await api.post("/auth/login",{email, password})
             return response.data
         } catch (error: any) {
             return rejectWithValue(error.message);
