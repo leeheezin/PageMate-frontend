@@ -7,13 +7,13 @@ import DefaultImg from "../assets/images/DefaultImg.svg";
 import { FaEllipsisV } from "react-icons/fa";
 import Dialog from "./dialog";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../features/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../features/store";
 import { deletePost } from "../features/post/postsSlice";
 
 interface PostProps {
   _id: string;
-  id?: string;
+  userId?: string;
   bookTitle: string;
   bookAuthor: string;
   title: string;
@@ -21,7 +21,7 @@ interface PostProps {
   date: string;
   author: string;
   profilePhoto: string | null;
-  likes: number;
+  likes: string[];
   comments: { author: string; text: string }[];
 }
 const StyledPost = styled.div`
@@ -41,7 +41,6 @@ const StyledPost = styled.div`
     padding: 8px;
   }
 `;
-
 const Header = styled.div`
     position: relative;
   display: flex;
@@ -123,6 +122,7 @@ const ActionButton = styled.div`
 `;
 
 const Post: React.FC<PostProps> = ({
+    userId,
     _id,
     title,
     bookTitle,
@@ -138,11 +138,16 @@ const Post: React.FC<PostProps> = ({
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
+    const [localError, setLocalError] = useState<string | null>(null);
+    // const currentUser = useSelector((state: RootState) => 사용자정보 갖고오기
+      const currentUserId = '673b32ec9123f53e377db39f'
+    // 게시글 작성자가 현재 로그인한 사용자인지 확인
+    // const isOwner = currentUser?.username === author;
 
     const handleDialogOpen = () => {
         setIsDialogOpen(true);
     };
-    const handleDialogClose = () => {
+    const handleDialogClose = () => {   
         setIsDialogOpen(false);
     };
     const toggleCommentsVisibility = () => {
@@ -162,9 +167,16 @@ const Post: React.FC<PostProps> = ({
             },
         });
     };
-    const handleDelete = (id:string) => {
-        dispatch(deletePost({id}))
-    }
+    const handleDelete = async (id: string) => {
+        try {
+            await dispatch(deletePost({ id })).unwrap();
+            setLocalError(null);
+        } catch (error: any) {
+            setLocalError(error);
+            console.log(error)
+        }
+    };
+    
     return (
         <StyledPost>
         <Header>
@@ -175,21 +187,27 @@ const Post: React.FC<PostProps> = ({
             <ProfileInfo>
             <ProfilePhoto src={profilePhoto || DefaultImg} alt="Profile" />
             <Name>{author}</Name>
-            <OptionsIcon onClick={handleDialogOpen} />
+            {/* 게시글 작성자만 메뉴 볼수있게 조건 */}
+            {/* {isOwner && ( */} 
+                <>
+                    <OptionsIcon onClick={handleDialogOpen} />
+                    {isDialogOpen && (
+                        <Dialog isOpen={isDialogOpen} onClose={handleDialogClose} position="absolute" top="45px">
+                            <DialogContainer>
+                                <ActionButton onClick={handleEdit}>수정</ActionButton>
+                                <ActionButton onClick={() => handleDelete(_id)}>삭제</ActionButton>
+                            </DialogContainer>
+                        </Dialog>
+                    )}
+                </>
+            {/* )} */}
             </ProfileInfo>
-            {isDialogOpen && (
-            <Dialog isOpen={isDialogOpen} onClose={handleDialogClose} position="absolute" top="45px">
-                <DialogContainer>
-                    <ActionButton onClick={handleEdit}>수정</ActionButton>
-                    <ActionButton onClick={() => handleDelete(_id)}>삭제</ActionButton>
-                </DialogContainer>
-            </Dialog>
-            )}
+
         </Header>
         <Content>{text}</Content>
         <Footer>
             <Inner>
-            <LikeButton count={likes} />
+            <LikeButton postId={_id} likes={likes} userId={currentUserId} />
             <CommentButton
                 count={comments.length}
                 onClick={toggleCommentsVisibility}

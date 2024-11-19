@@ -21,7 +21,9 @@ const [displayedPosts, setDisplayedPosts] = useState(posts.slice(0, 5)); // 초�
 const [hasMore, setHasMore] = useState(true);
 
 useEffect(() => {
-    dispatch(fetchPosts());
+    if (posts.length === 0) {  // posts가 비어있을 때만 데이터를 가져오도록
+        dispatch(fetchPosts());
+    }
 }, [dispatch]);
 
 useEffect(() => {
@@ -39,7 +41,6 @@ const fetchMorePosts = () => {
         setHasMore(false); 
     }
 };
-console.log(displayedPosts)
 return (
 <HomePageContainer>
     {loading ? (
