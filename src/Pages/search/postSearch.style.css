@@ -1,0 +1,134 @@
+.search-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-box {
+  padding: 50px 0 70px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.search-icon {
+  position: absolute;
+  margin-left: 10px;
+  font-size: 16px;
+  color: #878787;
+}
+
+.searchPage-search-input {
+  padding: 10px 10px 10px 30px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 450px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.searchPage-search-input:focus {
+  outline: none;
+  border-color: #878787;
+  box-shadow: 0 0 5px #ccc;
+}
+
+.searchPage-search-input::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+.searchPage-search-input:focus::placeholder {
+  color: transparent; /* 포커스 상태에서 placeholder 숨기기 */
+}
+
+.search-button {
+  padding: 10px 20px;
+  background-color: var(--main-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.popular-books-container {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.today-popular {
+  background-color: var(--main-color);
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  padding: 20px;
+  line-height: 1.3;
+  width: 230px;
+  height: 420px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.today-popular p {
+  margin: 0;
+  white-space: pre-line;
+  font-size: 30px;
+}
+
+.popular-books-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.carousel-container {
+  position: relative;
+  margin-left: -110px;  /* Overlapping effect */
+  margin-bottom: -60px; /* Overlapping effect */
+}
+
+.carousel {
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+.carousel-slide {
+  flex-shrink: 0;
+  width: 200px; /* Adjust to fit 4 slides */
+  height: 300px;
+  margin-right: 10px;
+  transition: transform 0.5s ease-in-out;
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  height: 40px;
+  cursor: pointer;
+  z-index: 10;
+  font-weight: bold;
+}
+
+.carousel-button.prev {
+  left: -32px;
+}
+
+.carousel-button.next {
+  right: -23px;
+}
+
+.carousel-icon {
+  width: 15px; 
+}
