@@ -28,9 +28,6 @@ interface LoginPayload {
     email:string;
     password:string;
 }
-interface LoginResponse {
-    token: string;
-}
 
 interface RegisterPayload {
     email: string;
@@ -62,7 +59,7 @@ export const loginWithEmail = createAsyncThunk<User, LoginPayload, {rejectValue:
             const response = await api.post("/auth/login",{email, password})
 
             const token = response.data.token;
-            sessionStorage.setItem("token", "Bearer "+token);
+            sessionStorage.setItem("token", token);
 
             return response.data
         } catch (error: any) {
@@ -71,6 +68,18 @@ export const loginWithEmail = createAsyncThunk<User, LoginPayload, {rejectValue:
     }
 );
 
+export const loginWithToken = createAsyncThunk<User,void, {rejectValue:string}>(
+    "user/loginWithToken",
+    async (_, {rejectWithValue}) => {
+        try {
+            const response = await api.get("/user/me");
+            console.log("토큰 로그인!")
+            return response.data
+        } catch (error:any) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
 
 const userSlice = createSlice({
     name: "user",
@@ -106,7 +115,11 @@ const userSlice = createSlice({
         .addCase(loginWithEmail.rejected, (state, action)=>{
             state.loading = false;
             state.loginError = action.payload || "login failed";
-        });
+        })
+        .addCase(loginWithToken.fulfilled, (state, action)=>{
+            state.user = action.payload;
+        })
+        ;
     },
 })
 
