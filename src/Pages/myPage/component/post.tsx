@@ -152,7 +152,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
         </Footer>
         {commentsVisible && (
           <CommentSectionContainer>
-            <Comment comments={comments} visible={commentsVisible} postId={_id}/>
+            <Comment visible={commentsVisible} postId={_id}/>
           </CommentSectionContainer>
         )}
       </StyledPost>
