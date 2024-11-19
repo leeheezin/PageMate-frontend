@@ -1,10 +1,14 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../../utils/api";
 
 interface Comment {
     author: string;
     text: string;
 }
+
+interface QueryParams {
+    bookTitle?: string;
+  }
 
 interface Post {
     id: number;
@@ -37,15 +41,15 @@ const initialState: PostsState = {
     error: null,
 };
 
-export const fetchPosts = createAsyncThunk<Post[]>(
+  export const fetchPosts = createAsyncThunk<Post[], QueryParams | undefined>(
     "posts/fetchPosts",
-    async (_, { rejectWithValue }) => {
+    async (queryParams = {}, { rejectWithValue }) => {
         try {
-            const response = await axios.get("http://localhost:5001/api/post");
+            const response = await api.get("/post", { params: queryParams });
             console.log("API response data:", response.data); 
             return response.data.data; 
         } catch (error: any) {
-            return rejectWithValue(error.message);
+            return rejectWithValue(error?.message || "post data get error");
         }
     }
 );
@@ -58,7 +62,7 @@ export const createPost = createAsyncThunk<Post, NewPost>(
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzM5ZmMxNzRhOTg1OWRjMDM0YzFmOTgiLCJpYXQiOjE3MzE5MTM5NzEsImV4cCI6MTczMTkzNTU3MX0.O3J6z9ArMYSE28C4uAld0SpxmzJJoKdLoOH07_SaWPU"
             if (!token) throw new Error("토큰이 없습니다.");
 
-            const response = await axios.post("http://localhost:5001/api/post/write", newPost, {
+            const response = await api.post("/post/write", newPost, {
                 headers: {
                     "Authorization": `Bearer ${token}`,
                 },
@@ -95,10 +99,14 @@ const postsSlice = createSlice({
                 console.log("Posts fetched:", action.payload);
                 state.loading = false;
             })
-            .addCase(fetchPosts.rejected, (state, action) => {
+            .addCase(fetchPosts.rejected, (state, action: PayloadAction<any>) => {
                 state.loading = false;
-                state.error = action.payload as string;
+                state.error = action.payload;
             })
+            // .addCase(fetchPosts.rejected, (state, action) => {
+            //     state.loading = false;
+            //     state.error = action.payload as string;
+            // })
             .addCase(createPost.pending, (state) => {
                 state.loading = true;
                 state.error = null;
