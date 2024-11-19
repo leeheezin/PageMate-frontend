@@ -77,7 +77,7 @@ const PostSearch: React.FC = () => {
                 <input
                   type="search"
                   className="searchPage-search-input"
-                  placeholder="도서 제목 검색"
+                  placeholder="도서 제목으로 리뷰 검색"
                   value={query}
                   onChange={handleInputChange}
                 />
