@@ -4,8 +4,11 @@ import userSlice from "./user/userSlice";
 import bookSearchReducer from "./bookSearch/bookSearchSlice";
 import bookReducer from "./book/bookSlice";
 import gptSlice from "./gpt/gptSlice";
+<<<<<<< HEAD
 import commentReducer from './comment/commentSlice';
 
+=======
+>>>>>>> 0672d91 (create gpt api func)
 const store = configureStore({
     reducer: {
         posts: postsSlice,
@@ -13,7 +16,10 @@ const store = configureStore({
         bookSearch: bookSearchReducer,
         user: userSlice,
         gpt: gptSlice,
+<<<<<<< HEAD
         comments: commentReducer,
+=======
+>>>>>>> 0672d91 (create gpt api func)
     },
 });
 
