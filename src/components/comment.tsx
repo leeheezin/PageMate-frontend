@@ -8,8 +8,46 @@ const CommentContainer = styled.div`
     margin-top: 8px;
 `;
 
-const CommentItem = styled.p`
-    margin: 4px 0;
+const CommentItem = styled.div`
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 12px;
+`;
+
+const ProfileImage = styled.img`
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #d3d3d3; // 기본 회색 프로필 이미지
+`;
+
+const CommentContent = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+
+const Author = styled.span`
+    font-weight: bold;
+    font-size: 14px;
+`;
+
+const Date = styled.span`
+    font-size: 12px;
+    color: #666;
+    margin-left: 4px;
+`;
+
+const Text = styled.p`
+    margin: 4px 0 0 0;
+    font-size: 14px;
+    color: #014421;
+`;
+
+const CommentHeader = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 4px;
 `;
 
 const InputContainer = styled.div`
@@ -44,7 +82,7 @@ const DeleteButton = styled.button`
     color: gray;
     cursor: pointer;
     font-size: 12px;
-
+    margin-left: auto;
     &:hover {
         text-decoration: underline;
     }
@@ -97,11 +135,22 @@ const Comment: React.FC<CommentProps> = ({ visible, postId }) => {
         <CommentContainer>
             {comments.map((comment, index) => (
                 <CommentItem key={index}>
-                    <strong>{comment.author}:</strong> {comment.text}
+                     <ProfileImage
+                        src ={ (comment.profilePhoto || '/path/to/default/profile.png') as string } // profilePhoto가 없으면 기본 이미지
+                        alt={`${comment.author}의 프로필`}
+                    />
+                     <CommentContent>
+                        <CommentHeader>    
+                            <Author>{comment.author}</Author>
+                            <Date>{comment.commentDate.toLocaleString()}</Date>
+                        </CommentHeader>
+                        <Text>{comment.text}</Text>
+                    </CommentContent>
                     {/* {currentUser?._id === comment.id && ( // 현재 유저와 댓글 작성자의 _id 비교 */}
                     {"673b66d9320a8682a2ff723e" === comment.userId && ( // 현재 유저와 댓글 작성자의 _id 비교
                         <DeleteButton onClick={() => handleDeleteComment(comment.id)}>삭제</DeleteButton>
                     )}
+                            
                 </CommentItem>
             ))}
             <InputContainer>

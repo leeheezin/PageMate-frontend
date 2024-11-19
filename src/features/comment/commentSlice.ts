@@ -7,10 +7,14 @@ interface Comment {
     author: string;
     commentText: string;
     isDeleted: boolean;
+    commentDate: Date;
+    profilePhoto: string;
   }
   
   interface CommentState {
-    comments: { id: string; author: string; text: string; userId: string; }[];
+    comments: {
+        commentDate: Date; id: string; author: string; text: string; userId: string; profilePhoto: string; 
+}[];
     loading: boolean;
     error: string | null;
   }
@@ -89,6 +93,8 @@ const commentSlice = createSlice({
                     author: comment.author, // userId를 author로 변환
                     text: comment.commentText, // commentText를 text로 변환
                     userId: comment.userId,
+                    commentDate: new Date(comment.commentDate),
+                    profilePhoto: comment.profilePhoto,
                 }));
             })
             .addCase(fetchComments.rejected, (state, action) => {
