@@ -17,12 +17,12 @@ const AppRoutes: React.FC = () => {
         <Routes>
             <Route path="/login" element={<Login/>} />
             <Route path="/signup" element={<SignUpPage/>} />
-            <Route element={<PrivateRoute isAuthenticated={isAuthenticated}/>}>
+            {/* <Route element={<PrivateRoute isAuthenticated={isAuthenticated}/>}> */}
                 <Route path="/" element={<HomePage/>} />
                 <Route path="/mypage" element={<MyPage/>} />
                 <Route path="/post/write" element={<PostWrite/>} />
                 <Route path="/post/:id" element={<PostDetail/>} />    
-            </Route>
+            {/* </Route> */}
         </Routes>
     );
 }
