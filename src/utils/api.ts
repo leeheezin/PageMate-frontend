@@ -1,7 +1,10 @@
 import axios, { AxiosInstance } from "axios";
 
+const SERVER_ADDRESS = process.env.REACT_APP_SERVER_ADDRESS
+
+
 const api: AxiosInstance = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: `${SERVER_ADDRESS}`,
 });
 
 api.interceptors.request.use((config) => {
