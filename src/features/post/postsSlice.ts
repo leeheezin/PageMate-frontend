@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import api from "../../utils/api";
+import { RootState } from "../store";
 
 interface Comment {
     author: string;
@@ -42,18 +43,30 @@ const initialState: PostsState = {
     error: null,
 };
 
-export const fetchPosts = createAsyncThunk<Post[]>(
+export const fetchPosts = createAsyncThunk<Post[], void, { state: RootState }>(
     "posts/fetchPosts",
-    async (_, { rejectWithValue }) => {
+    async (_, { getState, rejectWithValue }) => {
         try {
+            const state = getState(); 
+            const currentUserId = state.user.user?._id || "";
             const response = await api.get("/post");
-            console.log("API response data:", response.data); 
-            return response.data.data; 
+            if (!response.data || !response.data.data) {
+                throw new Error("Invalid response structure");
+            }
+
+            const posts = response.data.data;
+
+            return posts.map((post: Post) => ({
+                ...post,
+                liked: post.likes.includes(currentUserId), 
+                // 로그인된 사용자가 좋아요를 눌렀는지 확인
+            }));
         } catch (error: any) {
-            return rejectWithValue(error.response.data.error);
+            return rejectWithValue(error.response?.data?.error || "An error occurred while fetching posts.");
         }
     }
 );
+
 
 export const createPost = createAsyncThunk<Post, NewPost>(
     "posts/createPost",
@@ -87,7 +100,6 @@ export const deletePost = createAsyncThunk<Post, { id: string }>(
         try {
 
             const res = await api.delete(`/post/${id}`);
-            dispatch(fetchPosts())
             return res.data.data;
         } catch (error: any) {
             if (error.response && error.response.data && error.response.data.error) {
@@ -97,30 +109,43 @@ export const deletePost = createAsyncThunk<Post, { id: string }>(
         }
     }
 );
-export const toggleLike = createAsyncThunk<Post, { postId: string; userId: string }>(
+export const toggleLike = createAsyncThunk<Post, { postId: string; userId: string }, { state: RootState }>(
     "posts/toggleLike",
-    async ({ postId, userId }, { rejectWithValue }) => {
+    async ({ postId, userId }, { getState, rejectWithValue }) => {
         try {
-            const response = await api.post(
-            `/post/${postId}/like`, 
-            { userId }
-            );
-            return response.data.data; 
+            const state = getState(); 
+            const currentUserId = state.user.user?._id || ""; 
+            const response = await api.post(`/post/${postId}/like`, { userId: currentUserId });
+
+            if (!response.data || !response.data.data) {
+                throw new Error("Invalid response structure");
+            }
+            const updatedPost = response.data.data;
+            return {
+                ...updatedPost,
+                liked: updatedPost.likes.includes(currentUserId), 
+                // 현재 로그인된 사용자가 좋아요를 눌렀는지 확인
+            };
         } catch (error: any) {
-            return rejectWithValue(error.response.data.error);
+            console.error("Error in toggleLike:", error.message);
+            return rejectWithValue(error.response?.data?.error || "An error occurred while toggling like.");
         }
-        }
-    );
+    }
+);
+
+
+
+
 
 
 const postsSlice = createSlice({
     name: "posts",
     initialState,
     reducers: {
-        startLoading(state) {
+        startLoading(state: PostsState) {
             state.loading = true;
         },
-        stopLoading(state) {
+        stopLoading(state: PostsState) {
             state.loading = false;
         },
     },
@@ -130,11 +155,8 @@ const postsSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(fetchPosts.fulfilled, (state, action: PayloadAction<Post[]>) => {
-                state.posts = action.payload.map(post => ({
-                    ...post,
-                    liked: post.likes.includes(post.userId), // liked 상태를 계산하여 추가
-                }));
+            .addCase(fetchPosts.fulfilled, (state: PostsState, action: PayloadAction<Post[]>) => {
+                state.posts = action.payload;
                 state.loading = false;
             })
             .addCase(fetchPosts.rejected, (state, action) => {
@@ -186,15 +208,15 @@ const postsSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(toggleLike.fulfilled, (state, action: PayloadAction<Post>) => {
+            .addCase(toggleLike.fulfilled, (state: PostsState, action: PayloadAction<Post>) => {
                 const updatedPost = action.payload;
                 const index = state.posts.findIndex((post) => post._id === updatedPost._id);
+            
                 if (index !== -1) {
-                    const liked = updatedPost.likes.includes(updatedPost.userId);
-                    state.posts[index] = { ...updatedPost, liked };
+                    state.posts[index] = updatedPost; 
                 }
                 state.loading = false;
-            })
+            })         
             .addCase(toggleLike.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
