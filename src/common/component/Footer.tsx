@@ -26,8 +26,8 @@ const Footer: React.FC = () => {
 
   const handleMenu = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect(); // 버튼의 크기와 위치
-    const dialogWidth = 170; // 다이얼로그 예상 너비
-    const dialogHeight = 150; // 다이얼로그 예상 높이
+    const dialogWidth = 230; // 다이얼로그 예상 너비
+    const dialogHeight = 180; // 다이얼로그 예상 높이
 
     // 화면 크기
     const viewportWidth = window.innerWidth;
