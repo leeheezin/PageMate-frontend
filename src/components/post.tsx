@@ -25,7 +25,15 @@ interface PostProps {
   likes: string[];
   comments: { author: string; text: string }[];
 }
-
+interface UserResponse {
+  status: string;
+  data: {
+    _id: string;
+    email: string;
+    nickName: string;
+    profilePhoto?: string;
+  };
+}
 const StyledPost = styled.div`
   position: relative;
   width: 100%;
@@ -154,9 +162,14 @@ const Post: React.FC<PostProps> = ({
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
     const [localError, setLocalError] = useState<string | null>(null);
-    const currentUser = useSelector((state: RootState) => state.user.user);
+    const currentUser = useSelector((state: RootState) => state.user.user) as UserResponse | null;
+    const currentUserId = currentUser?.data._id;
     // 게시글 작성자가 현재 로그인한 사용자인지 확인
-    const isOwner = currentUser?._id !== author;
+    const isOwner = currentUserId === userId;
+    
+    console.log('currentUserId:', currentUserId);
+    console.log('userId:', userId);
+    console.log('isOwner:', isOwner);
 
     const handleDialogOpen = () => {
         setIsDialogOpen(true);

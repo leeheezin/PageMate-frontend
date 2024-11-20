@@ -75,6 +75,7 @@ return (
         <Post
             _id={post._id}
             key={post._id}
+            userId={post.userId}
             bookTitle={post.bookTitle}
             bookAuthor={post.bookAuthor}
             title={post.title}
