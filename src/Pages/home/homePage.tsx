@@ -8,6 +8,25 @@ import { AppDispatch, RootState } from '../../features/store';
 import { fetchPosts, startLoading, stopLoading } from '../../features/post/postsSlice';
 import Post from '../../components/post';
 
+const formatDate = (dateString?: string): string => {
+    if (!dateString) return "날짜 없음"; // createdAt이 없을 경우 처리
+  
+    const date: Date = new Date(dateString); 
+    if (isNaN(date.getTime())) {
+      return "Invalid date"; // 유효하지 않은 날짜일 경우 처리
+    }
+  
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric', 
+      month: '2-digit', 
+      day: '2-digit', 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      hour12: true, // 오후/오전 포함
+    };
+    return date.toLocaleString("ko-KR", options).replace(/(\d{4})\/(\d{2})\/(\d{2}), (\d{2}):(\d{2})/, '$1.$2.$3. $7'); 
+  };
+  
 const HomePageContainer = styled.div`
     margin: 0 auto;
     padding: 16px;
@@ -64,11 +83,12 @@ return (
         <Post
             _id={post._id}
             key={post._id}
+            userId={post.userId}
             bookTitle={post.bookTitle}
             bookAuthor={post.bookAuthor}
             title={post.title}
             text={post.text}
-            date={post.date}
+            date={formatDate(post.createdAt)}
             author={post.author}
             profilePhoto={post.profilePhoto}
             likes={post.likes}

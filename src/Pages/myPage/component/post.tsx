@@ -13,6 +13,7 @@ interface Comment {
   interface PostProps {
     post: {
       _id: string;
+      id: string;
       bookTitle: string;
       bookAuthor: string;
       title: string;
@@ -20,8 +21,10 @@ interface Comment {
       date: string;
       author: string;
       profilePhoto: string;
-      likes: number;
+      likes: string[];
       comments: Comment[];
+      likeCount: number;  // 좋아요 수
+      liked: boolean;   
     };
   }
   
@@ -139,7 +142,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
         <Content>{text}</Content>
         <Footer>
           <Inner>
-            <LikeButton count={likes} />
+            {/* <LikeButton count={likes} /> */}
             <CommentButton
               count={comments.length}
               onClick={toggleCommentsVisibility}

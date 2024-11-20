@@ -88,6 +88,16 @@
     padding: 5px;
 }
 
+.mini-bar-btn2 {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    width: 80px;
+    margin-bottom: 5px;
+}
+
 .mini-bar-btn:hover {
     text-decoration: underline;
 }

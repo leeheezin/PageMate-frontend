@@ -3,6 +3,7 @@ import postsSlice from './post/postsSlice';
 import userSlice from "./user/userSlice";
 import bookSearchReducer from "./bookSearch/bookSearchSlice";
 import bookReducer from "./book/bookSlice";
+import gptSlice from "./gpt/gptSlice";
 import commentReducer from './comment/commentSlice';
 
 const store = configureStore({
@@ -11,6 +12,7 @@ const store = configureStore({
         book: bookReducer,
         bookSearch: bookSearchReducer,
         user: userSlice,
+        gpt: gptSlice,
         comments: commentReducer,
     },
 });

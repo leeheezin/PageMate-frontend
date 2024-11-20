@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "target": "es2016",
+    "lib": ["esnext", "dom"], 
+    "skipLibCheck": true,
     "module": "commonjs",
     "jsx": "react-jsx", 
     "esModuleInterop": true,
