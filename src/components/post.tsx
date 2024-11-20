@@ -32,7 +32,6 @@ interface UserResponse {
   data: {
     _id: string;
     email: string;
-    nickName: string;
     profilePhoto?: string;
   };
 }
