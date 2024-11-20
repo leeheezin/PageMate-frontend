@@ -66,7 +66,13 @@ const Footer: React.FC = () => {
           <button className="icon-button" onClick={() => navigate("/")}>
             <img src={iconHome} alt="Home" />
           </button>
-          <button className="icon-button" onClick={() => navigate("/search")}>
+          <button
+            className="icon-button" 
+            onClick={() => {
+              navigate("/search")
+              // window.location.reload(); // 강제로 페이지 새로고침
+            }}
+          >
             <img src={iconSearch} alt="Search" className="img-sizeup"/>
           </button>
           <button
