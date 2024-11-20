@@ -8,6 +8,7 @@ import { AppDispatch, RootState } from "../../features/store";
 import { getLikedPost, getMyPost } from "../../features/post/postsSlice";
 import { Post } from "../../features/post/postsSlice";
 import Dialog from "../../components/dialog";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   max-height: calc(100vh - 60px);
@@ -121,6 +122,7 @@ const NoPost = styled.div`
 
 const MyPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const { user } = useSelector((state: RootState) => state.user);
   const { myPosts, myLiked } = useSelector((state: RootState) => state.posts);
   const [highlight, setHighlight] = useState<boolean>(true);
@@ -155,6 +157,12 @@ const MyPage: React.FC = () => {
     setDialogPosition({ top: `${top}px`, left: `${left}px` });
     setIsDialogOpen(true);
   };
+
+  useEffect(() => {
+    if(!user){
+      navigate('/login');
+    }
+  }, []);
   
   useEffect(() => {
     dispatch(getMyPost());
