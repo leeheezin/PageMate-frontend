@@ -51,9 +51,9 @@ const initialState: PostsState = {
     error: null,
 };
 
-export const fetchPosts = createAsyncThunk<Post[], QueryParams | undefined>(
-    // export const fetchPosts = createAsyncThunk<Post[], void, { state: RootState }>(
-
+// export const fetchPosts = createAsyncThunk<Post[], QueryParams | undefined>(
+// export const fetchPosts = createAsyncThunk<Post[], void, { state: RootState }>(
+export const fetchPosts = createAsyncThunk<Post[], QueryParams | undefined, { state: RootState }>(
     "posts/fetchPosts",
     async (queryParams = {}, { getState, rejectWithValue }) => {
         try {
@@ -67,13 +67,13 @@ export const fetchPosts = createAsyncThunk<Post[], QueryParams | undefined>(
 
             const posts = response.data.data;
 
-            // return posts.map((post: Post) => ({
-            //     ...post,
-            //     liked: post.likes.includes(currentUserId), 
-            //     // 로그인된 사용자가 좋아요를 눌렀는지 확인
-            // }));
+            return posts.map((post: Post) => ({
+                ...post,
+                liked: post.likes.includes(currentUserId), 
+                // 로그인된 사용자가 좋아요를 눌렀는지 확인
+            }));
 
-            return response.data.data; 
+            // return response.data.data; 
         } catch (error: any) {
             return rejectWithValue(error?.message || "post data get error");
         }

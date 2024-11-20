@@ -81,8 +81,8 @@ const PostSearch: React.FC = () => {
 
   // books에서 cover만 추출하여 CarouselSwiper로 전달
   const covers = books.map((book) => book.cover);
-  // console.log('covers', covers);
-
+  // console.log('posts', posts);
+  
   return (
     <>
       {!searched ? (
@@ -131,7 +131,9 @@ const PostSearch: React.FC = () => {
             <div className="post-list">
               {posts.map((post) => (
                 <Post
-                  key={post.id}
+                  key={post._id} // posts 배열에서 _id를 사용한다고 가정
+                  _id={post._id}
+                  userId={post.userId}
                   bookTitle={post.bookTitle}
                   bookAuthor={post.bookAuthor}
                   title={post.title}
@@ -142,7 +144,7 @@ const PostSearch: React.FC = () => {
                   likes={post.likes}
                   comments={post.comments}
                 />
-              ))}
+            ))}
             </div>
           )}
         </div>
