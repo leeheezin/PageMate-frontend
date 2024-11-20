@@ -114,6 +114,10 @@ const ActionButton = styled.div`
     background: #e2e6ea;
   }
 `;
+const NoPost = styled.div`
+  font-size: 28px;
+  font-weight: 600;
+`
 
 const MyPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -217,7 +221,7 @@ const MyPage: React.FC = () => {
                 <PostComponent key={index} post={post} />
               ))
             ) : (
-              <div>게시글이 없습니다.</div>
+              <NoPost>게시글이 없습니다.</NoPost>
             )}
           </Posts>
         </PostArea>
