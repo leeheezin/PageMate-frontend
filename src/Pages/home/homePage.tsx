@@ -40,11 +40,12 @@ const [displayedPosts, setDisplayedPosts] = useState(posts.slice(0, 5)); // 초�
 const [hasMore, setHasMore] = useState(true);
 
 const [activeCommentPostId, setActiveCommentPostId] = useState<string | null>(null); // 열려 있는 댓글 영역의 포스트 ID
-
 useEffect(() => {
-    if (posts.length === 0) {  // posts가 비어있을 때만 데이터를 가져오도록
-        dispatch(fetchPosts());
-    }
+    console.log("Redux 상태 확인 - posts:", posts);
+  }, [posts]);
+useEffect(() => {
+    dispatch(fetchPosts());
+    console.log("Fetching posts...");
 }, [dispatch]);
 
 useEffect(() => {

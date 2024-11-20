@@ -179,7 +179,7 @@ const MyPage: React.FC = () => {
       setPost(myLiked);
     }
   };
-  console.log('user',user?.name)
+  console.log('user',user)
   return (
     <Container>
       <Dialog
