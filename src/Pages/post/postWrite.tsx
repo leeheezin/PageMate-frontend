@@ -2,9 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createPost, updatePost } from "../../features/post/postsSlice";
 import "./component/postWrite.style.css";
+import "./component/gptModal.css";
 import BookSearchDialog from "./bookSearchDialog";
 import { AppDispatch, RootState } from "../../features/store";
 import styled from "styled-components";
+import { styleChange, contentCorrection, spellingCorrection ,aiRequest } from "../../features/gpt/gptSlice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import getCaretCoordinates from 'textarea-caret';
+
 import { useNavigate, useLocation } from "react-router-dom";
 
 const Error = styled.div`
@@ -22,63 +28,68 @@ const PostWrite: React.FC = () => {
     const [title, setTitle] = useState(postToEdit?.title || "");
     const [text, setText] = useState(postToEdit?.text || "");
     const [selectedBookTitle, setSelectedBookTitle] = useState(
-    postToEdit?.bookTitle || ""
-);
+    postToEdit?.bookTitle || "");
     const [selectedBookAuthor, setSelectedBookAuthor] = useState(
-    postToEdit?.bookAuthor || ""
-);
+    postToEdit?.bookAuthor || "");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const error = useSelector((state: RootState) => state.posts.error);
+    const [gptResultModal, setGptResultModal] = useState(false);    
+    const gptResultText = useSelector((state: RootState) => state.gpt.gptResultText);       
+    
 
     const [selectedText, setSelectedText] = useState("");
     const [miniBarPosition, setMiniBarPosition] = useState({
     top: 0,
     left: 0,
-    visible: false,
-});
+    visible: false,});
     const titleInputRef = useRef<HTMLInputElement | null>(null);
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+    const [selectionStart, setSelectionStart] = useState<number | null>(null);
+    const [selectionEnd, setSelectionEnd] = useState<number | null>(null);
+    const [aiRequestText, setAiRequestText] = useState("");
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleTextSelection = (
-        event: React.MouseEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-    const target = event.target as HTMLInputElement | HTMLTextAreaElement;
-    const selectionStart = target.selectionStart;
-    const selectionEnd = target.selectionEnd;
+    // const handleTextSelection = (
+    //     event: React.MouseEvent<HTMLInputElement | HTMLTextAreaElement>
+    // ) => {
+    // const target = event.target as HTMLInputElement | HTMLTextAreaElement;
+    // const selectionStart = target.selectionStart;
+    // const selectionEnd = target.selectionEnd;
 
-    if (
-        selectionStart !== null &&
-        selectionEnd !== null &&
-        selectionStart !== selectionEnd
-        ) {
-        const selectedText = target.value.substring(selectionStart, selectionEnd);
-        setSelectedText(selectedText);
+    // if (
+    //     selectionStart !== null &&
+    //     selectionEnd !== null &&
+    //     selectionStart !== selectionEnd
+    //     ) {
+    //     const selectedText = target.value.substring(selectionStart, selectionEnd);
+    //     setSelectedText(selectedText);
 
-        // Create a temporary span to measure text width
-        const span = document.createElement("span");
-        const computedStyle = window.getComputedStyle(target);
-        span.style.font = computedStyle.font;
-        span.style.visibility = "hidden";
-        span.style.whiteSpace = "pre";
-        span.textContent = target.value.substring(0, selectionStart);
-        document.body.appendChild(span);
+    //     // Create a temporary span to measure text width
+    //     const span = document.createElement("span");
+    //     const computedStyle = window.getComputedStyle(target);
+    //     span.style.font = computedStyle.font;
+    //     span.style.visibility = "hidden";
+    //     span.style.whiteSpace = "pre";
+    //     span.textContent = target.value.substring(0, selectionStart);
+    //     document.body.appendChild(span);
 
-        const textWidth = span.offsetWidth;
-        document.body.removeChild(span);
+    //     const textWidth = span.offsetWidth;
+    //     document.body.removeChild(span);
 
-        const { top, left } = target.getBoundingClientRect();
-        const cursorTop = top + window.scrollY; // 필드의 상단 위치
-        const cursorLeft = left + textWidth + 5 + window.scrollX; // 선택된 텍스트 바로 뒤 위치
+    //     const { top, left } = target.getBoundingClientRect();
+    //     const cursorTop = top + window.scrollY; // 필드의 상단 위치
+    //     const cursorLeft = left + textWidth + 5 + window.scrollX; // 선택된 텍스트 바로 뒤 위치
 
-        setMiniBarPosition({
-            top: cursorTop,
-            left: cursorLeft,
-            visible: true,
-        });
-        } else {
-        setMiniBarPosition((prev) => ({ ...prev, visible: false }));
-        }
-    };
+    //     setMiniBarPosition({
+    //         top: cursorTop,
+    //         left: cursorLeft,
+    //         visible: true,
+    //     });
+    //     } else {
+    //     setMiniBarPosition((prev) => ({ ...prev, visible: false }));
+    //     }
+    // };
 
     const handleMiniBarAction = (
         action: string,
@@ -125,8 +136,41 @@ const PostWrite: React.FC = () => {
         navigate("/");
         } else {
         alert("모든 필수 정보를 입력해 주세요.");
-    }
+    };
 };
+
+
+
+
+const handleTextSelection = (
+  event: React.SyntheticEvent<HTMLTextAreaElement>
+) => {
+  const target = event.target as HTMLTextAreaElement;
+  const start = target.selectionStart;
+  const end = target.selectionEnd;
+
+  if (start !== null && end !== null && start !== end) {
+      const selectedText = target.value.substring(start, end);
+      setSelectedText(selectedText);
+      setSelectionStart(start);
+      setSelectionEnd(end);
+
+      // 커서 좌표 계산
+      const coordinates = getCaretCoordinates(target, start);
+
+      // 텍스트 영역의 위치
+      const textareaRect = target.getBoundingClientRect();
+
+      setMiniBarPosition({
+          top: textareaRect.top + coordinates.top + window.scrollY - 30, // 오프셋 조정
+          left: textareaRect.left + coordinates.left + window.scrollX,
+          visible: true,
+      });
+  } else {
+      setMiniBarPosition((prev) => ({ ...prev, visible: false }));
+  }
+    }
+
     const openDialog = () => {
         setIsDialogOpen(true);
     };
@@ -152,7 +196,7 @@ const PostWrite: React.FC = () => {
                 name="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                onMouseUp={handleTextSelection} // 텍스트 드래그 후 이벤트 처리
+                // onMouseUp={handleTextSelection} // 텍스트 드래그 후 이벤트 처리
             />
             <input
                 type="text"
@@ -189,6 +233,8 @@ const PostWrite: React.FC = () => {
             style={{
                 top: `${miniBarPosition.top}px`,
                 left: `${miniBarPosition.left}px`,
+                display: 'flex',
+                flexDirection: 'column',
             }}
             >
             <button
