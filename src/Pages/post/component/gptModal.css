@@ -59,7 +59,7 @@
   .mini-bar {
     display: flex;
     flex-direction: column;
-    gap: 20px; /* 텍스트 입력 필드와 미니바 사이의 공간 */
+    /* gap: 20px; 텍스트 입력 필드와 미니바 사이의 공간 */
 }
 
 .mini-bar-input {
@@ -73,7 +73,6 @@
     margin-bottom: 0px;
 
 }
-
 
 .mini-bar-row {
     padding: 3px;

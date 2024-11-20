@@ -31,9 +31,11 @@ interface UserData {
   createdAt: string;
   updatedAt: string;
 }
+
 interface User {
   data: UserData;
 }
+
 interface LoginPayload {
   email: string;
   password: string;
