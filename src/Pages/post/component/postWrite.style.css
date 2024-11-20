@@ -25,10 +25,29 @@
     margin-bottom: 15px;
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 8px;
+    border-radius: 5px;
     box-sizing: border-box;
     font-family: Arial, sans-serif;
     resize: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-field:focus,
+.textarea-field:focus {
+    outline: none;
+    border-color: #878787;
+    box-shadow: 0 0 5px #ccc;
+}
+
+.input-field::placeholder,
+.textarea-field:placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+.input-field:focus::placeholder,
+.textarea-field:focus::placeholder {
+    color: transparent; /* 포커스 상태에서 placeholder 숨기기 */
 }
 
 .textarea-field {
