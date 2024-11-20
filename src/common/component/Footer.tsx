@@ -8,6 +8,10 @@ import iconMenu from "../../assets/images/icon-menu_white.png";
 import "../style/common.style.css";
 import Dialog from "../../components/dialog";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
+import { AppDispatch,RootState } from "../../features/store";
+import { useDispatch } from "react-redux";
+import { logout } from "../../features/user/userSlice";
 
 const ActionButton = styled.div`
   padding: 9px;
@@ -21,8 +25,10 @@ const ActionButton = styled.div`
 
 const Footer: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogPosition, setDialogPosition] = useState({ top: "50%", left: "50%" });
+  const { user } = useSelector((state: RootState) => state.user);
 
   const handleMenu = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect(); // 버튼의 크기와 위치
@@ -49,6 +55,10 @@ const Footer: React.FC = () => {
     setIsDialogOpen(true);
   };
 
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
   return (
     <>
       {/* desktop 사이드바 footer */}
@@ -59,7 +69,8 @@ const Footer: React.FC = () => {
           top={dialogPosition.top}
           left={dialogPosition.left}
         >
-          <ActionButton>로그아웃</ActionButton>
+          {user && <ActionButton onClick={handleLogout}>로그아웃</ActionButton>}
+          {!user && <ActionButton onClick={() => navigate('/login')}>로그인</ActionButton>}
         </Dialog>
         {/* 상단 버튼들 */}
         <div className="top-buttons">

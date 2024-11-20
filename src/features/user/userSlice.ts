@@ -100,6 +100,11 @@ export const loginWithToken = createAsyncThunk<
   }
 });
 
+export const logout = createAsyncThunk("user/logout", async () => {
+  sessionStorage.removeItem("token");
+  window.location.reload();
+});
+
 const userSlice = createSlice({
   name: "user",
   initialState,
