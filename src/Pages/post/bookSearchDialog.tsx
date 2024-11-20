@@ -27,6 +27,8 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
     }, [dispatch, books2.length]);
 
     const loadMore = useCallback(() => {
+
+
         if (!searchTerm.trim() || !hasMore || loading) return; // 중복 호출 방지
         
         console.log("현재 페이지:", page); // 디버깅: 현재 페이지 값 확인
@@ -57,6 +59,7 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             e.preventDefault();
+            dispatch(clearBooks());
             handleSearch();
         }
     };
@@ -83,7 +86,7 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
 
     // books에서 cover만 추출하여 CarouselSwiper로 전달
     const covers = books2.map((book) => book.cover);
-    console.log('covers', covers)
+    
     return (
         <div className="dialog-overlay" onClick={handleOverlayClick}>
             <div className="dialog-content" onClick={(e) => e.stopPropagation()}>
@@ -113,9 +116,9 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
                     <ul>
                         {books.map((book: any, index: number) => (
                             <li 
-                                key={book.id} 
+                                key={`${book.title}-${index}`} 
                                 onClick={() => handleSelectBook(book.title, book.authors)}
-                                ref={index === books.length - 1 ? lastBookRef : null} // 마지막 아이템에 ref 추가
+                                ref={books.length >= 10 && index === books.length - 1 ? lastBookRef : null} // 마지막 아이템에 ref 추가
                             >
                                 <img src={book.thumbnail} alt={book.title} />
                                 <div>

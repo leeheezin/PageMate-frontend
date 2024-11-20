@@ -123,7 +123,6 @@ const MyPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.user);
   const { myPosts, myLiked } = useSelector((state: RootState) => state.posts);
-
   const [highlight, setHighlight] = useState<boolean>(true);
   const [posts, setPost] = useState<Post[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -160,7 +159,8 @@ const MyPage: React.FC = () => {
   useEffect(() => {
     dispatch(getMyPost());
     dispatch(getLikedPost());
-  }, [user]);
+  }, [dispatch,user]);
+  
 
   useEffect(() => {
     setPost(myPosts);
@@ -179,7 +179,7 @@ const MyPage: React.FC = () => {
       setPost(myLiked);
     }
   };
-
+  console.log('user',user)
   return (
     <Container>
       <Dialog
@@ -195,7 +195,7 @@ const MyPage: React.FC = () => {
         <ProfileArea>
           <Photo imageUrl={ProfileIcon}></Photo>
           <Info>
-            <UserName>{user?.data?.name || "unknown"}</UserName>
+            <UserName>{user?.name || "unknown"}</UserName>
             <Summary>
               내 {highlight ? "게시글" : "좋아요"} {posts.length || 0}개
             </Summary>
@@ -217,8 +217,8 @@ const MyPage: React.FC = () => {
           </Filter>
           <Posts>
             {posts?.length > 0 ? (
-              posts.map((post, index) => (
-                <PostComponent key={index} post={post} />
+              posts.map((post) => (
+                <PostComponent key={post._id} post={post} />
               ))
             ) : (
               <NoPost>게시글이 없습니다.</NoPost>

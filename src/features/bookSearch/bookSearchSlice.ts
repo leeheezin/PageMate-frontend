@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import api from "../../utils/api";
 
 interface Book {
     title: string;
@@ -28,13 +29,9 @@ export const fetchBookSearchResult = createAsyncThunk(
     "bookSearch/fetchBookSearchResult",
     async ({ query, page }: { query: string; page: number }, thunkAPI) => {
         try {
-            const response = await fetch(`http://localhost:5001/api/book/search?query=${query}&page=${page}`);
-            if (!response.ok) {
-                const errorData = await response.json();
-                return thunkAPI.rejectWithValue(errorData.error || "API 요청 중 오류가 발생했습니다.");
-            }
-
-            const data = await response.json();
+            const response = await api.get(`/book/search?query=${query}&page=${page}`);
+            
+            const data = await response.data;
             return data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.message || "네트워크 오류가 발생했습니다.");

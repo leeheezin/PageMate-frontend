@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { addComment, fetchComments, deleteComment } from '../features/comment/commentSlice'; // Import the action
 import { RootState, AppDispatch } from '../features/store'; // Import the types
 
 const CommentContainer = styled.div`
+    border-top: 1px solid #D2D1D1;
     margin-top: 8px;
 `;
 
@@ -53,6 +56,7 @@ const CommentHeader = styled.div`
 const InputContainer = styled.div`
     display: flex;
     margin-top: 8px;
+    position: relative;
 `;
 
 const CommentInput = styled.input`
@@ -60,19 +64,24 @@ const CommentInput = styled.input`
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    margin-right: 8px;
+    padding-right: 40px; /* 공간 확보 */
+    width: 100%;
 `;
 
 const SubmitButton = styled.button`
-    padding: 8px 12px;
-    background-color: #014421;
-    color: #fff;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    padding: 8px;
+    color: gray;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-
+    font-size: 16px;
     &:hover {
-        background-color: #01381e;
+        color: #5b5b5b;
     }
 `;
 
@@ -164,7 +173,7 @@ const Comment: React.FC<CommentProps> = ({ visible, postId }) => {
                     placeholder="댓글 달기" 
                 />
                 <SubmitButton onClick={handleAddComment} disabled={loading}>
-                    {loading ? '...' : '^'}
+                    {loading ? '...' : <FontAwesomeIcon icon={faChevronUp} />}
                 </SubmitButton>
             </InputContainer>
             {error && <p style={{ color: 'red' }}>{error}</p>}

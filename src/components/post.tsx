@@ -3,13 +3,15 @@ import LikeButton from "./likeBtn";
 import CommentButton from "./comBtn";
 import Comment from "./comment";
 import React, { useEffect, useState } from "react";
-import DefaultImg from "../assets/images/DefaultImg.svg";
+import ProfileIcon from "../assets/images/icon-user.png"
 import { FaEllipsisV } from "react-icons/fa";
 import Dialog from "./dialog";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../features/store";
 import { deletePost } from "../features/post/postsSlice";
+import { current } from "@reduxjs/toolkit";
+import UserData from "../features/user/userSlice";
 
 interface PostProps {
   _id: string;
@@ -19,12 +21,21 @@ interface PostProps {
   title: string;
   text: string;
   date: string;
+  createdAt?: string;
   author: string;
   profilePhoto: string | null;
   likes: string[];
   comments: { author: string; text: string }[];
-  isCommentVisible: boolean; // 댓글 영역이 열려 있는지 여부
-  onCommentToggle: (postId: string) => void; // 댓글 토글 핸들러
+  isCommentVisible?: boolean; // 댓글 영역이 열려 있는지 여부
+  onCommentToggle?: (postId: string) => void; // 댓글 토글 핸들러
+}
+interface UserResponse {
+  status: string;
+  data: {
+    _id: string;
+    email: string;
+    profilePhoto?: string;
+  };
 }
 const StyledPost = styled.div`
   position: relative;
@@ -39,12 +50,13 @@ const StyledPost = styled.div`
   padding: 16px;
 
   @media (max-width: 480px) {
-    max-width: 330px;
-    padding: 8px;
+    max-width: 358px;
+    padding: 9px 10px;
+    margin-bottom: 14px;
   }
 `;
 const Header = styled.div`
-    position: relative;
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -81,14 +93,21 @@ const Date = styled.div`
 `;
 
 const Title = styled.h4`
+  font-size: 24px;
   text-align: left;
   margin: 0;
+  @media (max-width: 480px) {
+    font-size: 20px;
+  }
 `;
 
 const Content = styled.p`
   color: #014421;
-  font-size: 14px;
+  font-size: 20px;
   margin-bottom: 16px;
+  @media (max-width: 480px) {
+    font-size: 16px;
+  }
 `;
 
 const Footer = styled.div`
@@ -96,7 +115,6 @@ const Footer = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 5px;
-  margin-bottom: 8px;
 `;
 const Inner = styled.div`
   display: flex;
@@ -106,7 +124,12 @@ const CommentSectionContainer = styled.div`
   width: 100%;
   margin-top: 8px;
 `;
-const BookTit = styled.div``;
+const BookTit = styled.div`
+  font-size: 14px;
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
+`;
 const BTitle = styled.div``;
 const BAuthor = styled.div`
   color: #a4a4a4;
@@ -134,18 +157,31 @@ const Post: React.FC<PostProps> = ({
     author,
     profilePhoto,
     likes,
+    createdAt,
     comments,
-    isCommentVisible,
-    onCommentToggle,
+    isCommentVisible = false, // @@기본값 설정
+    onCommentToggle,  // @@함수 전달 여부에 따라 동작 추가해야함
     }) => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
     const [localError, setLocalError] = useState<string | null>(null);
-    // const currentUser = useSelector((state: RootState) => 사용자정보 갖고오기
-      const currentUserId = '673b32ec9123f53e377db39f'
+
+    // @추가
+    const [activeCommentPostId, setActiveCommentPostId] = useState<string | null>(null); // 열려 있는 댓글 영역의 포스트 ID
+      
+    const currentUser = useSelector((state: RootState) => state.user.user);
+
+    const currentUserId = currentUser ? currentUser._id : null;
+    
+
     // 게시글 작성자가 현재 로그인한 사용자인지 확인
-    // const isOwner = currentUser?.username === author;
+    const isOwner = currentUserId === userId;
+    
+    console.log('currentUserId:', currentUserId);
+    console.log('userId:', userId);
+    console.log('isOwner:', isOwner);
+    console.log('_id', _id);
 
     const handleDialogOpen = () => {
         setIsDialogOpen(true);
@@ -178,6 +214,12 @@ const Post: React.FC<PostProps> = ({
         }
     };
     
+    //@@ 추가
+    const handleCommentToggle = (postId: string) => {
+      // 같은 포스트 클릭 시 닫고, 다른 포스트 클릭 시 열기
+      setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
+    };
+
     return (
         <StyledPost>
         <Header>
@@ -186,10 +228,10 @@ const Post: React.FC<PostProps> = ({
             <Date>{date}</Date>
             </TitleDate>
             <ProfileInfo>
-            <ProfilePhoto src={profilePhoto || DefaultImg} alt="Profile" />
+            <ProfilePhoto src={profilePhoto || ProfileIcon} alt="Profile" />
             <Name>{author}</Name>
             {/* 게시글 작성자만 메뉴 볼수있게 조건 */}
-            {/* {isOwner && ( */} 
+            {currentUser && isOwner && ( 
                 <>
                     <OptionsIcon onClick={handleDialogOpen} />
                     {isDialogOpen && (
@@ -201,23 +243,27 @@ const Post: React.FC<PostProps> = ({
                         </Dialog>
                     )}
                 </>
-            {/* )} */}
+            )} 
             </ProfileInfo>
 
         </Header>
         <Content>{text}</Content>
         <Footer>
-            <Inner>
-            <LikeButton postId={_id} likes={likes} userId={currentUserId} />
+          <Inner>
+            <LikeButton postId={_id } />
             <CommentButton
                         count={comments.length}
-                        onClick={() => onCommentToggle(_id)} // 댓글 토글 핸들러 호출
-                    />
-            </Inner>
-            <BookTit>
+                        onClick={() => {
+                          if (onCommentToggle) {
+                            onCommentToggle(_id); // @@onCommentToggle이 있을 때만 호출
+                          }
+                        }} // 댓글 토글 핸들러 호출
+            />
+          </Inner>
+          <BookTit>
             <BTitle>{bookTitle}</BTitle>
             <BAuthor>{bookAuthor}</BAuthor>
-            </BookTit>
+          </BookTit>
         </Footer>
           {isCommentVisible && (
               <CommentSectionContainer>

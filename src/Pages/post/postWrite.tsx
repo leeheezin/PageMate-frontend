@@ -50,46 +50,6 @@ const PostWrite: React.FC = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    // const handleTextSelection = (
-    //     event: React.MouseEvent<HTMLInputElement | HTMLTextAreaElement>
-    // ) => {
-    // const target = event.target as HTMLInputElement | HTMLTextAreaElement;
-    // const selectionStart = target.selectionStart;
-    // const selectionEnd = target.selectionEnd;
-
-    // if (
-    //     selectionStart !== null &&
-    //     selectionEnd !== null &&
-    //     selectionStart !== selectionEnd
-    //     ) {
-    //     const selectedText = target.value.substring(selectionStart, selectionEnd);
-    //     setSelectedText(selectedText);
-
-    //     // Create a temporary span to measure text width
-    //     const span = document.createElement("span");
-    //     const computedStyle = window.getComputedStyle(target);
-    //     span.style.font = computedStyle.font;
-    //     span.style.visibility = "hidden";
-    //     span.style.whiteSpace = "pre";
-    //     span.textContent = target.value.substring(0, selectionStart);
-    //     document.body.appendChild(span);
-
-    //     const textWidth = span.offsetWidth;
-    //     document.body.removeChild(span);
-
-    //     const { top, left } = target.getBoundingClientRect();
-    //     const cursorTop = top + window.scrollY; // 필드의 상단 위치
-    //     const cursorLeft = left + textWidth + 5 + window.scrollX; // 선택된 텍스트 바로 뒤 위치
-
-    //     setMiniBarPosition({
-    //         top: cursorTop,
-    //         left: cursorLeft,
-    //         visible: true,
-    //     });
-    //     } else {
-    //     setMiniBarPosition((prev) => ({ ...prev, visible: false }));
-    //     }
-    // };
 
 
     useEffect(() => {
@@ -149,13 +109,25 @@ const handleTextSelection = (
       // 커서 좌표 계산
       const coordinates = getCaretCoordinates(target, start);
 
-      // 텍스트 영역의 위치
+      // 텍스트 영역의 위치 및 스크롤 값 가져오기
       const textareaRect = target.getBoundingClientRect();
+      const scrollTop = target.scrollTop;
+      const scrollLeft = target.scrollLeft;
 
+      // 스크롤 값을 반영해 미니바 위치 조정
       setMiniBarPosition({
-          top: textareaRect.top + coordinates.top + window.scrollY - 30, // 오프셋 조정
-          left: textareaRect.left + coordinates.left + window.scrollX,
-          visible: true,
+        top:
+          textareaRect.top +
+          coordinates.top -
+          scrollTop +
+          window.scrollY -
+          30, // 오프셋 조정
+        left:
+          textareaRect.left +
+          coordinates.left -
+          scrollLeft +
+          window.scrollX,
+        visible: true,
       });
   } else {
       setMiniBarPosition((prev) => ({ ...prev, visible: false }));
@@ -310,7 +282,7 @@ return (
         onSelect={handleTextSelection} // 키보드로 텍스트 선택 시 이벤트 처리
         ></textarea>
         <button type="submit" className="submit-btn">
-        작성하기
+        {isEditMode ? "수정하기" : "작성하기"}
         </button>
         {error && <Error>{error}</Error>}
     </form>

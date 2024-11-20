@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
-
+import api from "../../utils/api";
 interface Book {
     id: number;
     title: string;
@@ -29,7 +28,7 @@ export const fetchBooks = createAsyncThunk<Book[], void, { rejectValue: string }
     "books/fetchBooks",
     async (_, { rejectWithValue }) => {
         try {
-            const response = await axios.get("http://localhost:5500/api/book/bestsellers");
+            const response = await api.get("/book/bestsellers");
             console.log("response", response.data);
             return response.data.data.item; // API 응답 구조에 맞게 수정
         } catch (error: any) {

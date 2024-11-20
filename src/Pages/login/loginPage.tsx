@@ -175,7 +175,7 @@ const Login: React.FC = () => {
 
     useEffect(() => {
         if(user){
-            // navigate("/")
+            navigate("/")
         }
     },[user])
 
