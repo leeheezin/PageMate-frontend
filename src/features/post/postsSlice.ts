@@ -7,7 +7,7 @@ export interface Comment {
     text: string;
 }
 
-interface Post {
+export interface Post {
     _id: string;
     id: string;
     bookTitle: string;
