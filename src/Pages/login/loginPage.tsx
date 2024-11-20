@@ -180,6 +180,7 @@ const Login: React.FC = () => {
     },[user])
 
     return (
+        <div className='login-page'>
         <Container>
             <LoginArea>
                 <Title><img src={Logo} alt="Logo"/>PageMate</Title>
@@ -198,6 +199,7 @@ const Login: React.FC = () => {
                 </LoginForm>
             </LoginArea>
         </Container>
+        </div>
     );
 };
 

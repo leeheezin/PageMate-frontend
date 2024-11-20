@@ -9,14 +9,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 9999; /* 모든 요소 위에 오도록 설정 */
 }
 
 .dialog-content {
     background-color: white;
     border-radius: 8px;
     width: 80%;
-    height: 60%;
-    max-width: 600px;
+    height: 80vh;
+    max-width: 1000px;
     max-height: 80vh; /* 화면 높이의 80%로 제한 */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     padding: 0 20px 20px; /* 헤더와 리스트 여백 설정 */
@@ -24,6 +25,21 @@
     overflow-y: auto; /* 세로 스크롤 활성화 */
     box-sizing: border-box; /* 패딩과 border를 박스 크기에 포함 */
     position: relative; /* 검색창 기준이 되도록 설정 */
+    margin-right: 60px;
+    scroll-behavior: smooth;
+}
+
+/* 모바일 환경을 위한 스타일 */
+@media (max-width: 461px) {
+    .dialog-overlay {
+        align-items: flex-start; /* 모바일에서 다이얼로그가 중앙 위쪽으로 */
+        padding-top: 60px; /* 상단 여백 추가 */
+    }
+    .dialog-content {
+        width: 90%; /* 화면 너비를 더 많이 차지하도록 설정 */
+        margin-right: 0; /* 오른쪽 여백 제거 */
+        margin-bottom: 0; /* 아래쪽 네비게이션 바 간섭 방지 */
+    }
 }
 
 /* 스크롤바 숨기기 */
@@ -53,7 +69,7 @@
     top: 0; /* 다이얼로그 상단에 고정 */
     z-index: 100; /* 리스트 위에 렌더링되도록 설정 */
     background-color: white; /* 검색창 배경 흰색 */
-    padding: 10px 15px; /* 내부 여백 */
+    padding: 20px 20px; /* 내부 여백 */
     display: flex; /* 검색창과 버튼을 가로로 정렬 */
     align-items: center; /* 수직 중앙 정렬 */
     gap: 20px; /* 검색창과 닫기 버튼 간격 */
