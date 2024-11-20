@@ -19,6 +19,7 @@ const Error = styled.div`
     font-size: 14px;
 `;
 
+
 const PostWrite: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const location = useLocation();
@@ -49,8 +50,14 @@ const PostWrite: React.FC = () => {
     const [aiRequestText, setAiRequestText] = useState("");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const { user } = useSelector((state: RootState) => state.user);
 
-
+    useEffect(() => {
+        if(!user){
+          navigate('/login');
+        }
+      }, []);
+    
 
     useEffect(() => {
         if (postToEdit) {
