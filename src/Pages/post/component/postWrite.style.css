@@ -71,8 +71,8 @@
     position: absolute;
     display: flex;
     gap: 10px;
-    background-color: #333;
-    color: #fff;
+    background-color: #ffffff;
+    color: #000;
     padding: 5px 10px;
     border-radius: 5px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
@@ -82,7 +82,7 @@
 .mini-bar-btn {
     background: none;
     border: none;
-    color: #fff;
+    color: #000;
     cursor: pointer;
     font-size: 14px;
     padding: 5px;
@@ -91,7 +91,7 @@
 .mini-bar-btn2 {
     background: none;
     border: none;
-    color: #fff;
+    color: #000;
     cursor: pointer;
     font-size: 14px;
     width: 80px;
