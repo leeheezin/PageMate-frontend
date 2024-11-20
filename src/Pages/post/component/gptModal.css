@@ -71,7 +71,22 @@
 
     margin-right: 10px;
     margin-bottom: 0px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
 
+.mini-bar-input:focus {
+    outline: none;
+    border-color: #878787;
+    box-shadow: 0 0 5px #ccc;
+}
+
+.mini-bar-input:placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+.mini-bar-input:focus::placeholder {
+    color: transparent; /* 포커스 상태에서 placeholder 숨기기 */
 }
 
 .mini-bar-row {
