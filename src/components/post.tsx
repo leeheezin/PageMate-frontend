@@ -24,15 +24,14 @@ interface PostProps {
   profilePhoto: string | null;
   likes: string[];
   comments: { author: string; text: string }[];
-  isCommentVisible: boolean; // 댓글 영역이 열려 있는지 여부
-  onCommentToggle: (postId: string) => void; // 댓글 토글 핸들러
+  isCommentVisible?: boolean; // 댓글 영역이 열려 있는지 여부
+  onCommentToggle?: (postId: string) => void; // 댓글 토글 핸들러
 }
 interface UserResponse {
   status: string;
   data: {
     _id: string;
     email: string;
-    nickName: string;
     profilePhoto?: string;
   };
 }
@@ -158,13 +157,17 @@ const Post: React.FC<PostProps> = ({
     likes,
     createdAt,
     comments,
-    isCommentVisible,
-    onCommentToggle,
+    isCommentVisible = false, // @@기본값 설정
+    onCommentToggle,  // @@함수 전달 여부에 따라 동작 추가해야함
     }) => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
     const [localError, setLocalError] = useState<string | null>(null);
+
+    // @추가
+    const [activeCommentPostId, setActiveCommentPostId] = useState<string | null>(null); // 열려 있는 댓글 영역의 포스트 ID
+
     const currentUser = useSelector((state: RootState) => state.user.user) as UserResponse | null;
     const currentUserId = currentUser?.data._id;
     // 게시글 작성자가 현재 로그인한 사용자인지 확인
@@ -205,6 +208,12 @@ const Post: React.FC<PostProps> = ({
         }
     };
     
+    //@@ 추가
+    const handleCommentToggle = (postId: string) => {
+      // 같은 포스트 클릭 시 닫고, 다른 포스트 클릭 시 열기
+      setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
+    };
+
     return (
         <StyledPost>
         <Header>
@@ -234,17 +243,21 @@ const Post: React.FC<PostProps> = ({
         </Header>
         <Content>{text}</Content>
         <Footer>
-            <Inner>
+          <Inner>
             <LikeButton postId={_id} />
             <CommentButton
                         count={comments.length}
-                        onClick={() => onCommentToggle(_id)} // 댓글 토글 핸들러 호출
-                    />
-            </Inner>
-            <BookTit>
-              <BTitle>{bookTitle}</BTitle>
-              <BAuthor>{bookAuthor}</BAuthor>
-            </BookTit>
+                        onClick={() => {
+                          if (onCommentToggle) {
+                            onCommentToggle(_id); // @@onCommentToggle이 있을 때만 호출
+                          }
+                        }} // 댓글 토글 핸들러 호출
+            />
+          </Inner>
+          <BookTit>
+            <BTitle>{bookTitle}</BTitle>
+            <BAuthor>{bookAuthor}</BAuthor>
+          </BookTit>
         </Footer>
           {isCommentVisible && (
               <CommentSectionContainer>

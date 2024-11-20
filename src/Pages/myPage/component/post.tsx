@@ -23,7 +23,6 @@ interface Comment {
       profilePhoto: string;
       likes: string[];
       comments: Comment[];
-      likeCount: number;  // 좋아요 수
       liked: boolean;   
     };
   }
@@ -108,18 +107,7 @@ const BAuthor = styled.div`
   color: #a4a4a4;
 `;
 const Post: React.FC<PostProps> = ({ post }) => {
-    const {
-      _id,
-      bookTitle,
-      bookAuthor,
-      title,
-      text,
-      date,
-      author,
-      profilePhoto,
-      likes,
-      comments,
-    } = post;
+  const { _id, bookTitle, bookAuthor, title, text, date, author, profilePhoto, likes, comments } = post;
   
     const [commentsVisible, setCommentsVisible] = useState(false);
   
@@ -142,7 +130,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
         <Content>{text}</Content>
         <Footer>
           <Inner>
-            {/* <LikeButton count={likes} /> */}
+            <LikeButton postId={_id}/>
             <CommentButton
               count={comments.length}
               onClick={toggleCommentsVisibility}

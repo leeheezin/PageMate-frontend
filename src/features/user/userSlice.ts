@@ -8,7 +8,7 @@ import api from "../../utils/api";
 import { NavigateFunction } from "react-router-dom";
 
 interface UserState {
-  user: User | null;
+  user: UserData | null;
   loading: boolean;
   loginError: string | null;
   registrationError: string | null;
@@ -32,9 +32,7 @@ interface UserData {
   updatedAt: string;
 }
 interface User {
-    _id:string;
-    email: string;
-    name: string;
+  data: UserData;
 }
 interface LoginPayload {
   email: string;
@@ -49,7 +47,7 @@ interface RegisterPayload {
 }
 
 export const registerUser = createAsyncThunk<
-  User,
+  UserData,
   RegisterPayload,
   { rejectValue: string }
 >(
@@ -67,11 +65,12 @@ export const registerUser = createAsyncThunk<
 );
 
 export const loginWithEmail = createAsyncThunk<
-  User,
+  UserData,
   LoginPayload,
   { rejectValue: string }
 >("user/loginWithEmail", async ({ email, password }, { rejectWithValue }) => {
   try {
+
     const response = await api.post("/auth/login", { email, password });
 
     const token = response.data.token;
@@ -84,14 +83,15 @@ export const loginWithEmail = createAsyncThunk<
 });
 
 export const loginWithToken = createAsyncThunk<
-  User,
+  UserData,
   void,
   { rejectValue: string }
 >("user/loginWithToken", async (_, { rejectWithValue }) => {
   try {
     const response = await api.get("/user/me");
     console.log("토큰 로그인!");
-    return response.data;
+
+    return response.data.data;
   } catch (error: any) {
     return rejectWithValue(error.message);
   }
