@@ -32,7 +32,9 @@ interface UserData {
   updatedAt: string;
 }
 interface User {
-  data: UserData;
+    _id:string;
+    email: string;
+    name: string;
 }
 interface LoginPayload {
   email: string;
