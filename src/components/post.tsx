@@ -176,6 +176,12 @@ const Post: React.FC<PostProps> = ({
     console.log('currentUserId:', currentUserId);
     console.log('userId:', userId);
     console.log('isOwner:', isOwner);
+    
+    //@추가 - 댓글 수 관리
+    const [commentCount, setCommentCount] = useState(comments.length); // 댓글 수 상태 추가
+    const handleCommentCountChange = (newCount: number) => {
+        setCommentCount(newCount); // 댓글 수 업데이트
+    };
 
     const handleDialogOpen = () => {
         setIsDialogOpen(true);
@@ -246,7 +252,7 @@ const Post: React.FC<PostProps> = ({
           <Inner>
             <LikeButton postId={_id} />
             <CommentButton
-                        count={comments.length}
+                        count={commentCount}
                         onClick={() => {
                           if (onCommentToggle) {
                             onCommentToggle(_id); // @@onCommentToggle이 있을 때만 호출
@@ -261,7 +267,11 @@ const Post: React.FC<PostProps> = ({
         </Footer>
           {isCommentVisible && (
               <CommentSectionContainer>
-                  <Comment visible={isCommentVisible} postId={_id} />
+                  <Comment 
+                    visible={isCommentVisible} 
+                    postId={_id} 
+                    onCommentCountChange={handleCommentCountChange} // 콜백 전달 @추가
+                    />
               </CommentSectionContainer>
           )}
         </StyledPost>
