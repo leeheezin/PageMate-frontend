@@ -8,19 +8,24 @@ interface DialogProps {
     position?: "fixed" | "absolute";
     top?: string;
 }
-const Overlay = styled.div<{ isOpen: boolean, position: string, top: string }>`
-    display: ${({ isOpen }) => (isOpen ? "flex" : "none")};
-    position: ${({ position }) => position};
-    top: ${({ top }) => top};
+const Overlay = styled.div<{ isOpen: boolean; position: string; top: string }>`
+  display: ${({ isOpen }) => (isOpen ? "flex" : "none")};
+  position: ${({ position }) => position};
+  top: ${({ top }) => top || "0"};
+  right: 0;
+  bottom: 0;
+  left: 0; /* 추가: 전체 화면을 덮도록 설정 */
+  justify-content: center; /* 수직 중앙 정렬 */
+  align-items: center; /* 수평 중앙 정렬 */
+  background-color: rgba(0, 0, 0, 0); /* 배경 어두운 효과 */
+  z-index: 10000;
+
+  @media (max-width: 480px) {
+    top: ${({ top }) => top || "0"};
     right: 0;
-    bottom: 0;
-    flex-direction: column;
-    z-index: 10000;
-    @media (max-width: 480px) {
-        top: ${({ top }) => (top ? top : "0")};
-        right: 0;
-    }
+  }
 `;
+
 const DialogContainer = styled.div`
     background: #fff;
     width: 100%;

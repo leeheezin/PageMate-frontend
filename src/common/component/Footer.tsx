@@ -31,6 +31,11 @@ const Footer: React.FC = () => {
     <>
       {/* desktop 사이드바 footer */}
       <div className="sidebar">
+      <Dialog isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+                <ActionButton>
+                    로그아웃
+                </ActionButton>
+            </Dialog>
       {/* 상단 버튼들 */}
         <div className="top-buttons">
           <button className="icon-button" onClick={() => navigate("/")}>
@@ -52,20 +57,7 @@ const Footer: React.FC = () => {
           <button className="icon-button">
             <img src={iconMenu} alt="Menu" />
           </button>
-          <Dialog isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
-                <ActionButton>
-                    프로필 사진 편집
-                </ActionButton>
-                <ActionButton>
-                    프로필 이름 수정
-                </ActionButton>
-                <ActionButton>
-                    로그아웃
-                </ActionButton>
-                <ActionButton>
-                    회원탈퇴
-                </ActionButton>
-            </Dialog>
+
         </div>
       </div>
 
