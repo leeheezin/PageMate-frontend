@@ -76,7 +76,7 @@ export const loginWithEmail = createAsyncThunk<
     const token = response.data.token;
     sessionStorage.setItem("token", token);
 
-    return response.data;
+    return response.data.user;
   } catch (error: any) {
     return rejectWithValue(error.message);
   }
@@ -89,6 +89,7 @@ export const loginWithToken = createAsyncThunk<
 >("user/loginWithToken", async (_, { rejectWithValue }) => {
   try {
     const response = await api.get("/user/me");
+    console.log("🚀 ~ > ~ response:", response.data.data)
     console.log("토큰 로그인!");
 
     return response.data.data;
