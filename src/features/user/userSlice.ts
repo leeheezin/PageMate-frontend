@@ -32,7 +32,7 @@ interface UserData {
   updatedAt: string;
 }
 interface User {
-    data: UserData
+  data: UserData;
 }
 interface LoginPayload {
   email: string;
@@ -47,7 +47,7 @@ interface RegisterPayload {
 }
 
 export const registerUser = createAsyncThunk<
-UserData,
+  UserData,
   RegisterPayload,
   { rejectValue: string }
 >(
@@ -65,11 +65,12 @@ UserData,
 );
 
 export const loginWithEmail = createAsyncThunk<
-UserData,
+  UserData,
   LoginPayload,
   { rejectValue: string }
 >("user/loginWithEmail", async ({ email, password }, { rejectWithValue }) => {
   try {
+
     const response = await api.post("/auth/login", { email, password });
 
     const token = response.data.token;
@@ -82,14 +83,15 @@ UserData,
 });
 
 export const loginWithToken = createAsyncThunk<
-UserData,
+  UserData,
   void,
   { rejectValue: string }
 >("user/loginWithToken", async (_, { rejectWithValue }) => {
   try {
     const response = await api.get("/user/me");
     console.log("토큰 로그인!");
-    return response.data;
+
+    return response.data.data;
   } catch (error: any) {
     return rejectWithValue(error.message);
   }
