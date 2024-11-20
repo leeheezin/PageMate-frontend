@@ -29,31 +29,39 @@ const PostSearch: React.FC = () => {
   const location = useLocation(); // 현재 URL 정보 가져오기
   const navigate = useNavigate(); // 네비게이션 훅 초기화
 
+  
   // URL 파라미터에서 검색어 추출
   const queryParams = new URLSearchParams(location.search);
-  const urlQuery = queryParams.get("query");
+  const urlQuery = queryParams.get("bookTitle");
 
 
+  const fetchSearchResults = () => {
+    // 검색 데이터를 가져오는 로직
+    if (urlQuery) {
+      dispatch(fetchPosts({ bookTitle: urlQuery }));
+    }
+  };
+
+  // 검색어가 변경되거나 URL이 업데이트될 때 실행
   useEffect(() => {
     if (urlQuery) {
-      setQuery(urlQuery); // URL에서 검색어가 있으면 입력란에 넣기
+      setQuery(urlQuery);
       setSearched(true);
-      dispatch(fetchPosts({ bookTitle: urlQuery })); // 해당 검색어로 게시물 검색
+      fetchSearchResults();
     }
-  }, [location.search, dispatch]);
+  }, [urlQuery, dispatch]);
 
-
-  // useEffect(() => { // search page로 다시 돌아오면 초기화
-  //   if (!location.search) {
-  //     setSearched(false);
-  //     setQuery("");
-  //   }  
-  // }, [location.search]);
-
-
-  // 베스트셀러 데이터를 가져오기 위해 useEffect 수정
+  // URL에 검색어가 없으면 초기화
   useEffect(() => {
-    if (books.length === 0) { // books가 비어있다면 fetchBooks를 호출하여 데이터를 가져옵니다.
+    if (!urlQuery) {
+      setQuery("");
+      setSearched(false);
+    }
+  }, [location.search]);
+
+  // 베스트셀러 데이터 요청
+  useEffect(() => {
+    if (books.length === 0) {
       dispatch(fetchBooks());
     }
   }, [dispatch, books.length]);
@@ -70,11 +78,11 @@ const PostSearch: React.FC = () => {
       return;
     }
   
+    // console.log('query',query)
+    navigate(`/search?bookTitle=${encodeURIComponent(query)}`);
+    setSearched(true); // 검색 버튼 클릭 시 검색 상태로 변경
     try {
       // Redux에 검색 기능이 있는 경우
-      console.log('query',query)
-      navigate(`/search?bookTitle=${encodeURIComponent(query)}`);
-      setSearched(true); // 검색 버튼 클릭 시 검색 상태로 변경
       await dispatch(fetchPosts({ bookTitle: query }));
       // onSearch(query); // 검색어를 상위 컴포넌트로 전달
     } catch (error) {
@@ -153,7 +161,6 @@ const PostSearch: React.FC = () => {
                   comments={post.comments}
                   isCommentVisible={activeCommentPostId === post._id} // 댓글 영역이 열려 있는지 여부 전달
                   onCommentToggle={handleCommentToggle} // 댓글 토글 핸들러 전달
-      
                 />
             ))}
             </div>

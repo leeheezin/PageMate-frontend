@@ -1,17 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
 import { createPost, updatePost } from "../../features/post/postsSlice";
-import "./component/postWrite.style.css";
-import "./component/gptModal.css";
-import BookSearchDialog from "./bookSearchDialog";
 import { AppDispatch, RootState } from "../../features/store";
-import styled from "styled-components";
 import { styleChange, contentCorrection, spellingCorrection ,aiRequest } from "../../features/gpt/gptSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import BookSearchDialog from "./bookSearchDialog";
 import getCaretCoordinates from 'textarea-caret';
+import styled from "styled-components";
+import "./component/gptModal.css";
+import "./component/postWrite.style.css";
 
-import { useNavigate, useLocation } from "react-router-dom";
 
 const Error = styled.div`
     color: red;
@@ -242,11 +242,11 @@ const GptResultModal = ({gptResultText, isLoading}:{gptResultText:string, isLoad
             readOnly
           ></textarea>
           <div className="gpt-modal-buttons">
-            <button className="gpt-apply-btn" onClick={applyGptResult}>
-              적용하기
-            </button>
             <button className="gpt-cancel-btn" onClick={closeGptResultModal}>
               취소
+            </button>
+            <button className="gpt-apply-btn" onClick={applyGptResult}>
+              적용
             </button>
           </div>
         </>
@@ -259,7 +259,7 @@ return (
 <div className="post-area">
     <div className="form-container">
     <form onSubmit={handleSubmit}>
-        <input
+      <input
         ref={titleInputRef}
         type="text"
         placeholder="제목을 입력해 주세요"
@@ -268,8 +268,8 @@ return (
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         // onMouseUp={handleTextSelection} // 텍스트 드래그 후 이벤트 처리
-        />
-        <input
+      />
+      <input
         type="text" 
         placeholder="책을 선택해 주세요"
         value={selectedBookTitle}
@@ -277,8 +277,8 @@ return (
         className="input-field"
         name="bookTitle"
         readOnly
-        />
-        <textarea
+      />
+      <textarea
         ref={textAreaRef}
         placeholder="내용을 입력해 주세요"
         className="textarea-field"
@@ -287,97 +287,100 @@ return (
         onChange={(e) => setText(e.target.value)}
         onMouseUp={handleTextSelection} // 텍스트 드래그 후 이벤트 처리
         onSelect={handleTextSelection} // 키보드로 텍스트 선택 시 이벤트 처리
-        ></textarea>
-        <button type="submit" className="submit-btn">
+      ></textarea>
+      <button type="submit" className="submit-btn">
         {isEditMode ? "수정하기" : "작성하기"}
-        </button>
-        {error && <Error>{error}</Error>}
+      </button>
+      {error && <Error>{error}</Error>}
     </form>
     </div>
     {isDialogOpen && (
     <BookSearchDialog onClose={closeDialog} onSelect={handleSelectBook} />
     )}
 
-      {/* 미니 바 */}
-      {miniBarPosition.visible && (
-        <div
-            className="mini-bar"
-            style={{
-                top: `${miniBarPosition.top}px`,
-                left: `${miniBarPosition.left}px`,
-                display: 'flex',
-                flexDirection: 'column',
-            }}
+    {/* 미니 바 */}
+    {miniBarPosition.visible && (
+      <div
+        className="mini-bar"
+        style={{
+            top: `${miniBarPosition.top}px`,
+            left: `${miniBarPosition.left}px`,
+            display: 'flex',
+            flexDirection: 'column',
+        }}
+      >
+      <div className="mini-bar-row">
+        <input
+          type="text"
+          className="mini-bar-input"
+          placeholder="AI에게 요청 내용"
+          value={aiRequestText}
+          onChange={(e) => setAiRequestText(e.target.value)}
+        />
+        <button
+          className="submit-btn"
+          onClick={() => handleMiniBarAction("AI 요청", undefined, aiRequestText)}
         >
-            <div className="mini-bar-row">
-                <input
-                    type="text"
-                    className="mini-bar-input"
-                    placeholder="AI에게 요청 내용"
-                    value={aiRequestText}
-                    onChange={(e) => setAiRequestText(e.target.value)}
-                />
-                <button
-                    className="mini-bar-btn"
-                    onClick={() => handleMiniBarAction("AI 요청", undefined, aiRequestText)}
-                >
-                    요청하기
-                </button>
-            </div>
-            <div className="mini-bar-row">
-                <button
-                    className="mini-bar-btn"
-                    onClick={toggleDropdown}
-                >
-                    문체 변경 <FontAwesomeIcon icon={faChevronDown} />
-                </button>
+        요청하기
+        </button>
+      </div>
+      <div className="mini-bar-row">
+        <button
+          className="mini-bar-btn"
+          onClick={toggleDropdown}
+        >
+          문체 변경
+          <FontAwesomeIcon icon={faChevronDown} />
+        </button>
 
-                <button
-                    className="mini-bar-btn"
-                    onClick={() => handleMiniBarAction("내용 첨삭")}
-                >
-                    내용 첨삭
-                </button>
-                <button
-                    className="mini-bar-btn"
-                    onClick={() => handleMiniBarAction("맞춤법 교정")}
-                >
-                    맞춤법 교정
-                </button>
-            </div>
-        </div>
-    )}
-    {isDropdownOpen && (
-    <div className="mini-bar"
-            style={{
-                top: `${miniBarPosition.top+120}px`,
-                left: `${miniBarPosition.left}px`,
-                display: 'flex',
-                flexDirection: 'column',
-            }}>
         <button
-            className="mini-bar-btn2"
-            onClick={() => handleMiniBarAction("문체 변경", "구어체")}
+          className="mini-bar-btn"
+          onClick={() => handleMiniBarAction("내용 첨삭")}
         >
-            구어체
+          내용 첨삭
         </button>
         <button
-            className="mini-bar-btn2"
-            onClick={() => handleMiniBarAction("문체 변경", "문어체")}
+          className="mini-bar-btn"
+          onClick={() => handleMiniBarAction("맞춤법 교정")}
         >
-            문어체
+          맞춤법 교정
         </button>
-        <button
-            className="mini-bar-btn2"
-            onClick={() => handleMiniBarAction("문체 변경", "격식체")}
-        >
-            격식체
-        </button>
+      </div>
     </div>
-)}
+  )}
+  {isDropdownOpen && (
+  <div
+    className="mini-bar"
+    style={{
+      top: `${miniBarPosition.top+120}px`,
+      left: `${miniBarPosition.left}px`,
+      display: 'flex',
+      flexDirection: 'column',
+    }}
+  >
+    <button
+      className="mini-bar-btn2"
+      onClick={() => handleMiniBarAction("문체 변경", "구어체")}
+    >
+      구어체
+    </button>
+    <button
+      className="mini-bar-btn2"
+      onClick={() => handleMiniBarAction("문체 변경", "문어체")}
+    >
+      문어체
+    </button>
+    <button
+      className="mini-bar-btn2"
+      onClick={() => handleMiniBarAction("문체 변경", "격식체")}
+    >
+      격식체
+    </button>
+  </div>
+  )}
 
-    {/* 모달 창 표시 */}
-    {gptResultModal && <GptResultModal gptResultText={gptResultText} isLoading={isLoading} />}
+  {/* 모달 창 표시 */}
+  {gptResultModal && <GptResultModal gptResultText={gptResultText} isLoading={isLoading} />}
 </div>
 );
 };
