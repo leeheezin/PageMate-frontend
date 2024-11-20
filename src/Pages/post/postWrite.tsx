@@ -243,7 +243,7 @@ const handleTextSelection = (
             >
                 AI 첨삭받기 1
             </button>
-            <button
+            <button 
                 className="mini-bar-btn"
                 onClick={(e) => handleMiniBarAction("AI 첨삭받기 2", e)}
             >
