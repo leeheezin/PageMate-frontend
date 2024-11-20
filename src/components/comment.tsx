@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { addComment, fetchComments  } from '../features/comment/commentSlice'; // Import the action
+import { RootState, AppDispatch } from '../features/store'; // Import the types
 
 const CommentContainer = styled.div`
     margin-top: 8px;
@@ -36,38 +39,42 @@ const SubmitButton = styled.button`
 `;
 
 interface CommentProps {
-    comments: { author: string; text: string }[];
     visible: boolean;
+    postId: string; // 해당 게시물의 ID
 }
 
-const Comment: React.FC<CommentProps> = ({ comments, visible }) => {
+const Comment: React.FC<CommentProps> = ({ visible, postId }) => {
     const [inputValue, setInputValue] = useState('');
-    const [newComments, setNewComments] = useState<{ author: string; text: string }[]>([]);
+    const { comments, loading, error } = useSelector((state: RootState) => state.comments);
+    const dispatch = useDispatch<AppDispatch>();
+
+    useEffect(() => {
+        if (visible) {
+            dispatch(fetchComments(postId)); // 댓글 가져오기
+        }
+    }, [visible, postId, dispatch]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(e.target.value);
     };
 
-    const handleAddComment = () => {
+    const handleAddComment = async () => {
         if (inputValue.trim() !== '') {
-            setNewComments([...newComments, { author: '나', text: inputValue }]);
+            console.log("inputValue",inputValue);
+            await dispatch(addComment({ postId, text: inputValue })); // 댓글 추가 후
             setInputValue('');
+            dispatch(fetchComments(postId)); // 댓글 목록 새로 가져오기
         }
     };
 
     if (!visible) {
         return null;
     }
-
+    console.log("c",comments);
     return (
         <CommentContainer>
             {comments.map((comment, index) => (
                 <CommentItem key={index}>
-                    <strong>{comment.author}:</strong> {comment.text}
-                </CommentItem>
-            ))}
-            {newComments.map((comment, index) => (
-                <CommentItem key={comments.length + index}>
                     <strong>{comment.author}:</strong> {comment.text}
                 </CommentItem>
             ))}
@@ -78,8 +85,11 @@ const Comment: React.FC<CommentProps> = ({ comments, visible }) => {
                     onChange={handleInputChange} 
                     placeholder="댓글 달기" 
                 />
-                <SubmitButton onClick={handleAddComment}>^</SubmitButton>
+                <SubmitButton onClick={handleAddComment} disabled={loading}>
+                    {loading ? '...' : '^'}
+                </SubmitButton>
             </InputContainer>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
         </CommentContainer>
     );
 };

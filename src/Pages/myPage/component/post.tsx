@@ -109,6 +109,7 @@ const BAuthor = styled.div`
 `;
 const Post: React.FC<PostProps> = ({ post }) => {
     const {
+      _id,
       bookTitle,
       bookAuthor,
       title,
@@ -154,7 +155,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
         </Footer>
         {commentsVisible && (
           <CommentSectionContainer>
-            <Comment comments={comments} visible={commentsVisible} />
+            <Comment visible={commentsVisible} postId={_id}/>
           </CommentSectionContainer>
         )}
       </StyledPost>
