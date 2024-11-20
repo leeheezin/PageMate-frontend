@@ -6,7 +6,8 @@ import PostComponent from "./component/post";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../features/store";
 import { getLikedPost, getMyPost } from "../../features/post/postsSlice";
-import {Post} from "../../features/post/postsSlice"
+import { Post } from "../../features/post/postsSlice";
+import Dialog from "../../components/dialog";
 
 const Container = styled.div`
   max-height: calc(100vh - 60px);
@@ -104,22 +105,19 @@ const Posts = styled.div`
   width: 80%;
   min-height: 100px;
 `;
-const examplePost = {
-  _id: "",
-  bookTitle: "The Great Gatsby",
-  bookAuthor: "F. Scott Fitzgerald",
-  title: "A Classic Review",
-  text: "This is an amazing book!",
-  date: "2024-11-19",
-  author: "John Doe",
-  profilePhoto: "https://example.com/profile.jpg",
-  likes: 25,
-  comments: [
-    { author: "Jane Doe", text: "I love this book too!" },
-    { author: "Alex", text: "Great review!" },
-  ],
-};
-
+const ActionButton = styled.div`
+  padding: 9px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  &:hover {
+    background: #e2e6ea;
+  }
+`;
+const NoPost = styled.div`
+  font-size: 28px;
+  font-weight: 600;
+`
 
 const MyPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -127,16 +125,46 @@ const MyPage: React.FC = () => {
   const { myPosts, myLiked } = useSelector((state: RootState) => state.posts);
 
   const [highlight, setHighlight] = useState<boolean>(true);
-    const [posts, setPost] = useState<Post[]>([]);
+  const [posts, setPost] = useState<Post[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogPosition, setDialogPosition] = useState({
+    top: "50%",
+    left: "50%",
+  });
 
+  const handleMenu = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const dialogWidth = 170; // 다이얼로그 예상 너비
+    const dialogHeight = 150; // 다이얼로그 예상 높이
+  
+    // 화면 크기
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+  
+    // 기본 위치 (버튼의 우측 하단)
+    let top = rect.bottom + window.scrollY;
+    let left = rect.right + window.scrollX;
+  
+    // 다이얼로그가 화면 밖으로 나가지 않도록 조정
+    if (left + dialogWidth > viewportWidth) {
+      left = rect.right - dialogWidth; // 우측 공간 부족 시 왼쪽으로 이동
+    }
+    if (top + dialogHeight > viewportHeight) {
+      top = rect.bottom - dialogHeight; // 하단 공간 부족 시 위로 이동
+    }
+  
+    setDialogPosition({ top: `${top}px`, left: `${left}px` });
+    setIsDialogOpen(true);
+  };
+  
   useEffect(() => {
     dispatch(getMyPost());
     dispatch(getLikedPost());
   }, [user]);
 
-  useEffect(() =>{
-    setPost(myPosts)
-  },[myPosts])
+  useEffect(() => {
+    setPost(myPosts);
+  }, [myPosts]);
 
   const handleBtn = (event: any) => {
     event.preventDefault();
@@ -145,24 +173,35 @@ const MyPage: React.FC = () => {
 
     if (id === "my") {
       setHighlight(true);
-      setPost(myPosts)
+      setPost(myPosts);
     } else {
       setHighlight(false);
-      setPost(myLiked)
+      setPost(myLiked);
     }
   };
 
   return (
     <Container>
+      <Dialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        top={dialogPosition.top}
+        left={dialogPosition.left}
+      >
+        <ActionButton>닉네임 수정</ActionButton>
+        <ActionButton>프로필 사진 수정</ActionButton>
+      </Dialog>
       <MyPageArea>
         <ProfileArea>
           <Photo imageUrl={ProfileIcon}></Photo>
           <Info>
             <UserName>{user?.data?.name || "unknown"}</UserName>
-            <Summary>내 {highlight?"게시글":"좋아요"} {posts.length||0}개</Summary>
+            <Summary>
+              내 {highlight ? "게시글" : "좋아요"} {posts.length || 0}개
+            </Summary>
           </Info>
           <Modify>
-            <Bnt>
+            <Bnt onClick={handleMenu}>
               <ModifyIcon />
             </Bnt>
           </Modify>
@@ -178,9 +217,11 @@ const MyPage: React.FC = () => {
           </Filter>
           <Posts>
             {posts?.length > 0 ? (
-              posts.map((post, index) => <PostComponent key={index} post={post} />)
+              posts.map((post, index) => (
+                <PostComponent key={index} post={post} />
+              ))
             ) : (
-              <div>게시글이 없습니다.</div>
+              <NoPost>게시글이 없습니다.</NoPost>
             )}
           </Posts>
         </PostArea>
