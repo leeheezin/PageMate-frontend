@@ -42,7 +42,6 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, likes, userId }) => {
     }
   };
 
-<<<<<<< HEAD
   return (
     <LikeContainer onClick={handleToggleLike}>
       <FontAwesomeIcon 
@@ -52,14 +51,6 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, likes, userId }) => {
       <span style={{ marginLeft: '8px' }}>{likeCount}</span> {/* 좋아요 갯수 표시 */}
     </LikeContainer>
   );
-=======
-    return (
-        <LikeContainer onClick={handleToggleLike}>
-            <FontAwesomeIcon icon={liked ? faHeart : (faRegHeart as any)} color={liked ? 'red' : 'black'} />
-            <span style={{ marginLeft: '8px' }}>{plusCount}</span>
-        </LikeContainer>
-    );
->>>>>>> 0672d91 (create gpt api func)
 };
 
 export default LikeButton;
