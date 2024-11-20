@@ -17,11 +17,15 @@ const PostSearch: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const [searched, setSearched] = useState<boolean>(false); // 검색 여부 상태 추가
 
+  const [activeCommentPostId, setActiveCommentPostId] = useState<string | null>(null); // 열려 있는 댓글 영역의 포스트 ID
+
+
   // Redux 상태에서 books 데이터를 가져옵니다.
   const dispatch = useDispatch<AppDispatch>();  // dispatch 타입 지정
   const { books } = useSelector((state: RootState) => state.book);
   const { posts, loading, error } = useSelector((state: RootState) => state.posts);
   
+
   const location = useLocation(); // 현재 URL 정보 가져오기
   const navigate = useNavigate(); // 네비게이션 훅 초기화
 
@@ -83,6 +87,10 @@ const PostSearch: React.FC = () => {
   const covers = books.map((book) => book.cover);
   // console.log('posts', posts);
   
+  const handleCommentToggle = (postId: string) => {
+    // 같은 포스트 클릭 시 닫고, 다른 포스트 클릭 시 열기
+    setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
+  };
   return (
     <>
       {!searched ? (
@@ -143,6 +151,9 @@ const PostSearch: React.FC = () => {
                   profilePhoto={post.profilePhoto}
                   likes={post.likes}
                   comments={post.comments}
+                  isCommentVisible={activeCommentPostId === post._id} // 댓글 영역이 열려 있는지 여부 전달
+                  onCommentToggle={handleCommentToggle} // 댓글 토글 핸들러 전달
+      
                 />
             ))}
             </div>

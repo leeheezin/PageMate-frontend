@@ -10,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../features/store";
 import { deletePost } from "../features/post/postsSlice";
+import { current } from "@reduxjs/toolkit";
+import UserData from "../features/user/userSlice";
 
 interface PostProps {
   _id: string;
@@ -167,15 +169,24 @@ const Post: React.FC<PostProps> = ({
 
     // @추가
     const [activeCommentPostId, setActiveCommentPostId] = useState<string | null>(null); // 열려 있는 댓글 영역의 포스트 ID
+      
+    const currentUser = useSelector((state: RootState) => state.user.user);
 
-    const currentUser = useSelector((state: RootState) => state.user.user) as UserResponse | null;
-    const currentUserId = currentUser?.data._id;
+    const currentUserId = currentUser ? currentUser._id : null;
+    
+
     // 게시글 작성자가 현재 로그인한 사용자인지 확인
     const isOwner = currentUserId === userId;
     
     console.log('currentUserId:', currentUserId);
     console.log('userId:', userId);
     console.log('isOwner:', isOwner);
+    
+    //@추가 - 댓글 수 관리
+    const [commentCount, setCommentCount] = useState(comments.length); // 댓글 수 상태 추가
+    const handleCommentCountChange = (newCount: number) => {
+        setCommentCount(newCount); // 댓글 수 업데이트
+    };
 
     const handleDialogOpen = () => {
         setIsDialogOpen(true);
@@ -244,9 +255,9 @@ const Post: React.FC<PostProps> = ({
         <Content>{text}</Content>
         <Footer>
           <Inner>
-            <LikeButton postId={_id} />
+            <LikeButton postId={_id } />
             <CommentButton
-                        count={comments.length}
+                        count={commentCount}
                         onClick={() => {
                           if (onCommentToggle) {
                             onCommentToggle(_id); // @@onCommentToggle이 있을 때만 호출
@@ -261,7 +272,11 @@ const Post: React.FC<PostProps> = ({
         </Footer>
           {isCommentVisible && (
               <CommentSectionContainer>
-                  <Comment visible={isCommentVisible} postId={_id} />
+                  <Comment 
+                    visible={isCommentVisible} 
+                    postId={_id} 
+                    onCommentCountChange={handleCommentCountChange} // 콜백 전달 @추가
+                    />
               </CommentSectionContainer>
           )}
         </StyledPost>

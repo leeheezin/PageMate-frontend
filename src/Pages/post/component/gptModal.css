@@ -59,7 +59,7 @@
   .mini-bar {
     display: flex;
     flex-direction: column;
-    gap: 20px; /* 텍스트 입력 필드와 미니바 사이의 공간 */
+    /* gap: 20px; 텍스트 입력 필드와 미니바 사이의 공간 */
 }
 
 .mini-bar-input {
@@ -71,9 +71,23 @@
 
     margin-right: 10px;
     margin-bottom: 0px;
-
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
+.mini-bar-input:focus {
+    outline: none;
+    border-color: #878787;
+    box-shadow: 0 0 5px #ccc;
+}
+
+.mini-bar-input:placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+.mini-bar-input:focus::placeholder {
+    color: transparent; /* 포커스 상태에서 placeholder 숨기기 */
+}
 
 .mini-bar-row {
     padding: 3px;
