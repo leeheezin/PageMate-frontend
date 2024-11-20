@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../../utils/api";
 
 interface GptResult {
     gptResultText: string;
@@ -29,7 +29,7 @@ export const styleChange = createAsyncThunk<string, {style:string, review_object
             }
             if (!token) throw new Error("토큰이 없습니다.");
             
-            const response = await axios.post("http://localhost:5001/api/gpt/stylechange", {style,review_object}, {
+            const response = await api.post("/gpt/stylechange", {style,review_object}, {
                 headers: {
                     "Authorization": `Bearer ${token}`,
                 },
@@ -53,7 +53,7 @@ export const contentCorrection = createAsyncThunk<string, {review_object:object}
             }
             if (!token) throw new Error("토큰이 없습니다.");
             
-            const response = await axios.post("http://localhost:5001/api/gpt/contentcorrection", {review_object}, {
+            const response = await api.post("/gpt/contentcorrection", {review_object}, {
                 headers: {
                     "Authorization": `Bearer ${token}`,
                 },
@@ -78,7 +78,7 @@ export const spellingCorrection = createAsyncThunk<string, {review_object:object
             }
             if (!token) throw new Error("토큰이 없습니다.");
             
-            const response = await axios.post("http://localhost:5001/api/gpt/spellingcorrection", {review_object}, {
+            const response = await api.post("/gpt/spellingcorrection", {review_object}, {
                 headers: {
                     "Authorization": `Bearer ${token}`,
                 },
@@ -102,7 +102,7 @@ export const aiRequest = createAsyncThunk<string, {aiRequestText:string, review_
                 token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzM5ZmMxNzRhOTg1OWRjMDM0YzFmOTgiLCJpYXQiOjE3MzE5MTM5NzEsImV4cCI6MTczMTkzNTU3MX0.O3J6z9ArMYSE28C4uAld0SpxmzJJoKdLoOH07_SaWPU"
             }   
             if (!token) throw new Error("토큰이 없습니다.");
-            const response = await axios.post("http://localhost:5001/api/gpt/aiRequest", {aiRequestText, review_object}, {
+            const response = await api.post("/gpt/aiRequest", {aiRequestText, review_object}, {
                 headers: {
                     "Authorization": `Bearer ${token}`,
                 },
