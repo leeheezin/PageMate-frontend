@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
+import api from "../../utils/api"
 
-interface Comment {
+export interface Comment {
     author: string;
     text: string;
 }
 
-interface Post {
+export interface Post {
     id: number;
     bookTitle: string;
     bookAuthor: string;
@@ -26,6 +27,8 @@ interface NewPost {
 }
 interface PostsState {
     posts: Post[];
+    myPosts:Post[];
+    myLiked:Post[];
     loading: boolean;
     error: string | null;
 }
@@ -33,6 +36,8 @@ interface PostsState {
 // 초기 상태
 const initialState: PostsState = {
     posts: [],
+    myPosts:[],
+    myLiked:[],
     loading: false,
     error: null,
 };
@@ -70,6 +75,32 @@ export const createPost = createAsyncThunk<Post, NewPost>(
         }
     }
 );
+
+export const getMyPost = createAsyncThunk<Post[], void>(
+    "posts/getMyPost",
+    async (_, {rejectWithValue}) =>{
+    try {
+        const response = await api.get("/post/me")
+
+        return response.data.data
+    } catch (error:any) {
+        return rejectWithValue(error.response.data.error);
+    }
+}
+)
+
+export const getLikedPost = createAsyncThunk<Post[], void>(
+    "posts/getLikedPost",
+    async (_, {rejectWithValue}) =>{
+    try {
+        const response = await api.get("/post/liked")
+
+        return response.data.data
+    } catch (error:any) {
+        return rejectWithValue(error.response.data.error);
+    }
+}
+)
 
 
 
@@ -110,7 +141,30 @@ const postsSlice = createSlice({
             .addCase(createPost.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
-            });
+            })
+            .addCase(getMyPost.pending, (state)=>{
+                state.loading = true;
+            })
+            .addCase(getMyPost.fulfilled, (state,action)=>{
+                state.loading = false;
+                state.myPosts = action.payload;
+            })
+            .addCase(getMyPost.rejected, (state,action)=>{
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+            .addCase(getLikedPost.pending, (state)=>{
+                state.loading = true;
+            })
+            .addCase(getLikedPost.fulfilled, (state,action)=>{
+                state.loading = false;
+                state.myLiked = action.payload;
+            })
+            .addCase(getLikedPost.rejected, (state,action)=>{
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+            ;
     },
 });
 
