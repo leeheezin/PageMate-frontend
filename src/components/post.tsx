@@ -10,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../features/store";
 import { deletePost } from "../features/post/postsSlice";
+import { current } from "@reduxjs/toolkit";
+import UserData from "../features/user/userSlice";
 
 interface PostProps {
   _id: string;
@@ -167,9 +169,12 @@ const Post: React.FC<PostProps> = ({
 
     // @추가
     const [activeCommentPostId, setActiveCommentPostId] = useState<string | null>(null); // 열려 있는 댓글 영역의 포스트 ID
+      
+    const currentUser = useSelector((state: RootState) => state.user.user);
 
-    const currentUser = useSelector((state: RootState) => state.user.user) as UserResponse | null;
-    const currentUserId = currentUser?.data._id;
+    const currentUserId = currentUser ? currentUser._id : null;
+    
+
     // 게시글 작성자가 현재 로그인한 사용자인지 확인
     const isOwner = currentUserId === userId;
     
@@ -250,7 +255,7 @@ const Post: React.FC<PostProps> = ({
         <Content>{text}</Content>
         <Footer>
           <Inner>
-            <LikeButton postId={_id} />
+            <LikeButton postId={_id } />
             <CommentButton
                         count={commentCount}
                         onClick={() => {

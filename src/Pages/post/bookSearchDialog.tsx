@@ -27,6 +27,8 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
     }, [dispatch, books2.length]);
 
     const loadMore = useCallback(() => {
+
+
         if (!searchTerm.trim() || !hasMore || loading) return; // 중복 호출 방지
         
         console.log("현재 페이지:", page); // 디버깅: 현재 페이지 값 확인
