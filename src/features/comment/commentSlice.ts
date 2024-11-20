@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import api from "../../utils/api";
 
 interface Comment {
     _id: string;
@@ -30,7 +30,7 @@ export const addComment = createAsyncThunk(
     'comments/addComment',
     async ({ postId, text }: { postId: string; text: string }, thunkAPI) => {
         try {
-            const response = await axios.post('http://localhost:5001/api/comment/write', { postId, text });
+            const response = await api.post('/comment/write', { postId, text });
             return response.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to add comment');
@@ -43,7 +43,7 @@ export const fetchComments = createAsyncThunk(
     'comments/fetchComments',
     async (postId: string, { rejectWithValue }) => {
       try {
-        const response = await axios.get(`http://localhost:5001/api/comment/${postId}`); // API 엔드포인트
+        const response = await api.get(`/comment/${postId}`); // API 엔드포인트
         return response.data.data; // 댓글 데이터 반환
       } catch (error: any) {
         return rejectWithValue(error.response?.data?.message || 'Failed to fetch comments');
@@ -56,7 +56,7 @@ export const deleteComment = createAsyncThunk(
   'comments/deleteComment',
   async ({ postId, commentId }: { postId: string; commentId: string }, { rejectWithValue }) => {
       try {
-          const response = await axios.delete(`http://localhost:5001/api/comment/${commentId}`);
+          const response = await api.delete(`/comment/${commentId}`);
           return response;
       } catch (error: any) {
           return rejectWithValue(error.response?.data?.message || '댓글 삭제에 실패했습니다.');

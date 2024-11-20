@@ -109,13 +109,25 @@ const handleTextSelection = (
       // 커서 좌표 계산
       const coordinates = getCaretCoordinates(target, start);
 
-      // 텍스트 영역의 위치
+      // 텍스트 영역의 위치 및 스크롤 값 가져오기
       const textareaRect = target.getBoundingClientRect();
+      const scrollTop = target.scrollTop;
+      const scrollLeft = target.scrollLeft;
 
+      // 스크롤 값을 반영해 미니바 위치 조정
       setMiniBarPosition({
-          top: textareaRect.top + coordinates.top + window.scrollY - 30, // 오프셋 조정
-          left: textareaRect.left + coordinates.left + window.scrollX,
-          visible: true,
+        top:
+          textareaRect.top +
+          coordinates.top -
+          scrollTop +
+          window.scrollY -
+          30, // 오프셋 조정
+        left:
+          textareaRect.left +
+          coordinates.left -
+          scrollLeft +
+          window.scrollX,
+        visible: true,
       });
   } else {
       setMiniBarPosition((prev) => ({ ...prev, visible: false }));
