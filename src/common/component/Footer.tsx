@@ -67,7 +67,7 @@ const Footer: React.FC = () => {
             <img src={iconHome} alt="Home" />
           </button>
           <button className="icon-button" onClick={() => navigate("/search")}>
-            <img src={iconSearch} alt="Search" />
+            <img src={iconSearch} alt="Search" className="img-sizeup"/>
           </button>
           <button
             className="icon-button"
@@ -83,7 +83,7 @@ const Footer: React.FC = () => {
         {/* 하단 햄버거 버튼 */}
         <div onClick={handleMenu} className="bottom-button">
           <button className="icon-button">
-            <img src={iconMenu} alt="Menu" />
+            <img src={iconMenu} alt="Menu" className="img-sizeup"/>
           </button>
         </div>
       </div>
