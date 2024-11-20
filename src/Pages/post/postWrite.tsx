@@ -5,7 +5,6 @@ import "./component/postWrite.style.css";
 import "./component/gptModal.css";
 import BookSearchDialog from "./bookSearchDialog";
 import { AppDispatch, RootState } from "../../features/store";
-import styled from "styled-components";
 import { styleChange, contentCorrection, spellingCorrection ,aiRequest } from "../../features/gpt/gptSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
@@ -13,6 +12,10 @@ import getCaretCoordinates from 'textarea-caret';
 import { useNavigate, useLocation } from "react-router-dom";
 import miniBar from "./ai";
 import MiniBarComponent from "./ai";
+import styled from "styled-components";
+import "./component/gptModal.css";
+import "./component/postWrite.style.css";
+
 
 const Error = styled.div`
     color: red;
@@ -206,6 +209,7 @@ useEffect(() => {
             setMiniBarPosition((prev) => ({ ...prev, visible: false }));
         }
 
+        // 'mini-bar-input' 클래스에 대해서는 드래그 상태를 유지하면서 입력 가능하게 함
         if (
             target.classList.contains('mini-bar') ||
             target.classList.contains('mini-bar-btn') ||

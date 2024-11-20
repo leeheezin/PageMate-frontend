@@ -32,6 +32,11 @@ const Title = styled.div`
   font-weight: 700;
   padding-bottom: 12px;
 
+  img {
+    width: 88px;
+    margin-right: 10px;
+  }
+
   @media (max-width: 768px) {
     img {
       margin-left: 10px;
@@ -92,7 +97,24 @@ const Input = styled.input`
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ccc;
-  border-radius: 10px;
+  /* 은서 변경 - 공통 스타일 */
+  border-radius: 5px; 
+  transition: border-color 0.3s, box-shadow 0.3s;
+
+  &:focus {
+    outline: none;
+    border-color: #878787;
+    box-shadow: 0 0 5px #ccc;
+  }
+
+  &::placeholder {
+    color: #aaa;
+    // font-style: italic;
+  }
+
+  &:focus::placeholder {
+    color: transparent; /* 포커스 상태에서 placeholder 숨기기 */
+  }
 `;
 const ErrorMessage = styled.div`
   color: red;
