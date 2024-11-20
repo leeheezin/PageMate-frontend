@@ -174,8 +174,12 @@ const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange
                     value={inputValue} 
                     onChange={handleInputChange} 
                     placeholder="댓글 달기" 
+                    disabled={!currentUser} // 로그인하지 않은 경우 비활성화
                 />
-                <SubmitButton onClick={handleAddComment} disabled={loading}>
+                <SubmitButton 
+                    onClick={handleAddComment} 
+                    disabled={!currentUser || loading} // 로그인하지 않거나 로딩 중이면 비활성화
+                >
                     {loading ? '...' : <FontAwesomeIcon icon={faChevronUp} />}
                 </SubmitButton>
             </InputContainer>
