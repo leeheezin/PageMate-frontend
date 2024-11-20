@@ -105,6 +105,7 @@ const Posts = styled.div`
   min-height: 100px;
 `;
 const examplePost = {
+  _id: "",
   bookTitle: "The Great Gatsby",
   bookAuthor: "F. Scott Fitzgerald",
   title: "A Classic Review",

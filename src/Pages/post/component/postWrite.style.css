@@ -32,7 +32,7 @@
 }
 
 .textarea-field {
-    height: 350px;
+    min-height: 300px;
 }
 
 .submit-btn {
@@ -51,12 +51,14 @@
     background-color: #003300; /* 호버 시 버튼 색상 */
 }
 
-@media (max-width: 480px) {
+@media (max-width: 481px) {
     .form-container {
         margin: 10px;
         padding: 10px;
     }
-
+    .textarea-field {
+        max-height: 300px;
+    }
     .submit-btn {
         width: 30%;
         padding: 8px;
@@ -84,6 +86,16 @@
     cursor: pointer;
     font-size: 14px;
     padding: 5px;
+}
+
+.mini-bar-btn2 {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    width: 80px;
+    margin-bottom: 5px;
 }
 
 .mini-bar-btn:hover {
