@@ -1,17 +1,22 @@
-import React, { useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
+import { AppDispatch } from "../../features/store";
+import { fetchPosts } from "../../features/post/postsSlice";
 import iconLogo from '../../assets/images/icon-logo1.png';
 import iconLogoBig from '../../assets/images/icon-logo1_big.png';
 import iconMenu from '../../assets/images/icon-menu_black.png';
 import iconSearch from '../../assets/images/icon-search_black.png';
 import iconClose from '../../assets/images/icon-close.png';
 import iconBack from '../../assets/images/icon-back.png'
-import '../style/common.style.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import '../style/common.style.css';
 // import '../../Pages/search/postSearch.style.css';
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation(); // 현재 URL 정보 가져오기
+  const dispatch = useDispatch<AppDispatch>();  // dispatch 타입 지정
 
   // 검색 UI 상태 관리
   const [isSearching, setIsSearching] = useState(false);
@@ -22,26 +27,42 @@ const Navbar: React.FC = () => {
   };
 
   const handleSearchCloseClick = () => {
-    setIsSearching(false); // 검색 UI 숨기기
-    navigate("/search"); // search 페이지로 이동
+    // console.log('query', query)
+    if(!query) {
+      setIsSearching(false); // 검색 UI 숨기기
+      if (location.search.includes("?bookTitle")) {
+        navigate("/search"); // search 페이지로 이동
+        window.location.reload(); // 강제로 페이지 새로고침
+      }
+    }else{
+      setQuery("")
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('검색', e.target.value);
     setQuery(e.target.value); // 검색어 입력 상태 업데이트
   };
 
-  const handleSearchSubmit = () => {
+  const handleSearchSubmit = async() => {
     if (query.trim()) {
-      navigate(`/search?query=${encodeURIComponent(query)}`); // 검색어를 URL로 전달
+      navigate(`/search?bookTitle=${encodeURIComponent(query)}`); // 검색어를 URL로 전달
+      await dispatch(fetchPosts({ bookTitle: query }));
     }
   };
+
   // 엔터 키로 검색을 제출하는 함수
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleSearchSubmit(); // 엔터 키를 누르면 검색어 제출
     }
   };
+
+  // URL이 `/`일 때 검색 UI 닫기
+  useEffect(() => {
+    if (location.pathname === "/") {
+      setIsSearching(false); 
+    }
+  }, [location.pathname]); // URL 변경 시 감지
   return (
     <>
       {/* desktop 상단 navbar */}
@@ -98,19 +119,6 @@ const Navbar: React.FC = () => {
             />
             {/* 검색 아이콘 */}
             <FontAwesomeIcon icon={faSearch} className="nav-search-icon" />
-
-            {/* <div className="search-box">
-              <form onSubmit={handleSubmit} className="search-form">
-                <input
-                  type="search"
-                  className="searchPage-search-input"
-                  placeholder="도서 제목으로 리뷰 검색"
-                  value={query}
-                  onChange={handleInputChange}
-                />
-                <FontAwesomeIcon icon={faSearch} className="search-icon" />
-              </form>
-            </div> */}
             
             {/* 닫기 아이콘 */}
             <button onClick={handleSearchCloseClick} className="nav-icon">
