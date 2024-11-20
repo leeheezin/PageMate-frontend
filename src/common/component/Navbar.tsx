@@ -32,7 +32,7 @@ const Navbar: React.FC = () => {
       setIsSearching(false); // 검색 UI 숨기기
       if (location.search.includes("?bookTitle")) {
         navigate("/search"); // search 페이지로 이동
-        window.location.reload(); // 강제로 페이지 새로고침
+        // window.location.reload(); // 강제로 페이지 새로고침
       }
     }else{
       setQuery("")
