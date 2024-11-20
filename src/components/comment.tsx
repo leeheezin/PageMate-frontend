@@ -100,9 +100,10 @@ const DeleteButton = styled.button`
 interface CommentProps {
     visible: boolean;
     postId: string; // 해당 게시물의 ID
+    onCommentCountChange?: (newCount: number) => void; // 콜백 @추가
 }
 
-const Comment: React.FC<CommentProps> = ({ visible, postId }) => {
+const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange }) => {
     const [inputValue, setInputValue] = useState('');
     const { comments, loading, error } = useSelector((state: RootState) => state.comments);
     const currentUser = useSelector((state: RootState) => state.user.user); // 현재 로그인한 유저 정보
@@ -124,6 +125,7 @@ const Comment: React.FC<CommentProps> = ({ visible, postId }) => {
             await dispatch(addComment({ postId, text: inputValue })); // 댓글 추가 후
             setInputValue('');
             dispatch(fetchComments(postId)); // 댓글 목록 새로 가져오기
+            onCommentCountChange?.(comments.length + 1); // 댓글 수 증가
         }
     };
     
@@ -131,6 +133,7 @@ const Comment: React.FC<CommentProps> = ({ visible, postId }) => {
         try {
             await dispatch(deleteComment({ postId, commentId })).unwrap(); // 댓글 삭제
             dispatch(fetchComments(postId)); // 댓글 목록 새로 가져오기
+            onCommentCountChange?.(comments.length - 1); // 댓글 수 감소
         } catch (err) {
             console.error('댓글 삭제 중 오류 발생:', err);
         }
