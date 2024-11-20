@@ -22,13 +22,10 @@ const AppRoutes: React.FC = () => {
         <Routes>
             <Route path="/login" element={<Login/>} />
             <Route path="/signup" element={<SignUpPage/>} />
-            {/* <Route element={<PrivateRoute isAuthenticated={isAuthenticated}/>}> */}
-                <Route path="/" element={<HomePage/>} />
-                <Route path="/mypage" element={<MyPage/>} />
-                <Route path="/search" element={<PostSearch onSearch={handleSearch}/>} />
-                <Route path="/post/write" element={<PostWrite/>} />
-                <Route path="/post/:id" element={<PostDetail/>} />    
-            {/* </Route> */}
+            <Route path="/mypage" element={<MyPage/>} />
+            <Route path="/search" element={<PostSearch/>} />
+            <Route path="/post/write" element={<PostWrite/>} />
+            <Route path="/post/:id" element={<PostDetail/>} />
         </Routes>
     );
 }

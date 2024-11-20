@@ -7,6 +7,10 @@ export interface Comment {
     text: string;
 }
 
+interface QueryParams {
+    bookTitle?: string;
+  }
+
 export interface Post {
     _id: string;
     id: string;
@@ -47,16 +51,19 @@ const initialState: PostsState = {
     error: null,
 };
 
-export const fetchPosts = createAsyncThunk<Post[], void, { state: RootState }>(
+// export const fetchPosts = createAsyncThunk<Post[], QueryParams | undefined>(
+// export const fetchPosts = createAsyncThunk<Post[], void, { state: RootState }>(
+export const fetchPosts = createAsyncThunk<Post[], QueryParams | undefined, { state: RootState }>(
     "posts/fetchPosts",
-    async (_, { getState, rejectWithValue }) => {
+    async (queryParams = {}, { getState, rejectWithValue }) => {
         try {
             const state = getState(); 
             const currentUserId = state.user.user?._id || "";
-            const response = await api.get("/post");
+            const response = await api.get("/post", { params: queryParams });
             if (!response.data || !response.data.data) {
                 throw new Error("Invalid response structure");
             }
+            console.log("API response data:", response.data); 
 
             const posts = response.data.data;
 
@@ -65,8 +72,10 @@ export const fetchPosts = createAsyncThunk<Post[], void, { state: RootState }>(
                 liked: post.likes.includes(currentUserId), 
                 // 로그인된 사용자가 좋아요를 눌렀는지 확인
             }));
+
+            // return response.data.data; 
         } catch (error: any) {
-            return rejectWithValue(error.response?.data?.error || "An error occurred while fetching posts.");
+            return rejectWithValue(error?.message || "post data get error");
         }
     }
 );
@@ -190,10 +199,14 @@ const postsSlice = createSlice({
                 state.posts = action.payload;
                 state.loading = false;
             })
-            .addCase(fetchPosts.rejected, (state, action) => {
+            .addCase(fetchPosts.rejected, (state, action: PayloadAction<any>) => {
                 state.loading = false;
-                state.error = action.payload as string;
+                state.error = action.payload;
             })
+            // .addCase(fetchPosts.rejected, (state, action) => {
+            //     state.loading = false;
+            //     state.error = action.payload as string;
+            // })
             .addCase(createPost.pending, (state) => {
                 state.loading = true;
                 state.error = null;

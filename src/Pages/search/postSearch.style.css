@@ -132,3 +132,17 @@
 .carousel-icon {
   width: 15px; 
 }
+
+/* mobile-version */
+@media (max-width: 480px) {
+  .desktop-search-results {
+    display: none;
+  }
+}
+
+/* desktop-version */
+@media (min-width: 481px) {
+  .mobile-search-results{
+    display: none;
+  }
+}
