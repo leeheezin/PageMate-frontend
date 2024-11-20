@@ -166,6 +166,10 @@
   font-size: 2em !important;
 }
 
+.img-sizeup {
+  width: 30px !important;
+}
+
 /* mobile Navbar style */
 .mobile-navbar {
   background-color: var(--bg-color);

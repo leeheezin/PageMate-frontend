@@ -37,7 +37,7 @@ const Footer: React.FC = () => {
             <img src={iconHome} alt="Home" />
           </button>
           <button className="icon-button" onClick={() => navigate("/search")}>
-            <img src={iconSearch} alt="Search" />
+            <img src={iconSearch} alt="Search" className="img-sizeup"/>
           </button>
           <button className="icon-button" onClick={() => navigate("/post/write")}>
             <img src={iconPostAdd} alt="Add Post" />
@@ -50,22 +50,22 @@ const Footer: React.FC = () => {
         {/* 하단 햄버거 버튼 */}
         <div onClick={handleMenu} className="bottom-button">
           <button className="icon-button">
-            <img src={iconMenu} alt="Menu" />
+            <img src={iconMenu} alt="Menu" className="img-sizeup"/>
           </button>
           <Dialog isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
-                <ActionButton>
-                    프로필 사진 편집
-                </ActionButton>
-                <ActionButton>
-                    프로필 이름 수정
-                </ActionButton>
-                <ActionButton>
-                    로그아웃
-                </ActionButton>
-                <ActionButton>
-                    회원탈퇴
-                </ActionButton>
-            </Dialog>
+            <ActionButton>
+                프로필 사진 편집
+            </ActionButton>
+            <ActionButton>
+                프로필 이름 수정
+            </ActionButton>
+            <ActionButton>
+                로그아웃
+            </ActionButton>
+            <ActionButton>
+                회원탈퇴
+            </ActionButton>
+          </Dialog>
         </div>
       </div>
 
