@@ -24,6 +24,8 @@ interface PostProps {
   profilePhoto: string | null;
   likes: string[];
   comments: { author: string; text: string }[];
+  isCommentVisible: boolean; // 댓글 영역이 열려 있는지 여부
+  onCommentToggle: (postId: string) => void; // 댓글 토글 핸들러
 }
 interface UserResponse {
   status: string;
@@ -156,8 +158,9 @@ const Post: React.FC<PostProps> = ({
     likes,
     createdAt,
     comments,
+    isCommentVisible,
+    onCommentToggle,
     }) => {
-    const [commentsVisible, setCommentsVisible] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
@@ -177,9 +180,7 @@ const Post: React.FC<PostProps> = ({
     const handleDialogClose = () => {   
         setIsDialogOpen(false);
     };
-    const toggleCommentsVisibility = () => {
-        setCommentsVisible(!commentsVisible);
-    };
+    
     const handleEdit = () => {
         console.log("Navigating with post ID:", _id);
         navigate("/post/write", {
@@ -236,21 +237,20 @@ const Post: React.FC<PostProps> = ({
             <Inner>
             <LikeButton postId={_id} />
             <CommentButton
-                count={comments.length}
-                onClick={toggleCommentsVisibility}
-            />
+                        count={comments.length}
+                        onClick={() => onCommentToggle(_id)} // 댓글 토글 핸들러 호출
+                    />
             </Inner>
             <BookTit>
               <BTitle>{bookTitle}</BTitle>
               <BAuthor>{bookAuthor}</BAuthor>
             </BookTit>
         </Footer>
-        {commentsVisible && (
-            <CommentSectionContainer>
-            <Comment comments={comments} visible={commentsVisible} />
-            </CommentSectionContainer>
-        )}
-        
+          {isCommentVisible && (
+              <CommentSectionContainer>
+                  <Comment visible={isCommentVisible} postId={_id} />
+              </CommentSectionContainer>
+          )}
         </StyledPost>
     );
 };
