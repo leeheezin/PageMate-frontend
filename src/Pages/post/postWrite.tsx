@@ -52,6 +52,8 @@ const PostWrite: React.FC = () => {
     const [aiRequestText, setAiRequestText] = useState("");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isOverlayVisible, setIsOverlayVisible] = useState(false);
+
     const { user } = useSelector((state: RootState) => state.user);
 
     useEffect(() => {
@@ -74,29 +76,28 @@ const PostWrite: React.FC = () => {
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
         const target = event.target as HTMLElement;
+        
+        console.log("mini-bar",target.closest('.mini-bar')); 
+        console.log("gpt-modal",target.closest('.gpt-modal'));
+        console.log("mini-bar-input-row",target.closest('.mini-bar-input-row'));
+        console.log("IsOverlayVisible",isOverlayVisible);
 
-        // 미니바 관련 영역 클릭 시 선택 범위 유지
+        // mini-bar 내부의 모든 컴포넌트 클릭 시 mini-bar가 클릭된 것으로 처리
         if (
-          target.classList.contains("mini-bar") ||
-          target.classList.contains("mini-bar-btn") ||
-          target.classList.contains("mini-bar-row")
+            target.closest('.mini-bar')|| // mini-bar 내부의 모든 요소를 포함
+            target.closest('.gpt-modal')||
+            target.closest('.mini-bar-input-row')
         ) {
-          // 선택 범위 복원
-          if (
-            textAreaRef.current &&
-            selectionStart !== null &&
-            selectionEnd !== null
-          ) {
-            textAreaRef.current.setSelectionRange(selectionStart, selectionEnd);
-          }
-          event.preventDefault();
-          return;
+            setIsOverlayVisible(true);
+            return;
+        }else{
+            setIsOverlayVisible(false);
+            setMiniBarPosition((prev) => ({ ...prev, visible: false }));
         }
 
         // 다른 영역 클릭 시 미니바 닫기 및 선택 해제
-        if (!target.classList.contains("post-area")) {
-          setMiniBarPosition((prev) => ({ ...prev, visible: false }));
-        }
+        // if (!target.classList.contains("post-area")) {
+        // }
       };
 
       document.addEventListener("mousedown", handleClickOutside);
@@ -148,6 +149,7 @@ const handleTextSelection = (
       setSelectedText(selectedText);
       setSelectionStart(start);
       setSelectionEnd(end);
+      setIsOverlayVisible(false);
 
       // 커서 좌표 계산
       const coordinates = getCaretCoordinates(target, start);
@@ -253,16 +255,29 @@ return (
         name="bookTitle"
         readOnly
       />
-      <textarea
-        ref={textAreaRef}
-        placeholder="내용을 입력해 주세요"
-        className="textarea-field"
-        name="text"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        onMouseUp={handleTextSelection} // 텍스트 드래그 후 이벤트 처리
-        onSelect={handleTextSelection} // 키보드로 텍스트 선택 시 이벤트 처리
-      ></textarea>
+          <div className="textarea-container">
+            <textarea
+              ref={textAreaRef}
+              placeholder="내용을 입력해 주세요"
+              className={`textarea-field ${isOverlayVisible ? 'transparent' : ''}`}
+              name="text"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              onMouseUp={handleTextSelection}
+              onSelect={handleTextSelection}
+              onFocus={() => setIsOverlayVisible(false)}
+            ></textarea>
+            {isOverlayVisible && (
+              <div className="textarea-overlay">
+                <span>{text.substring(0, selectionStart!)}</span>
+                <span className="highlighted">
+                  {text.substring(selectionStart!, selectionEnd!)}
+                </span>
+                <span>{text.substring(selectionEnd!)}</span>
+              </div>
+            )}
+          </div>
+
       <button type="submit" className="submit-btn">
       {isEditMode ? "수정하기" : "작성하기"}
       </button>

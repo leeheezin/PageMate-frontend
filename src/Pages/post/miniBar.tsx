@@ -59,7 +59,7 @@ const MiniBar: React.FC<MiniBarProps> = ({
               value={aiRequestText}
               onChange={(e) => setAiRequestText(e.target.value)}
               onKeyPress={handleInputKeyPress}
-            />
+              />
           </div>
           <div
             className="mini-bar"
