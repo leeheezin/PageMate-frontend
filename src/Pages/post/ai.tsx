@@ -4,7 +4,19 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 
 
-const MiniBarComponent = (miniBarPosition: { top: number; left: number; visible: boolean }, handleMiniBarAction: (action: string, type?: string, text?: string) => void, aiRequestText: string, setAiRequestText: (text: string) => void,applyGptResult: () => void, closeGptResultModal: () => void, gptResultText: string, isLoading: boolean, gptResultModal: boolean, isDropdownOpen: boolean, setIsDropdownOpen: (open: boolean) => void) => {
+const MiniBarComponent = (
+    miniBarPosition: { top: number; left: number; visible: boolean }, 
+    handleMiniBarAction: (action: string, type?: string, text?: string) => void, 
+    aiRequestText: string, 
+    setAiRequestText: (text: string) => void,
+    applyGptResult: () => void, 
+    closeGptResultModal: () => void, 
+    gptResultText: string, 
+    isLoading: boolean, 
+    gptResultModal: boolean, 
+    isDropdownOpen: boolean, 
+    setIsDropdownOpen: (open: boolean) => void
+) => {
 
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
