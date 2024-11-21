@@ -138,11 +138,11 @@ const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange
             console.error('댓글 삭제 중 오류 발생:', err);
         }
     };
-
+    
     if (!visible) {
         return null;
     }
-    console.log("c",comments);
+
     return (
         <CommentContainer>
             {comments.map((comment, index) => (
@@ -161,8 +161,7 @@ const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange
                         </CommentHeader>
                         <Text>{comment.text}</Text>
                     </CommentContent>
-                    {/* {currentUser?._id === comment.id && ( // 현재 유저와 댓글 작성자의 _id 비교 */}
-                    {"673b66d9320a8682a2ff723e" === comment.userId && ( // 현재 유저와 댓글 작성자의 _id 비교
+                    {currentUser?._id === comment.userId && ( // 현재 유저와 댓글 작성자의 _id 비교
                         <DeleteButton onClick={() => handleDeleteComment(comment.id)}>삭제</DeleteButton>
                     )}
                             
