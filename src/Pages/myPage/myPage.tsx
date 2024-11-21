@@ -7,7 +7,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../features/store";
 import { getLikedPost, getMyPost } from "../../features/post/postsSlice";
 import { Post } from "../../features/post/postsSlice";
+import { uploadProfile } from "../../features/user/userSlice";
 import Dialog from "../../components/dialog";
+import CloudinaryUploadWidget from "../../utils/CloudinaryUploadWidget";
 import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
@@ -174,6 +176,11 @@ const MyPage: React.FC = () => {
     setPost(myPosts);
   }, [myPosts]);
 
+  const handleProfileUpdate = async (url: string) => {
+    await dispatch(uploadProfile({ profilePhoto: url }));
+    setIsDialogOpen(false); // 다이얼로그 닫기
+  };
+
   const handleBtn = (event: any) => {
     event.preventDefault();
 
@@ -197,11 +204,11 @@ const MyPage: React.FC = () => {
         left={dialogPosition.left}
       >
         <ActionButton>닉네임 수정</ActionButton>
-        <ActionButton>프로필 사진 수정</ActionButton>
+        <CloudinaryUploadWidget uploadImage={handleProfileUpdate} />
       </Dialog>
       <MyPageArea>
         <ProfileArea>
-          <Photo imageUrl={ProfileIcon}></Photo>
+          <Photo imageUrl={user?.profilePhoto? user?.profilePhoto : ProfileIcon}></Photo>
           <Info>
             <UserName>{user?.name || "unknown"}</UserName>
             <Summary>

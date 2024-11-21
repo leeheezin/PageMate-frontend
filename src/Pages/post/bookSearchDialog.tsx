@@ -21,6 +21,10 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
     const { books, loading, error, page, hasMore } = useSelector((state: any) => state.bookSearch);
     const { books: books2 } = useSelector((state: RootState) => state.book);
 
+    // 데이터 필터링
+    const isMobile = window.innerWidth <= 480; // 모바일 환경인지 확인
+    const filteredBooks = isMobile ? books2.slice(0, 9) : books2; // 모바일에서 9개 제한
+
     // 베스트셀러 데이터 로드
     useEffect(() => {
         if (books2.length === 0) {
@@ -87,7 +91,7 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
         }
     };
 
-    const covers = books2.map((book) => book.cover);
+    const covers = filteredBooks.map((book) => book.cover);
 
     return (
         <div className="dialog-overlay" onClick={handleOverlayClick}>
@@ -98,17 +102,19 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
             >
                 {/* 검색창 */}
                 <div className="search-header">
-                    <input
-                        type="text"
-                        placeholder="책 제목을 입력하세요"
-                        className="search-input"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                    />
-                    <button onClick={handleClose} className="dialog-close-btn">
-                        ✕
-                    </button>
+                    <div className="search-container">
+                        <input
+                            type="text"
+                            placeholder="책 제목을 입력하세요"
+                            className="search-input"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                        <button onClick={handleClose} className="dialog-close-btn">
+                            ✕
+                        </button>
+                    </div>
                 </div>
 
                 {/* 검색 결과 */}
@@ -120,32 +126,34 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
                     // <p>검색 결과가 없습니다.</p>
                     <NoResult bookTitle={fixedSearchTerm}/>
                 ) : (
-                    <ul>
-                        {books.map((book: any, index: number) => (
-                            <li
-                                key={`${book.title}-${index}`}
-                                onClick={() => handleSelectBook(book.title, book.authors)}
-                            >
-                                <img src={book.thumbnail} alt={book.title} />
-                                <div>
-                                    <span className="book-title">{book.title}</span>
-                                    <span className="book-author">
-                                        {book.authors.length > 0 ? book.authors.join(", ") : "저자 정보 없음"} 지음
-                                    </span>
-                                    <span className="book-publisher">
-                                        {book.publisher || "출판사 정보 없음"} 펴냄
-                                    </span>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                    <div className="book-search-result-list-container">
+                        <ul>
+                            {books.map((book: any, index: number) => (
+                                <li
+                                    key={`${book.title}-${index}`}
+                                    onClick={() => handleSelectBook(book.title, book.authors)}
+                                >
+                                    <img src={book.thumbnail} alt={book.title} />
+                                    <div>
+                                        <span className="book-title">{book.title}</span>
+                                        <span className="book-author">
+                                            {book.authors.length > 0 ? book.authors.join(", ") : "저자 정보 없음"} 지음
+                                        </span>
+                                        <span className="book-publisher">
+                                            {book.publisher || "출판사 정보 없음"} 펴냄
+                                        </span>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 )}
                 {loading && hasSearched && <p>로딩 중...</p>}
                 {!hasSearched && (
                     <div className="popular-books-grid">
                         <h2 className="popular-books-title">오늘의 인기 도서</h2>
                         <div className="grid-container">
-                            {books2.map((book, index) => (
+                            {filteredBooks.map((book, index) => (
                             <div
                                 className="book-card"
                                 key={index}
