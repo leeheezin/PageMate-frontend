@@ -13,6 +13,7 @@ interface UserState {
   loginError: string | null;
   registrationError: string | null;
   success: boolean;
+  profileUpdateError: string | null;
 }
 
 const initialState: UserState = {
@@ -21,6 +22,7 @@ const initialState: UserState = {
   loginError: null,
   registrationError: null,
   success: false,
+  profileUpdateError: null,
 };
 
 interface UserData {
@@ -46,6 +48,10 @@ interface RegisterPayload {
   name: string;
   password: string;
   navigate: NavigateFunction;
+}
+
+interface UpdateProfilePayload {
+  profilePhoto: string;
 }
 
 export const registerUser = createAsyncThunk<
@@ -105,6 +111,20 @@ export const logout = createAsyncThunk("user/logout", async () => {
   window.location.reload();
 });
 
+// 프로필 사진 업데이트
+export const uploadProfile = createAsyncThunk<
+  UserData,
+  UpdateProfilePayload,
+  { rejectValue: string }
+>("user/uploadProfile", async ({ profilePhoto }, { rejectWithValue }) => {
+  try {
+    const response = await api.put("/user/profile", { profilePhoto });
+    return response.data.data; // 업데이트된 유저 정보 반환
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data?.error || "Profile update failed");
+  }
+});
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -112,6 +132,7 @@ const userSlice = createSlice({
     clearErrors: (state) => {
       state.loginError = null;
       state.registrationError = null;
+      state.profileUpdateError = null;
     },
   },
   extraReducers: (builder) => {
@@ -142,6 +163,18 @@ const userSlice = createSlice({
       })
       .addCase(loginWithToken.fulfilled, (state, action) => {
         state.user = action.payload;
+      })
+      .addCase(uploadProfile.pending, (state) => {
+        state.loading = true;
+        state.profileUpdateError = null;
+      })
+      .addCase(uploadProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = { ...state.user, ...action.payload };
+      })
+      .addCase(uploadProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.profileUpdateError = action.payload || "Profile update failed";
       });
   },
 });
