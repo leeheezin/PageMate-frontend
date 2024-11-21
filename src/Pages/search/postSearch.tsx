@@ -6,6 +6,7 @@ import { fetchBooks } from "../../features/book/bookSlice";
 import { fetchPosts } from "../../features/post/postsSlice";
 import { AppDispatch, RootState } from "../../features/store"; // AppDispatch 타입 임포트
 import CarouselSwiper from "./CarouselSwiper";
+import NoResult from "../../components/noresultPage";
 import Post from '../../components/post';
 import HomePage from "../home/homePage";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -119,6 +120,7 @@ const PostSearch: React.FC = () => {
                 </button>
               </form>
             </div>
+
             <div className="popular-books-container">
               {/* '오늘의 인기 도서' 영역 */}
               <div className="today-popular">
@@ -141,7 +143,26 @@ const PostSearch: React.FC = () => {
           {loading && <p>검색 중...</p>}
           {error && <p>에러가 발생했습니다: {error}</p>}
           {!loading && searched && posts.length === 0 && (
-            <p>해당 책에 대한 결과가 없습니다.</p>
+            // <p>해당 책에 대한 결과가 없습니다.</p>
+            <>
+              <div className="search-box">
+                <form onSubmit={handleSubmit} className="search-form">
+                  <input
+                    type="search"
+                    className="searchPage-search-input"
+                    placeholder="도서 제목으로 리뷰 검색"
+                    value={query}
+                    onChange={handleInputChange}
+                  />
+                  <FontAwesomeIcon icon={faSearch} className="search-icon" />
+                  <button type="submit" className="search-button">
+                    검색
+                  </button>
+                </form>
+              </div>
+
+              <NoResult bookTitle={urlQuery} />
+            </>
           )}
           {!loading && searched && posts.length > 0 && (
             <div className="post-list">

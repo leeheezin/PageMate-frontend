@@ -5,7 +5,7 @@ import "./component/bookSearchDialog.style.css";
 import "./component/bestSellerList.style.css";
 import { fetchBookSearchResult, clearBooks } from "../../features/bookSearch/bookSearchSlice";
 import { fetchBooks } from "../../features/book/bookSlice";
-
+import NoResult from "../../components/noresultPage";
 interface BookSearchDialogProps {
     onClose: () => void;
     onSelect: (bookTitle: string, bookAuthor: string) => void;
@@ -13,7 +13,9 @@ interface BookSearchDialogProps {
 
 const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }) => {
     const [searchTerm, setSearchTerm] = useState("");
-    const [hasSearched, setHasSearched] = useState(false);
+    const [fixedSearchTerm, setFixedSearchTerm] = useState<string | null>(null); // 고정된 검색 값
+    const [hasSearched, setHasSearched] = useState(false); // 검색 여부 추가
+//     const observer = useRef<IntersectionObserver | null>(null); // Intersection Observer 레퍼런스
     const scrollContainerRef = useRef<HTMLDivElement | null>(null); // 스크롤 컨테이너 참조
     const dispatch = useDispatch<AppDispatch>();
     const { books, loading, error, page, hasMore } = useSelector((state: any) => state.bookSearch);
@@ -49,17 +51,18 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
         }
     };
 
-    const handleSearch = () => {
-        if (searchTerm.trim() === "") return;
-        setHasSearched(true);
+    const handleSearch = (term: string) => {
+        setHasSearched(true); // 검색 수행 여부 업데이트
         dispatch(clearBooks());
-        dispatch(fetchBookSearchResult({ query: searchTerm, page: 1 }));
+        dispatch(fetchBookSearchResult({query: term, page: 1}));
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            handleSearch();
+        if (e.key === "Enter" && searchTerm.trim() !== "") {
+          e.preventDefault();
+          setFixedSearchTerm(searchTerm); // 검색어를 고정
+          handleSearch(searchTerm); // 검색 실행
+
         }
     };
 
@@ -112,7 +115,8 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
                 ) : error ? (
                     <p style={{ color: "red" }}>{error}</p>
                 ) : hasSearched && books.length === 0 ? (
-                    <p>검색 결과가 없습니다.</p>
+                    // <p>검색 결과가 없습니다.</p>
+                    <NoResult bookTitle={fixedSearchTerm}/>
                 ) : (
                     <ul>
                         {books.map((book: any, index: number) => (
