@@ -1,13 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
 import { createPost, updatePost } from "../../features/post/postsSlice";
+import "./component/postWrite.style.css";
+import "./component/gptModal.css";
+import BookSearchDialog from "./bookSearchDialog";
 import { AppDispatch, RootState } from "../../features/store";
 import { styleChange, contentCorrection, spellingCorrection ,aiRequest } from "../../features/gpt/gptSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import BookSearchDialog from "./bookSearchDialog";
 import getCaretCoordinates from 'textarea-caret';
+import { useNavigate, useLocation } from "react-router-dom";
+import miniBar from "./ai";
+import MiniBarComponent from "./ai";
 import styled from "styled-components";
 import "./component/gptModal.css";
 import "./component/postWrite.style.css";
@@ -153,7 +157,8 @@ const handleSelectBook = (bookTitle: string, bookAuthor: string) => {
     setSelectedBookAuthor(bookAuthor);
     closeDialog();
 };
-  
+
+
   
 // style, text 는 선택적 인자
 const handleMiniBarAction = (action: string, style?: string, aiRequestText?: string) => {
@@ -180,30 +185,45 @@ const closeGptResultModal = () => {
 };
 
 const applyGptResult = () => {
-  if (selectionStart !== null && selectionEnd !== null) {
-    const beforeText = text.substring(0, selectionStart);
-    const afterText = text.substring(selectionEnd);
-    const newText = beforeText + gptResultText + afterText;
-    setText(newText);
-  }
-  miniBarPosition.visible=false;
-  setAiRequestText("");
-  setGptResultModal(false);
-  setIsDropdownOpen(false);
-  // 미니바 닫기
-};
+    if (selectionStart !== null && selectionEnd !== null) {
+      const beforeText = text.substring(0, selectionStart);
+      const afterText = text.substring(selectionEnd);
+      const newText = beforeText + gptResultText + afterText;
+      setText(newText);
+    }
+    miniBarPosition.visible=false;
+    setAiRequestText("");
+    setGptResultModal(false);
+    setIsDropdownOpen(false);
+    // 미니바 닫기
+  };
 
-const toggleDropdown = () => {
-  setIsDropdownOpen(!isDropdownOpen);
-};
+
 
 useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
         const target = event.target as HTMLElement;
+
         if (target.classList.contains('post-area')) {
             setIsDropdownOpen(false);
             setMiniBarPosition((prev) => ({ ...prev, visible: false }));
         }
+
+        // 'mini-bar-input' 클래스에 대해서는 드래그 상태를 유지하면서 입력 가능하게 함
+        if (
+            target.classList.contains('mini-bar') ||
+            target.classList.contains('mini-bar-btn') ||
+            target.classList.contains('mini-bar-row') ||
+            target.classList.contains('mini-bar-btn2')
+        ) {
+            event.preventDefault();
+        }
+
+        // if (target.classList.contains('mini-bar-input')) {
+        //     if (textAreaRef.current && selectionStart !== null && selectionEnd !== null) {
+        //         textAreaRef.current.setSelectionRange(selectionStart, selectionEnd);
+        //     }
+        // }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -218,48 +238,12 @@ useEffect(() => {
     }
 }, [miniBarPosition.visible]);
 
-const GptResultModal = ({gptResultText, isLoading}:{gptResultText:string, isLoading: boolean}) => (
-  <div
-    className="gpt-modal"
-    style={{
-      position: 'absolute',
-      top: `${miniBarPosition.top + 60}px`, // miniBarPosition 바로 아래에 위치
-      left: `${miniBarPosition.left}px`,
-      backgroundColor: 'white',
-      padding: '20px',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-      zIndex: 1000,
-    }}
-  >
-    <div className="gpt-modal-content">
-      {isLoading ? (
-        <div className="loading-spinner">로딩 중...</div>
-      ) : (
-        <>
-          <textarea
-            className="gpt-modal-textarea" 
-            value={gptResultText}
-            readOnly
-          ></textarea>
-          <div className="gpt-modal-buttons">
-            <button className="gpt-cancel-btn" onClick={closeGptResultModal}>
-              취소
-            </button>
-            <button className="gpt-apply-btn" onClick={applyGptResult}>
-              적용
-            </button>
-          </div>
-        </>
-      )}
-    </div>
-  </div>
-);
 
 return (
 <div className="post-area">
     <div className="form-container">
     <form onSubmit={handleSubmit}>
-      <input
+        <input
         ref={titleInputRef}
         type="text"
         placeholder="제목을 입력해 주세요"
@@ -268,8 +252,8 @@ return (
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         // onMouseUp={handleTextSelection} // 텍스트 드래그 후 이벤트 처리
-      />
-      <input
+        />
+        <input
         type="text" 
         placeholder="책을 선택해 주세요"
         value={selectedBookTitle}
@@ -277,8 +261,8 @@ return (
         className="input-field"
         name="bookTitle"
         readOnly
-      />
-      <textarea
+        />
+        <textarea
         ref={textAreaRef}
         placeholder="내용을 입력해 주세요"
         className="textarea-field"
@@ -287,100 +271,20 @@ return (
         onChange={(e) => setText(e.target.value)}
         onMouseUp={handleTextSelection} // 텍스트 드래그 후 이벤트 처리
         onSelect={handleTextSelection} // 키보드로 텍스트 선택 시 이벤트 처리
-      ></textarea>
-      <button type="submit" className="submit-btn">
+        ></textarea>
+        <button type="submit" className="submit-btn">
         {isEditMode ? "수정하기" : "작성하기"}
-      </button>
-      {error && <Error>{error}</Error>}
+        </button>
+        {error && <Error>{error}</Error>}
     </form>
     </div>
     {isDialogOpen && (
     <BookSearchDialog onClose={closeDialog} onSelect={handleSelectBook} />
     )}
 
-    {/* 미니 바 */}
-    {miniBarPosition.visible && (
-      <div
-        className="mini-bar"
-        style={{
-            top: `${miniBarPosition.top}px`,
-            left: `${miniBarPosition.left}px`,
-            display: 'flex',
-            flexDirection: 'column',
-        }}
-      >
-      <div className="mini-bar-row">
-        <input
-          type="text"
-          className="mini-bar-input"
-          placeholder="AI에게 요청 내용"
-          value={aiRequestText}
-          onChange={(e) => setAiRequestText(e.target.value)}
-        />
-        <button
-          className="submit-btn"
-          onClick={() => handleMiniBarAction("AI 요청", undefined, aiRequestText)}
-        >
-        요청하기
-        </button>
-      </div>
-      <div className="mini-bar-row">
-        <button
-          className="mini-bar-btn"
-          onClick={toggleDropdown}
-        >
-          문체 변경
-          <FontAwesomeIcon icon={faChevronDown} />
-        </button>
+      {/* 미니 바 */}
+      { MiniBarComponent(miniBarPosition, handleMiniBarAction, aiRequestText, setAiRequestText, applyGptResult, closeGptResultModal, gptResultText, isLoading, gptResultModal,isDropdownOpen,setIsDropdownOpen)}
 
-        <button
-          className="mini-bar-btn"
-          onClick={() => handleMiniBarAction("내용 첨삭")}
-        >
-          내용 첨삭
-        </button>
-        <button
-          className="mini-bar-btn"
-          onClick={() => handleMiniBarAction("맞춤법 교정")}
-        >
-          맞춤법 교정
-        </button>
-      </div>
-    </div>
-  )}
-  {isDropdownOpen && (
-  <div
-    className="mini-bar"
-    style={{
-      top: `${miniBarPosition.top+120}px`,
-      left: `${miniBarPosition.left}px`,
-      display: 'flex',
-      flexDirection: 'column',
-    }}
-  >
-    <button
-      className="mini-bar-btn2"
-      onClick={() => handleMiniBarAction("문체 변경", "구어체")}
-    >
-      구어체
-    </button>
-    <button
-      className="mini-bar-btn2"
-      onClick={() => handleMiniBarAction("문체 변경", "문어체")}
-    >
-      문어체
-    </button>
-    <button
-      className="mini-bar-btn2"
-      onClick={() => handleMiniBarAction("문체 변경", "격식체")}
-    >
-      격식체
-    </button>
-  </div>
-  )}
-
-  {/* 모달 창 표시 */}
-  {gptResultModal && <GptResultModal gptResultText={gptResultText} isLoading={isLoading} />}
 </div>
 );
 };
