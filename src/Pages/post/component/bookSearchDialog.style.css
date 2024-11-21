@@ -40,6 +40,9 @@
         margin-right: 0; /* 오른쪽 여백 제거 */
         margin-bottom: 0; /* 아래쪽 네비게이션 바 간섭 방지 */
     }
+    .search-container{
+        width: 100%;
+    }
 }
 
 /* 스크롤바 숨기기 */
@@ -73,6 +76,16 @@
     display: flex; /* 검색창과 버튼을 가로로 정렬 */
     align-items: center; /* 수직 중앙 정렬 */
     gap: 20px; /* 검색창과 닫기 버튼 간격 */
+}
+
+.search-container{
+    margin: 0 auto;
+    width: 95%;
+    display: flex; /* Flexbox 활성화 */
+    align-items: center; /* 세로축 정렬 */
+    gap: 20px; /* 입력 박스와 버튼 간의 간격 */
+    justify-content: space-between; /* 입력 박스와 버튼을 균등 배치 (옵션) */
+    margin-bottom: 16px; /* 하단 여백 (필요 시) */
 }
 
 /* 검색창 스타일 */
@@ -117,6 +130,12 @@
 }
 
 /* 책 리스트 스타일 */
+
+.book-search-result-list-container{
+    max-width: 90%;
+    margin: 0 auto;
+}
+
 .dialog-content ul {
     list-style: none;
     margin: 0;
