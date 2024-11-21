@@ -72,11 +72,8 @@ const CarouselSwiper: React.FC<CarouselSwiperProps> = ({ covers }) => {
     >
         {visibleCover.map((src, index) => (
       <SwiperSlide>
-        {/* <img src="https://cdn.magloft.com/github/swiper/images/page-001.jpg" /> */}
         <img src={src} alt={`Book ${index + 1}`} />
       </SwiperSlide>
-          // <div className="carousel-slide" key={index}>
-          // </div>
         ))}
     </Swiper>
   </>
