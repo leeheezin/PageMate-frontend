@@ -66,9 +66,11 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
         }
     };
 
-    const handleSelectBook = (bookTitle: string, bookAuthor: string[]) => {
-        const formatAuthor = bookAuthor.length > 0 ? bookAuthor.join(", ") : "저자 정보 없음";
-        onSelect(bookTitle, formatAuthor);
+    const handleSelectBook = (bookTitle: string, bookAuthor: string | string[]) => {
+        // bookAuthor가 string이면 배열로 변환, 아니면 그대로 사용
+        const formattedAuthor = typeof bookAuthor === "string" ? [bookAuthor] : bookAuthor;
+        const formatAuthorText = formattedAuthor.length > 0 ? formattedAuthor.join(", ") : "저자 정보 없음";
+        onSelect(bookTitle, formatAuthorText); // 부모 컴포넌트로 전달
         handleClose();
     };
 
@@ -143,13 +145,19 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
                     <div className="popular-books-grid">
                         <h2 className="popular-books-title">오늘의 인기 도서</h2>
                         <div className="grid-container">
-                            {covers.map((src, index) => (
-                                <div className="book-card" key={index}>
-                                    <img
-                                        src={src || "/path/to/default/cover.jpg"}
-                                        alt={`Book ${index + 1}`}
-                                    />
-                                </div>
+                            {books2.map((book, index) => (
+                            <div
+                                className="book-card"
+                                key={index}
+                                onClick={() =>
+                                    handleSelectBook(book.title, book.author || "저자 정보 없음")
+                                } // 책 클릭 시 제목과 저자를 부모로 전달
+                            >
+                                <img
+                                    src={book.cover || "/path/to/default/cover.jpg"}
+                                    alt={book.title || `Book ${index + 1}`}
+                                />
+                            </div>
                             ))}
                         </div>
                     </div>
