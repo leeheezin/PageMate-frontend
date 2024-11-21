@@ -60,54 +60,53 @@ const PostWrite: React.FC = () => {
     const { user } = useSelector((state: RootState) => state.user);
 
     useEffect(() => {
-        if(!user){
-          navigate('/login');
-        }
-      }, []);
+      if(!user){
+        navigate('/login');
+      }
+    }, []);
     
 
     useEffect(() => {
-        if (postToEdit) {
-        setIsEditMode(true);
-        console.log("postToEditid", postToEdit.id);
-        }
+      if (postToEdit) {
+      setIsEditMode(true);
+      console.log("postToEditid", postToEdit.id);
+      }
     }, [postToEdit]);
 
 
+    // // 미니바가 열린 상태에서도 선택 범위를 유지
+    // useEffect(() => {
+    //   const handleClickOutside = (event: MouseEvent) => {
+    //     const target = event.target as HTMLElement;
 
     // 미니바가 열린 상태에서도 선택 범위를 유지
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
         const target = event.target as HTMLElement;
         
-        console.log("mini-bar",target.closest('.mini-bar')); 
-        console.log("gpt-modal",target.closest('.gpt-modal'));
-        console.log("mini-bar-input-row",target.closest('.mini-bar-input-row'));
-        console.log("IsOverlayVisible",isOverlayVisible);
+        console.log("mini-bar", target.closest('.mini-bar')); 
+        console.log("gpt-modal", target.closest('.gpt-modal'));
+        console.log("mini-bar-input-row", target.closest('.mini-bar-input-row'));
+        console.log("IsOverlayVisible", isOverlayVisible);
 
-        // mini-bar 내부의 모든 컴포넌트 클릭 시 mini-bar가 클릭된 것으로 처리
         if (
-            target.closest('.mini-bar')|| // mini-bar 내부의 모든 요소를 포함
-            target.closest('.gpt-modal')||
+            target.closest('.mini-bar') || 
+            target.closest('.gpt-modal') ||
             target.closest('.mini-bar-input-row')
         ) {
             setIsOverlayVisible(true);
             return;
-        }else{
+        } else {
             setIsOverlayVisible(false);
             setMiniBarPosition((prev) => ({ ...prev, visible: false }));
         }
-
-        // 다른 영역 클릭 시 미니바 닫기 및 선택 해제
-        // if (!target.classList.contains("post-area")) {
-        // }
       };
 
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener('mousedown', handleClickOutside);
       return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
+        document.removeEventListener('mousedown', handleClickOutside);
       };
-    }, [selectionStart, selectionEnd]);
+    }, [isOverlayVisible]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
