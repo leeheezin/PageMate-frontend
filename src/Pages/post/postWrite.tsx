@@ -10,19 +10,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import getCaretCoordinates from 'textarea-caret';
 import { useNavigate, useLocation } from "react-router-dom";
-import miniBar from "./ai";
+import MiniBar from "./miniBar";
 import MiniBarComponent from "./ai";
 import styled from "styled-components";
 import "./component/gptModal.css";
 import "./component/postWrite.style.css";
-
 
 const Error = styled.div`
     color: red;
     margin-top: 15px;
     font-size: 14px;
 `;
-
 
 const PostWrite: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -70,6 +68,43 @@ const PostWrite: React.FC = () => {
         }
     }, [postToEdit]);
 
+
+
+    // 미니바가 열린 상태에서도 선택 범위를 유지
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        const target = event.target as HTMLElement;
+
+        // 미니바 관련 영역 클릭 시 선택 범위 유지
+        if (
+          target.classList.contains("mini-bar") ||
+          target.classList.contains("mini-bar-btn") ||
+          target.classList.contains("mini-bar-row")
+        ) {
+          // 선택 범위 복원
+          if (
+            textAreaRef.current &&
+            selectionStart !== null &&
+            selectionEnd !== null
+          ) {
+            textAreaRef.current.setSelectionRange(selectionStart, selectionEnd);
+          }
+          event.preventDefault();
+          return;
+        }
+
+        // 다른 영역 클릭 시 미니바 닫기 및 선택 해제
+        if (!target.classList.contains("post-area")) {
+          setMiniBarPosition((prev) => ({ ...prev, visible: false }));
+        }
+      };
+
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [selectionStart, selectionEnd]);
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (title && text) {
@@ -101,9 +136,6 @@ const PostWrite: React.FC = () => {
     };
 };
 
-
-
-
 const handleTextSelection = (
   event: React.SyntheticEvent<HTMLTextAreaElement>
 ) => {
@@ -127,17 +159,8 @@ const handleTextSelection = (
 
       // 스크롤 값을 반영해 미니바 위치 조정
       setMiniBarPosition({
-        top:
-          textareaRect.top +
-          coordinates.top -
-          scrollTop +
-          window.scrollY -
-          30, // 오프셋 조정
-        left:
-          textareaRect.left +
-          coordinates.left -
-          scrollLeft +
-          window.scrollX,
+        top: textareaRect.top + coordinates.top + scrollTop + window.scrollY - 30, // 미니바 오프셋
+        left: textareaRect.left + coordinates.left + scrollLeft + window.scrollX,
         visible: true,
       });
   } else {
@@ -181,7 +204,10 @@ const handleMiniBarAction = (action: string, style?: string, aiRequestText?: str
 };
 
 const closeGptResultModal = () => {
+  miniBarPosition.visible=false;
+  setAiRequestText("");
   setGptResultModal(false);
+  setIsDropdownOpen(false);
 };
 
 const applyGptResult = () => {
@@ -198,52 +224,17 @@ const applyGptResult = () => {
     // 미니바 닫기
   };
 
-
-
-useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-        const target = event.target as HTMLElement;
-
-        if (target.classList.contains('post-area')) {
-            setIsDropdownOpen(false);
-            setMiniBarPosition((prev) => ({ ...prev, visible: false }));
-        }
-
-        // 'mini-bar-input' 클래스에 대해서는 드래그 상태를 유지하면서 입력 가능하게 함
-        if (
-            target.classList.contains('mini-bar') ||
-            target.classList.contains('mini-bar-btn') ||
-            target.classList.contains('mini-bar-row') ||
-            target.classList.contains('mini-bar-btn2')
-        ) {
-            event.preventDefault();
-        }
-
-        // if (target.classList.contains('mini-bar-input')) {
-        //     if (textAreaRef.current && selectionStart !== null && selectionEnd !== null) {
-        //         textAreaRef.current.setSelectionRange(selectionStart, selectionEnd);
-        //     }
-        // }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-    };
-}, []);
-
 useEffect(() => {
     if (!miniBarPosition.visible) {
         setIsDropdownOpen(false);
     }
 }, [miniBarPosition.visible]);
 
-
 return (
-<div className="post-area">
+  <div className="post-area">
     <div className="form-container">
     <form onSubmit={handleSubmit}>
-        <input
+      <input
         ref={titleInputRef}
         type="text"
         placeholder="제목을 입력해 주세요"
@@ -252,8 +243,8 @@ return (
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         // onMouseUp={handleTextSelection} // 텍스트 드래그 후 이벤트 처리
-        />
-        <input
+      />
+      <input
         type="text" 
         placeholder="책을 선택해 주세요"
         value={selectedBookTitle}
@@ -261,8 +252,8 @@ return (
         className="input-field"
         name="bookTitle"
         readOnly
-        />
-        <textarea
+      />
+      <textarea
         ref={textAreaRef}
         placeholder="내용을 입력해 주세요"
         className="textarea-field"
@@ -271,21 +262,36 @@ return (
         onChange={(e) => setText(e.target.value)}
         onMouseUp={handleTextSelection} // 텍스트 드래그 후 이벤트 처리
         onSelect={handleTextSelection} // 키보드로 텍스트 선택 시 이벤트 처리
-        ></textarea>
-        <button type="submit" className="submit-btn">
-        {isEditMode ? "수정하기" : "작성하기"}
-        </button>
-        {error && <Error>{error}</Error>}
+      ></textarea>
+      <button type="submit" className="submit-btn">
+      {isEditMode ? "수정하기" : "작성하기"}
+      </button>
+      {error && <Error>{error}</Error>}
     </form>
     </div>
     {isDialogOpen && (
     <BookSearchDialog onClose={closeDialog} onSelect={handleSelectBook} />
     )}
+    {/* 미니 바 */}
+    {miniBarPosition.visible && (
+      <MiniBar
+        miniBarPosition={miniBarPosition}
+        handleMiniBarAction={handleMiniBarAction}
+        aiRequestText={aiRequestText}
+        setAiRequestText={setAiRequestText}
+        applyGptResult={applyGptResult}
+        closeGptResultModal={closeGptResultModal}
+        gptResultText={gptResultText}
+        isLoading={isLoading}
+        gptResultModal={gptResultModal}
+        isDropdownOpen={isDropdownOpen}
+        setIsDropdownOpen={setIsDropdownOpen}
+      />
+    )}
 
-      {/* 미니 바 */}
-      { MiniBarComponent(miniBarPosition, handleMiniBarAction, aiRequestText, setAiRequestText, applyGptResult, closeGptResultModal, gptResultText, isLoading, gptResultModal,isDropdownOpen,setIsDropdownOpen)}
-
-</div>
+    {/* 미니 바 */}
+    {/* { MiniBarComponent(miniBarPosition, handleMiniBarAction, aiRequestText, setAiRequestText, applyGptResult, closeGptResultModal, gptResultText, isLoading, gptResultModal,isDropdownOpen,setIsDropdownOpen)} */}
+  </div>
 );
 };
 export default PostWrite;
