@@ -8,8 +8,8 @@ import { AppDispatch, RootState } from "../../features/store";
 import { styleChange, contentCorrection, spellingCorrection ,aiRequest } from "../../features/gpt/gptSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import getCaretCoordinates from 'textarea-caret';
 import { useNavigate, useLocation } from "react-router-dom";
+import { TextareaSelectionBounds } from "textarea-selection-bounds";
 import MiniBar from "./miniBar";
 import MiniBarComponent from "./ai";
 import styled from "styled-components";
@@ -21,6 +21,8 @@ const Error = styled.div`
     margin-top: 15px;
     font-size: 14px;
 `;
+
+// TextMeasurement 객체를 전역 변수로 생성
 
 const PostWrite: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -38,6 +40,7 @@ const PostWrite: React.FC = () => {
     const error = useSelector((state: RootState) => state.posts.error);
     const [gptResultModal, setGptResultModal] = useState(false);    
     const gptResultText = useSelector((state: RootState) => state.gpt.gptResultText);       
+    
     
 
     const [selectedText, setSelectedText] = useState("");
@@ -151,18 +154,20 @@ const handleTextSelection = (
       setSelectionEnd(end);
       setIsOverlayVisible(false);
 
-      // 커서 좌표 계산
-      const coordinates = getCaretCoordinates(target, start);
+      const bounds = new TextareaSelectionBounds(target);
+      const coordinates = bounds.getBounds();
+
 
       // 텍스트 영역의 위치 및 스크롤 값 가져오기
       const textareaRect = target.getBoundingClientRect();
       const scrollTop = target.scrollTop;
       const scrollLeft = target.scrollLeft;
+      console.log('coordinates:', coordinates);
 
       // 스크롤 값을 반영해 미니바 위치 조정
       setMiniBarPosition({
-        top: textareaRect.top + coordinates.top + scrollTop + window.scrollY - 30, // 미니바 오프셋
-        left: textareaRect.left + coordinates.left + scrollLeft + window.scrollX,
+        top:  coordinates.top + coordinates.height + window.scrollY -50, // 미니바 오프셋
+        left:  coordinates.left < 200 ? textareaRect.left +  window.scrollX  : coordinates.left + coordinates.width + window.scrollX ,
         visible: true,
       });
   } else {
@@ -257,6 +262,7 @@ return (
       />
           <div className="textarea-container">
             <textarea
+              id="post_textarea"
               ref={textAreaRef}
               placeholder="내용을 입력해 주세요"
               className={`textarea-field ${isOverlayVisible ? 'transparent' : ''}`}
