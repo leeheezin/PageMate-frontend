@@ -5,19 +5,24 @@ import "./component/postWrite.style.css";
 import "./component/gptModal.css";
 import BookSearchDialog from "./bookSearchDialog";
 import { AppDispatch, RootState } from "../../features/store";
-import styled from "styled-components";
 import { styleChange, contentCorrection, spellingCorrection ,aiRequest } from "../../features/gpt/gptSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import getCaretCoordinates from 'textarea-caret';
-
 import { useNavigate, useLocation } from "react-router-dom";
+import miniBar from "./ai";
+import MiniBarComponent from "./ai";
+import styled from "styled-components";
+import "./component/gptModal.css";
+import "./component/postWrite.style.css";
+
 
 const Error = styled.div`
     color: red;
     margin-top: 15px;
     font-size: 14px;
 `;
+
 
 const PostWrite: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -49,8 +54,14 @@ const PostWrite: React.FC = () => {
     const [aiRequestText, setAiRequestText] = useState("");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const { user } = useSelector((state: RootState) => state.user);
 
-
+    useEffect(() => {
+        if(!user){
+          navigate('/login');
+        }
+      }, []);
+    
 
     useEffect(() => {
         if (postToEdit) {
@@ -146,7 +157,8 @@ const handleSelectBook = (bookTitle: string, bookAuthor: string) => {
     setSelectedBookAuthor(bookAuthor);
     closeDialog();
 };
-  
+
+
   
 // style, text 는 선택적 인자
 const handleMiniBarAction = (action: string, style?: string, aiRequestText?: string) => {
@@ -173,30 +185,45 @@ const closeGptResultModal = () => {
 };
 
 const applyGptResult = () => {
-  if (selectionStart !== null && selectionEnd !== null) {
-    const beforeText = text.substring(0, selectionStart);
-    const afterText = text.substring(selectionEnd);
-    const newText = beforeText + gptResultText + afterText;
-    setText(newText);
-  }
-  miniBarPosition.visible=false;
-  setAiRequestText("");
-  setGptResultModal(false);
-  setIsDropdownOpen(false);
-  // 미니바 닫기
-};
+    if (selectionStart !== null && selectionEnd !== null) {
+      const beforeText = text.substring(0, selectionStart);
+      const afterText = text.substring(selectionEnd);
+      const newText = beforeText + gptResultText + afterText;
+      setText(newText);
+    }
+    miniBarPosition.visible=false;
+    setAiRequestText("");
+    setGptResultModal(false);
+    setIsDropdownOpen(false);
+    // 미니바 닫기
+  };
 
-const toggleDropdown = () => {
-  setIsDropdownOpen(!isDropdownOpen);
-};
+
 
 useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
         const target = event.target as HTMLElement;
+
         if (target.classList.contains('post-area')) {
             setIsDropdownOpen(false);
             setMiniBarPosition((prev) => ({ ...prev, visible: false }));
         }
+
+        // 'mini-bar-input' 클래스에 대해서는 드래그 상태를 유지하면서 입력 가능하게 함
+        if (
+            target.classList.contains('mini-bar') ||
+            target.classList.contains('mini-bar-btn') ||
+            target.classList.contains('mini-bar-row') ||
+            target.classList.contains('mini-bar-btn2')
+        ) {
+            event.preventDefault();
+        }
+
+        // if (target.classList.contains('mini-bar-input')) {
+        //     if (textAreaRef.current && selectionStart !== null && selectionEnd !== null) {
+        //         textAreaRef.current.setSelectionRange(selectionStart, selectionEnd);
+        //     }
+        // }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -211,42 +238,6 @@ useEffect(() => {
     }
 }, [miniBarPosition.visible]);
 
-const GptResultModal = ({gptResultText, isLoading}:{gptResultText:string, isLoading: boolean}) => (
-  <div
-    className="gpt-modal"
-    style={{
-      position: 'absolute',
-      top: `${miniBarPosition.top + 60}px`, // miniBarPosition 바로 아래에 위치
-      left: `${miniBarPosition.left}px`,
-      backgroundColor: 'white',
-      padding: '20px',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-      zIndex: 1000,
-    }}
-  >
-    <div className="gpt-modal-content">
-      {isLoading ? (
-        <div className="loading-spinner">로딩 중...</div>
-      ) : (
-        <>
-          <textarea
-            className="gpt-modal-textarea" 
-            value={gptResultText}
-            readOnly
-          ></textarea>
-          <div className="gpt-modal-buttons">
-            <button className="gpt-apply-btn" onClick={applyGptResult}>
-              적용하기
-            </button>
-            <button className="gpt-cancel-btn" onClick={closeGptResultModal}>
-              취소
-            </button>
-          </div>
-        </>
-      )}
-    </div>
-  </div>
-);
 
 return (
 <div className="post-area">
@@ -292,85 +283,8 @@ return (
     )}
 
       {/* 미니 바 */}
-      {miniBarPosition.visible && (
-        <div
-            className="mini-bar"
-            style={{
-                top: `${miniBarPosition.top}px`,
-                left: `${miniBarPosition.left}px`,
-                display: 'flex',
-                flexDirection: 'column',
-            }}
-        >
-            <div className="mini-bar-row">
-                <input
-                    type="text"
-                    className="mini-bar-input"
-                    placeholder="AI에게 요청 내용"
-                    value={aiRequestText}
-                    onChange={(e) => setAiRequestText(e.target.value)}
-                />
-                <button
-                    className="mini-bar-btn"
-                    onClick={() => handleMiniBarAction("AI 요청", undefined, aiRequestText)}
-                >
-                    요청하기
-                </button>
-            </div>
-            <div className="mini-bar-row">
-                <button
-                    className="mini-bar-btn"
-                    onClick={toggleDropdown}
-                >
-                    문체 변경 <FontAwesomeIcon icon={faChevronDown} />
-                </button>
+      { MiniBarComponent(miniBarPosition, handleMiniBarAction, aiRequestText, setAiRequestText, applyGptResult, closeGptResultModal, gptResultText, isLoading, gptResultModal,isDropdownOpen,setIsDropdownOpen)}
 
-                <button
-                    className="mini-bar-btn"
-                    onClick={() => handleMiniBarAction("내용 첨삭")}
-                >
-                    내용 첨삭
-                </button>
-                <button
-                    className="mini-bar-btn"
-                    onClick={() => handleMiniBarAction("맞춤법 교정")}
-                >
-                    맞춤법 교정
-                </button>
-            </div>
-        </div>
-    )}
-    {isDropdownOpen && (
-    <div className="mini-bar"
-            style={{
-                top: `${miniBarPosition.top+120}px`,
-                left: `${miniBarPosition.left}px`,
-                display: 'flex',
-                flexDirection: 'column',
-            }}>
-        <button
-            className="mini-bar-btn2"
-            onClick={() => handleMiniBarAction("문체 변경", "구어체")}
-        >
-            구어체
-        </button>
-        <button
-            className="mini-bar-btn2"
-            onClick={() => handleMiniBarAction("문체 변경", "문어체")}
-        >
-            문어체
-        </button>
-        <button
-            className="mini-bar-btn2"
-            onClick={() => handleMiniBarAction("문체 변경", "격식체")}
-        >
-            격식체
-        </button>
-    </div>
-)}
-
-    {/* 모달 창 표시 */}
-    {gptResultModal && <GptResultModal gptResultText={gptResultText} isLoading={isLoading} />}
 </div>
 );
 };

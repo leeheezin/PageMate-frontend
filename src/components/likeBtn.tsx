@@ -34,12 +34,12 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId }) => {
     const post = useSelector((state: RootState) =>
         state.posts.posts.find(post => post._id === postId) || null
     );
-    const user = useSelector((state: RootState) => state.user.user) as UserResponse | null;
+    const user = useSelector((state: RootState) => state.user.user);
     const loading = useSelector((state: RootState) => state.posts.loading);
 
     if (!post) return null; 
 
-    const userId = user?.data._id || ""; 
+    const userId = user?._id || ""; 
     const liked = user ? post.likes.includes(userId) : false; 
 
     const handleToggleLike = async () => {

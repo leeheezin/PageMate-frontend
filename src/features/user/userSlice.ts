@@ -31,9 +31,11 @@ interface UserData {
   createdAt: string;
   updatedAt: string;
 }
+
 interface User {
   data: UserData;
 }
+
 interface LoginPayload {
   email: string;
   password: string;
@@ -96,6 +98,11 @@ export const loginWithToken = createAsyncThunk<
   } catch (error: any) {
     return rejectWithValue(error.message);
   }
+});
+
+export const logout = createAsyncThunk("user/logout", async () => {
+  sessionStorage.removeItem("token");
+  window.location.reload();
 });
 
 const userSlice = createSlice({
