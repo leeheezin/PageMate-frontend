@@ -11,6 +11,8 @@ interface CloudinaryUploadWidgetProps {
 const ActionButton = styled.button`
   padding: 9px;
   border-radius: 5px;
+  text-align: start;
+  width: 100%;
   font-size: 16px;
   cursor: pointer;
   border: none;

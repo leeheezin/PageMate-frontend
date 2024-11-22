@@ -102,9 +102,10 @@ interface CommentProps {
     visible: boolean;
     postId: string; // 해당 게시물의 ID
     onCommentCountChange?: (newCount: number) => void; // 콜백 @추가
+    isMyPage: boolean;
 }
 
-const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange }) => {
+const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange, isMyPage }) => {
     const [inputValue, setInputValue] = useState('');
     const { comments, loading, error } = useSelector((state: RootState) => state.comments);
     const currentUser = useSelector((state: RootState) => state.user.user); // 현재 로그인한 유저 정보
@@ -146,7 +147,7 @@ const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange
 
     return (
         <CommentContainer>
-            {comments.map((comment, index) => (
+            {comments.length>0?comments.map((comment, index) => (
                 <CommentItem key={index}>
                      <ProfileImage
                         src ={ (comment.profilePhoto || '/path/to/default/profile.png') as string } // profilePhoto가 없으면 기본 이미지
@@ -167,8 +168,9 @@ const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange
                     )}
                             
                 </CommentItem>
-            ))}
-            <InputContainer>
+            )):(<div>댓글이 없습니다</div>)}
+            {!isMyPage &&
+            (<InputContainer>
                 <CommentInput 
                     type="text" 
                     value={inputValue} 
@@ -187,7 +189,7 @@ const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange
                 >
                     {loading ? '...' : <FontAwesomeIcon icon={faChevronUp} />}
                 </SubmitButton>
-            </InputContainer>
+            </InputContainer>)}
             {error && <p style={{ color: 'red' }}>{error}</p>}
         </CommentContainer>
     );
