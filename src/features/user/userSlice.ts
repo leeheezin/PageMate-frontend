@@ -90,6 +90,24 @@ export const loginWithEmail = createAsyncThunk<
   }
 });
 
+export const loginWithGoogle = createAsyncThunk<
+  UserData,
+  LoginPayload,
+  { rejectValue: string }
+>("user/loginWithGoogle", async ( token , { rejectWithValue }) => {
+  try {
+
+    const response = await api.post("/auth/login/google", { token });
+    console.log("🚀 ~ > ~ response:", response.data)
+
+    sessionStorage.setItem("token", response.data.sessionToken);
+
+    return response.data.user;
+  } catch (error: any) {
+    return rejectWithValue(error.message);
+  }
+});
+
 export const loginWithToken = createAsyncThunk<
   UserData,
   void,
@@ -175,7 +193,20 @@ const userSlice = createSlice({
       .addCase(uploadProfile.rejected, (state, action) => {
         state.loading = false;
         state.profileUpdateError = action.payload || "Profile update failed";
-      });
+      })
+      .addCase(loginWithGoogle.pending, (state)=>{
+        state.loading = true;
+        state.loginError = null;
+      })
+      .addCase(loginWithGoogle.fulfilled, (state, action)=>{
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(loginWithGoogle.rejected, (state, action)=>{
+        state.loading = false;
+        state.loginError = action.payload || "login failed";
+      })
+      ;
   },
 });
 
