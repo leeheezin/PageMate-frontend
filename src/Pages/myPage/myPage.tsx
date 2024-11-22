@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { ReactComponent as ModifyIcon } from "../../assets/images/icon-more-vertical.svg";
 import ProfileIcon from "../../assets/images/icon-user.png";
-import PostComponent from "./component/post";
+import PostComponent from "../../components/post";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../features/store";
 import { getLikedPost, getMyPost } from "../../features/post/postsSlice";
@@ -147,6 +147,10 @@ const MyPage: React.FC = () => {
   const [posts, setPost] = useState<Post[]>([]);
   const [isNicknameModalOpen, setIsNicknameModalOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [activeCommentPostId, setActiveCommentPostId] = useState<string | null>(
+    null
+  ); // 열려 있는 댓글 영역의 포스트 ID
+
   const [dialogPosition, setDialogPosition] = useState({
     top: "50%",
     left: "50%",
@@ -224,15 +228,13 @@ const MyPage: React.FC = () => {
   };
 
   const handleProfileDelete = async () => {
-    try{ 
+    try {
       await dispatch(uploadProfile({ profilePhoto: "delete" }));
-      setIsDialogOpen(false); 
-      alert("삭제되었습니다.")
+      setIsDialogOpen(false);
+      alert("삭제되었습니다.");
+    } catch (error: any) {
+      alert("잠시 후 다시 시도해주세요");
     }
-    catch(error:any){
-      alert("잠시 후 다시 시도해주세요")
-    }
-
   };
   const handleBtn = (event: any) => {
     event.preventDefault();
@@ -247,7 +249,10 @@ const MyPage: React.FC = () => {
       setPost(myLiked);
     }
   };
-  console.log("user", user);
+  const handleCommentToggle = (postId: string) => {
+    // 같은 포스트 클릭 시 닫고, 다른 포스트 클릭 시 열기
+    setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
+  };
   return (
     <Container>
       <Dialog
@@ -294,7 +299,25 @@ const MyPage: React.FC = () => {
           </Filter>
           <Posts>
             {posts?.length > 0 ? (
-              posts.map((post) => <PostComponent key={post._id} post={post} />)
+              posts.map((post) => (
+                <PostComponent
+                  _id={post._id}
+                  key={post._id}
+                  userId={post.userId}
+                  bookTitle={post.bookTitle}
+                  bookAuthor={post.bookAuthor}
+                  title={post.title}
+                  text={post.text}
+                  date={"222"}
+                  author={post.author}
+                  profilePhoto={post.profilePhoto}
+                  likes={post.likes}
+                  comments={post.comments}
+                  isCommentVisible={activeCommentPostId === post._id} // 댓글 영역이 열려 있는지 여부 전달
+                  onCommentToggle={handleCommentToggle} // 댓글 토글 핸들러 전달
+                  isMyPage={true}
+                />
+              ))
             ) : (
               <NoPost>게시글이 없습니다.</NoPost>
             )}

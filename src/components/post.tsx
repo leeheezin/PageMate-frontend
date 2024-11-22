@@ -28,6 +28,7 @@ interface PostProps {
   comments: { author: string; text: string }[];
   isCommentVisible?: boolean; // 댓글 영역이 열려 있는지 여부
   onCommentToggle?: (postId: string) => void; // 댓글 토글 핸들러
+  isMyPage?: boolean;
 }
 interface UserResponse {
   status: string;
@@ -161,6 +162,7 @@ const Post: React.FC<PostProps> = ({
     comments,
     isCommentVisible = false, // @@기본값 설정
     onCommentToggle,  // @@함수 전달 여부에 따라 동작 추가해야함
+    isMyPage = false,
     }) => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const navigate = useNavigate();
@@ -276,6 +278,7 @@ const Post: React.FC<PostProps> = ({
                     visible={isCommentVisible} 
                     postId={_id} 
                     onCommentCountChange={handleCommentCountChange} // 콜백 전달 @추가
+                    isMyPage ={isMyPage}
                     />
               </CommentSectionContainer>
           )}
