@@ -135,7 +135,7 @@
 
 .toast-message {
     position: absolute; /* form-container를 기준으로 위치 지정 */
-    top: -20px; /* 제목 input 박스 위로 띄우기 */
+    top: -10px; /* 제목 input 박스 위로 띄우기 */
     left: 15px; /* 제목 input과 같은 위치 */
     background-color: white; /* 배경색 */
     color: black; /* 텍스트 색상 */
