@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import { AppDispatch,RootState } from "../../features/store";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/user/userSlice";
+import ConfirmDialog from "../../components/comfirmDialog";
 
 const ActionButton = styled.div`
   padding: 9px;
@@ -29,6 +30,7 @@ const Footer: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogPosition, setDialogPosition] = useState({ top: "50%", left: "50%" });
   const { user } = useSelector((state: RootState) => state.user);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const handleMenu = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect(); // 버튼의 크기와 위치
@@ -57,11 +59,19 @@ const Footer: React.FC = () => {
 
   const handleLogout = () => {
     dispatch(logout());
+    setIsConfirmOpen(false); 
   };
 
   return (
     <>
       {/* desktop 사이드바 footer */}
+      <ConfirmDialog
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={handleLogout}
+      >
+        로그아웃하시겠습니까?
+      </ConfirmDialog>
       <div className="sidebar">
         <Dialog
           isOpen={isDialogOpen}
@@ -69,7 +79,7 @@ const Footer: React.FC = () => {
           top={dialogPosition.top}
           left={dialogPosition.left}
         >
-          {user && <ActionButton onClick={handleLogout}>로그아웃</ActionButton>}
+          {user && <ActionButton onClick={() => setIsConfirmOpen(true)}>로그아웃</ActionButton>}
           {!user && <ActionButton onClick={() => navigate('/login')}>로그인</ActionButton>}
         </Dialog>
         {/* 상단 버튼들 */}

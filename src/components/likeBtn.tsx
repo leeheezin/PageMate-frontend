@@ -35,7 +35,6 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId }) => {
         state.posts.posts.find(post => post._id === postId) || null
     );
     const user = useSelector((state: RootState) => state.user.user);
-    const loading = useSelector((state: RootState) => state.posts.loading);
 
     if (!post) return null; 
 
@@ -43,8 +42,6 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId }) => {
     const liked = user ? post.likes.includes(userId) : false; 
 
     const handleToggleLike = async () => {
-        if (loading) return;
-
         try {
             await dispatch(toggleLike({ postId, userId })).unwrap();
         } catch (error) {

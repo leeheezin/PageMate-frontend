@@ -31,6 +31,7 @@ const initialState: UserState = {
 interface UserData {
   _id: string;
   name: string;
+  nickName: string;
   email: string;
   profilePhoto: string;
   createdAt: string;

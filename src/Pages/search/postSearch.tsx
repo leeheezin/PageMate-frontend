@@ -176,7 +176,7 @@ const PostSearch: React.FC = () => {
                   title={post.title}
                   text={post.text}
                   date={post.date}
-                  author={post.author}
+                  author={post.nickName}
                   profilePhoto={post.profilePhoto}
                   likes={post.likes}
                   comments={post.comments}
