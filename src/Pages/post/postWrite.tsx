@@ -60,20 +60,24 @@ const PostWrite: React.FC = () => {
     const { user } = useSelector((state: RootState) => state.user);
 
     useEffect(() => {
-        if(!user){
-          navigate('/login');
-        }
-      }, []);
+      if(!user){
+        navigate('/login');
+      }
+    }, []);
     
 
     useEffect(() => {
-        if (postToEdit) {
-        setIsEditMode(true);
-        console.log("postToEditid", postToEdit.id);
-        }
+      if (postToEdit) {
+      setIsEditMode(true);
+      console.log("postToEditid", postToEdit.id);
+      }
     }, [postToEdit]);
 
 
+    // // 미니바가 열린 상태에서도 선택 범위를 유지
+    // useEffect(() => {
+    //   const handleClickOutside = (event: MouseEvent) => {
+    //     const target = event.target as HTMLElement;
 
     // 미니바가 열린 상태에서도 선택 범위를 유지
     useEffect(() => {
@@ -102,43 +106,48 @@ const PostWrite: React.FC = () => {
         // if (!target.classList.contains("post-area")) {
         // }
       };
-
-      document.addEventListener("mousedown", handleClickOutside);
+    
+      document.addEventListener('mousedown', handleClickOutside);
       return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
+        document.removeEventListener('mousedown', handleClickOutside);
       };
-    }, [selectionStart, selectionEnd]);
+    }, [isOverlayVisible]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (title && text) {
-        if (isEditMode) {
-            console.log("Submitting update for post with ID:", postToEdit._id);
-            dispatch(
-            updatePost({
-                id: postToEdit._id,
-                title,
-                text,
-                bookTitle: selectedBookTitle,
-                bookAuthor: selectedBookAuthor,
-            })
-            );
-            console.log("Dispatching update with post ID:", postToEdit.id);
+            try {
+                if (isEditMode) {
+                    await dispatch(
+                        updatePost({
+                            id: postToEdit._id,
+                            title,
+                            text,
+                            bookTitle: selectedBookTitle,
+                            bookAuthor: selectedBookAuthor,
+                        })
+                    ).unwrap();
+                } else {
+                    await dispatch(
+                        createPost({
+                            title,
+                            text,
+                            bookTitle: selectedBookTitle,
+                            bookAuthor: selectedBookAuthor,
+                        })
+                    ).unwrap(); 
+                }
+                navigate("/"); 
+            } catch (error) {
+                console.error("Error while submitting post:", error);
+                alert("게시글을 저장하는 중 문제가 발생했습니다.");
+            }
         } else {
-            dispatch(
-            createPost({
-                title,
-                text,
-                bookTitle: selectedBookTitle,
-                bookAuthor: selectedBookAuthor,
-            })
-            );
+            alert("모든 필수 정보를 입력해 주세요.");
         }
-        navigate("/");
-        } else {
-        alert("모든 필수 정보를 입력해 주세요.");
     };
-};
+    
 
 const handleTextSelection = (
   event: React.SyntheticEvent<HTMLTextAreaElement>

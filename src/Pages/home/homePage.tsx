@@ -9,25 +9,25 @@ import { fetchPosts, startLoading, stopLoading } from '../../features/post/posts
 import Post from '../../components/post';
 
 const formatDate = (dateString?: string): string => {
-    if (!dateString) return "날짜 없음"; // createdAt이 없을 경우 처리
-  
-    const date: Date = new Date(dateString); 
+    if (!dateString) return ""; 
+
+    const date = new Date(dateString);
     if (isNaN(date.getTime())) {
-      return "Invalid date"; // 유효하지 않은 날짜일 경우 처리
+        return "유효하지 않은 날짜"; 
     }
-  
-    const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric', 
-      month: '2-digit', 
-      day: '2-digit', 
-      hour: '2-digit', 
-      minute: '2-digit', 
-      hour12: true, // 오후/오전 포함
-    };
-    return date.toLocaleString("ko-KR", options).replace(/(\d{4})\/(\d{2})\/(\d{2}), (\d{2}):(\d{2})/, '$1.$2.$3. $7'); 
-  };
+    return new Intl.DateTimeFormat("ko-KR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+    }).format(date);
+};
+
   
 const HomePageContainer = styled.div`
+    position: relative;
     margin: 0 auto;
     padding: 16px;
 `;
@@ -36,52 +36,39 @@ const HomePage: React.FC = () => {
 const dispatch = useDispatch<AppDispatch>();
 const posts = useSelector((state: RootState) => state.posts.posts);
 const loading = useSelector((state: RootState) => state.posts.loading);
+const pagination = useSelector((state: RootState) => state.posts.pagination);
 const [displayedPosts, setDisplayedPosts] = useState(posts.slice(0, 5)); // 초기 5개만
 const [hasMore, setHasMore] = useState(true);
-
+const [isLoading, setIsLoading] = useState(false);
 const [activeCommentPostId, setActiveCommentPostId] = useState<string | null>(null); // 열려 있는 댓글 영역의 포스트 ID
+
 useEffect(() => {
-    console.log("Redux 상태 확인 - posts:", posts);
-  }, [posts]);
-useEffect(() => {
-    dispatch(fetchPosts());
-    console.log("Fetching posts...");
+    dispatch(fetchPosts({ page: 1, limit: 5 }));
 }, [dispatch]);
-
 useEffect(() => {
-    if (!loading && posts.length > 0) {
-        setDisplayedPosts(posts.slice(0, 5)); // 데이터가 있으면 초기 5개 설정
-        setHasMore(true); // 추가 데이터가 있다고 가정
-    }
-}, [posts, loading]);
-
+    setHasMore(pagination.hasMore);
+}, [pagination.hasMore]);
 const fetchMorePosts = () => {
-    const nextPosts = posts.slice(displayedPosts.length, displayedPosts.length + 5);
-    if (nextPosts.length > 0) {
-        setDisplayedPosts((prevPosts) => [...prevPosts, ...nextPosts]);
-    } else {
-        setHasMore(false); 
-    }
+    if (loading || !pagination.hasMore) return;
+    dispatch(fetchPosts({ page: pagination.currentPage + 1, limit: 5 }));
 };
 
 const handleCommentToggle = (postId: string) => {
     // 같은 포스트 클릭 시 닫고, 다른 포스트 클릭 시 열기
     setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
 };
-
+console.log(posts)
 return (
 <HomePageContainer>
-    {loading ? (
-    <Spinner />
-    ) : (
     <InfiniteScroll
-        dataLength={displayedPosts.length}
+        dataLength={posts.length}
         next={fetchMorePosts}
         hasMore={hasMore}
         loader={<Spinner />}
     >
-        {displayedPosts.map((post) => (
+        {posts.map((post) => (
         <Post
+            id={post.id}
             _id={post._id}
             key={post._id}
             userId={post.userId}
@@ -89,8 +76,8 @@ return (
             bookAuthor={post.bookAuthor}
             title={post.title}
             text={post.text}
-            date={formatDate(post.createdAt)}
-            author={post.author}
+            date={formatDate(post.date)}
+            name={post.name}
             profilePhoto={post.profilePhoto}
             likes={post.likes}
             comments={post.comments}
@@ -99,7 +86,6 @@ return (
         />
         ))}
     </InfiniteScroll>
-    )}
 </HomePageContainer>
 );
 };
