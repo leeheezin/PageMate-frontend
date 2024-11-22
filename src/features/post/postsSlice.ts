@@ -22,6 +22,7 @@ export interface Post {
     date: string;
     createdAt?: string;
     author: string;
+    nickName: string;
     profilePhoto: string;
     likes: string[];
     comments: Comment[];
@@ -40,6 +41,12 @@ interface PostsState {
     myLiked:Post[];
     loading: boolean;
     error: string | null;
+    pagination: {
+        totalPosts: number;
+        currentPage: number;
+        totalPages: number;
+        hasMore: boolean;
+    };
 }
 
 // 초기 상태
@@ -49,36 +56,51 @@ const initialState: PostsState = {
     myLiked:[],
     loading: false,
     error: null,
+    pagination: { 
+        totalPosts: 0,
+        currentPage: 1,
+        totalPages: 0,
+        hasMore: true,
+    },
 };
 
 // export const fetchPosts = createAsyncThunk<Post[], QueryParams | undefined>(
 // export const fetchPosts = createAsyncThunk<Post[], void, { state: RootState }>(
-export const fetchPosts = createAsyncThunk<Post[], QueryParams | undefined, { state: RootState }>(
+    export const fetchPosts = createAsyncThunk<
+    { posts: Post[]; pagination: { totalPosts: number; totalPages: number; currentPage: number; hasMore: boolean } },
+    QueryParams & { page?: number; limit?: number },
+    { state: RootState }
+  >(
     "posts/fetchPosts",
     async (queryParams = {}, { getState, rejectWithValue }) => {
-        try {
-            const state = getState(); 
-            const currentUserId = state.user.user?._id || "";
-            const response = await api.get("/post", { params: queryParams });
-            if (!response.data || !response.data.data) {
-                throw new Error("Invalid response structure");
-            }
-            console.log("API response data:", response.data); 
-
-            const posts = response.data.data;
-
-            return posts.map((post: Post) => ({
-                ...post,
-                liked: post.likes.includes(currentUserId), 
-                // 로그인된 사용자가 좋아요를 눌렀는지 확인
-            }));
-
-            // return response.data.data; 
-        } catch (error: any) {
-            return rejectWithValue(error?.message || "post data get error");
+      try {
+        const state = getState();
+        const currentUserId = state.user.user?._id || "";
+  
+        // API 호출 (queryParams 포함)
+        const response = await api.get("/post", { params: queryParams });
+        if (!response.data || !response.data.data) {
+          throw new Error("Invalid response structure");
         }
+  
+        console.log("API response data:", response.data);
+  
+        const posts = response.data.data;
+        const pagination = response.data.pagination;
+  
+        return {
+          posts: posts.map((post: Post) => ({
+            ...post,
+            liked: post.likes.includes(currentUserId), 
+          })),
+          pagination, 
+        };
+      } catch (error: any) {
+        return rejectWithValue(error?.message || "Failed to fetch posts");
+      }
     }
-);
+  );
+  
 
 
 export const createPost = createAsyncThunk<Post, NewPost>(
@@ -86,6 +108,7 @@ export const createPost = createAsyncThunk<Post, NewPost>(
     async (newPost, { rejectWithValue }) => {
         try {
             const response = await api.post("/post/write", newPost);
+            console.log(response.data.data._id)
             return response.data.data; 
         } catch (error: any) {
             console.log(error.response.data.error)
@@ -140,6 +163,8 @@ export const deletePost = createAsyncThunk<Post, { id: string }>(
         try {
 
             const res = await api.delete(`/post/${id}`);
+            console.log(res.data.data)
+
             return res.data.data;
         } catch (error: any) {
             if (error.response && error.response.data && error.response.data.error) {
@@ -195,8 +220,16 @@ const postsSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(fetchPosts.fulfilled, (state: PostsState, action: PayloadAction<Post[]>) => {
-                state.posts = action.payload;
+            .addCase(fetchPosts.fulfilled, (state, action) => {
+                const { posts, pagination } = action.payload;
+                state.posts = [...state.posts, ...posts]; // 새 게시글 추가
+                state.pagination = {
+                    ...state.pagination,
+                    totalPosts: pagination.totalPosts,
+                    totalPages: pagination.totalPages,
+                    currentPage: state.pagination.currentPage, 
+                    hasMore: pagination.hasMore,
+                };
                 state.loading = false;
             })
             .addCase(fetchPosts.rejected, (state, action: PayloadAction<any>) => {
@@ -263,7 +296,7 @@ const postsSlice = createSlice({
                 state.error = null;
             })
             .addCase(deletePost.fulfilled, (state, action: PayloadAction<Post>) => {
-                state.posts = state.posts.filter((post) => post.id !== action.payload.id);
+                state.posts = state.posts.filter((post) => post._id !== action.payload.id);
                 state.loading = false;
             })
             .addCase(deletePost.rejected, (state, action) => {
@@ -271,7 +304,6 @@ const postsSlice = createSlice({
                 state.error = action.payload as string;
             })
             .addCase(toggleLike.pending, (state) => {
-                state.loading = true;
                 state.error = null;
             })
             .addCase(toggleLike.fulfilled, (state: PostsState, action: PayloadAction<Post>) => {

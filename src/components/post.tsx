@@ -47,7 +47,7 @@ const StyledPost = styled.div`
   border-radius: 16px;
   margin: auto;
   margin-bottom: 28px;
-  padding: 16px;
+  padding: 16px 19px;
 
   @media (max-width: 480px) {
     max-width: 358px;
@@ -173,8 +173,7 @@ const Post: React.FC<PostProps> = ({
     const currentUser = useSelector((state: RootState) => state.user.user);
 
     const currentUserId = currentUser ? currentUser._id : null;
-    
-
+      console.log(currentUser?.nickName)
     // 게시글 작성자가 현재 로그인한 사용자인지 확인
     const isOwner = currentUserId === userId;
     
@@ -224,7 +223,7 @@ const Post: React.FC<PostProps> = ({
       // 같은 포스트 클릭 시 닫고, 다른 포스트 클릭 시 열기
       setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
     };
-
+    console.log(author)
     return (
         <StyledPost>
         <Header>
