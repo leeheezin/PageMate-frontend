@@ -4,16 +4,20 @@
     display: flex; /* Flexbox 레이아웃 */
     justify-content: center; /* 가로 중앙 정렬 */
     align-items: center; /* 세로 중앙 정렬 */
-    min-height: 80vh; /* 화면 전체 높이를 기준으로 중앙 정렬 */
-    padding: 20px; /* 모바일에서 양 끝 여백 */
+    min-height: 90vh; /* 화면 전체 높이를 기준으로 중앙 정렬 */
+    padding: 0px 20px; /* 모바일에서 양 끝 여백 */
     box-sizing: border-box; /* 패딩 포함 크기 계산 */
     position: relative;
 }
 
 .form-container {
+    position: relative;
     max-width: 765px;
-    margin: 50px auto;
+    margin: 10px auto;
     padding: 15px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
     /* background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
@@ -22,10 +26,10 @@
 .input-field,
 .textarea-field {
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 10px;
     box-sizing: border-box;
     font-family: Arial, sans-serif;
     resize: none;
@@ -51,7 +55,7 @@
 }
 
 .textarea-field {
-    min-height: 300px;
+    min-height: 400px;
 }
 
 .submit-btn {
@@ -64,6 +68,7 @@
     cursor: pointer;
     font-size: 16px;
     float: right;
+    font-weight: bold;
 }
 
 .submit-btn:hover {
@@ -71,17 +76,24 @@
 }
 
 @media (max-width: 481px) {
-    .form-container {
-        margin: 10px;
-        padding: 10px;
+    .post-area {
+        min-height: 80vh; /* 화면 전체 높이를 기준으로 중앙 정렬 */
+    }
+    .input-field,
+    .textarea-field {
+        margin-bottom: 7px;
     }
     .textarea-field {
-        max-height: 300px;
+        min-height: 330px;
     }
     .submit-btn {
-        width: 30%;
+        width: 25%;
         padding: 8px;
         font-size: 14px;
+        border-radius: 6px;
+    }
+    .toast-message {
+        left: 10px; /* 제목 input과 같은 위치 */
     }
 }
 
@@ -120,3 +132,78 @@
 .mini-bar-btn:hover {
     text-decoration: underline;
 }
+
+.toast-message {
+    position: absolute; /* form-container를 기준으로 위치 지정 */
+    top: -20px; /* 제목 input 박스 위로 띄우기 */
+    left: 15px; /* 제목 input과 같은 위치 */
+    background-color: white; /* 배경색 */
+    color: black; /* 텍스트 색상 */
+    padding: 5px 10px; /* 내부 여백 */
+    border-radius: 5px; /* 둥근 모서리 */
+    font-size: 12px; /* 텍스트 크기 */
+    z-index: 1000; /* 다른 요소 위에 표시 */
+    opacity: 0.9; /* 투명도 */
+    animation: fade-in-out 3s ease-in-out forwards; /* 페이드 효과 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+    transform: translateY(-10px); /* 약간 위로 올리기 */
+}
+
+/* 페이드 인/아웃 애니메이션 */
+@keyframes fade-in-out {
+    0% {
+        opacity: 0; /* 처음에 투명 */
+    }
+    10% {
+        opacity: 0.9; /* 서서히 나타남 */
+    }
+    90% {
+        opacity: 0.9; /* 표시된 상태 유지 */
+    }
+    100% {
+        opacity: 0; /* 서서히 사라짐 */
+    }
+}
+/* CSS 파일에 추가 */
+
+/* CSS 파일에 추가 */
+
+.textarea-container {
+    position: relative;
+  }
+  
+  .textarea-field {
+    width: 100%;
+    height: 200px; /* 필요에 따라 조정 */
+    position: relative;
+    z-index: 1;
+  }
+  
+  .textarea-field.transparent {
+    color: transparent;
+    caret-color: transparent;
+  }
+  
+  .textarea-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow: auto;
+    padding: 8px; /* textarea의 패딩과 일치시킴 */
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+  }
+  
+  .highlighted {
+    background-color: lightblue; /* 기본 선택 색상과 동일하게 설정 */
+  }
+/* CSS 파일에 추가 또는 수정 */
+

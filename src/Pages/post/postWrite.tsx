@@ -8,8 +8,8 @@ import { AppDispatch, RootState } from "../../features/store";
 import { styleChange, contentCorrection, spellingCorrection ,aiRequest } from "../../features/gpt/gptSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import getCaretCoordinates from 'textarea-caret';
 import { useNavigate, useLocation } from "react-router-dom";
+import { TextareaSelectionBounds } from "textarea-selection-bounds";
 import MiniBar from "./miniBar";
 import MiniBarComponent from "./ai";
 import styled from "styled-components";
@@ -21,6 +21,8 @@ const Error = styled.div`
     margin-top: 15px;
     font-size: 14px;
 `;
+
+// TextMeasurement 객체를 전역 변수로 생성
 
 const PostWrite: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -39,12 +41,15 @@ const PostWrite: React.FC = () => {
     const [gptResultModal, setGptResultModal] = useState(false);    
     const gptResultText = useSelector((state: RootState) => state.gpt.gptResultText);       
     
+    
 
     const [selectedText, setSelectedText] = useState("");
     const [miniBarPosition, setMiniBarPosition] = useState({
     top: 0,
     left: 0,
     visible: false,});
+     // **토스트 메시지 상태 추가**
+    const [isToastVisible, setIsToastVisible] = useState(false);
     const titleInputRef = useRef<HTMLInputElement | null>(null);
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
     const [selectionStart, setSelectionStart] = useState<number | null>(null);
@@ -52,6 +57,8 @@ const PostWrite: React.FC = () => {
     const [aiRequestText, setAiRequestText] = useState("");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isOverlayVisible, setIsOverlayVisible] = useState(false);
+
     const { user } = useSelector((state: RootState) => state.user);
 
     useEffect(() => {
@@ -68,46 +75,51 @@ const PostWrite: React.FC = () => {
       }
     }, [postToEdit]);
 
+    // **토스트 메시지 타이머 관리**
+    const showToast = () => {
+      setIsToastVisible(true);
+      setTimeout(() => {
+        setIsToastVisible(false);
+      }, 3000); // 3초 후 메시지 숨김
+    };
 
     // // 미니바가 열린 상태에서도 선택 범위를 유지
     // useEffect(() => {
     //   const handleClickOutside = (event: MouseEvent) => {
     //     const target = event.target as HTMLElement;
 
-    //     // 미니바 관련 영역 클릭 시 선택 범위 유지
-    //     if (
-    //       target.classList.contains("mini-bar") ||
-    //       target.classList.contains("mini-bar-btn") ||
-    //       target.classList.contains("mini-bar-row")
-    //     ) {
-    //       // 선택 범위 복원
-    //       if (
-    //         textAreaRef.current &&
-    //         selectionStart !== null &&
-    //         selectionEnd !== null
-    //       ) {
-    //         textAreaRef.current.setSelectionRange(selectionStart, selectionEnd);
-    //       }
-    //       event.preventDefault();
-    //       return;
-    //     }
+    // 미니바가 열린 상태에서도 선택 범위를 유지
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        const target = event.target as HTMLElement;
+        
+        console.log("mini-bar", target.closest('.mini-bar')); 
+        console.log("gpt-modal", target.closest('.gpt-modal'));
+        console.log("mini-bar-input-row", target.closest('.mini-bar-input-row'));
+        console.log("IsOverlayVisible", isOverlayVisible);
 
-    //     // 다른 영역 클릭 시 미니바 닫기 및 선택 해제
-    //     if (!target.classList.contains("post-area")) {
-    //       setMiniBarPosition((prev) => ({ ...prev, visible: false }));
-    //     }
-    //   };
+        if (
+            target.closest('.mini-bar') || 
+            target.closest('.gpt-modal') ||
+            target.closest('.mini-bar-input-row')
+        ) {
+            setIsOverlayVisible(true);
+            return;
+        } else {
+            setIsOverlayVisible(false);
+            setMiniBarPosition((prev) => ({ ...prev, visible: false }));
+        }
+      };
 
-    //   document.addEventListener("mousedown", handleClickOutside);
-    //   return () => {
-    //     document.removeEventListener("mousedown", handleClickOutside);
-    //   };
-    // }, [selectionStart, selectionEnd]);
-
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [isOverlayVisible]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (title && text) {
+        if (title && text && selectedBookTitle) {
             try {
                 if (isEditMode) {
                     await dispatch(
@@ -152,19 +164,22 @@ const handleTextSelection = (
       setSelectedText(selectedText);
       setSelectionStart(start);
       setSelectionEnd(end);
+      setIsOverlayVisible(false);
 
-      // 커서 좌표 계산
-      const coordinates = getCaretCoordinates(target, start);
+      const bounds = new TextareaSelectionBounds(target);
+      const coordinates = bounds.getBounds();
+
 
       // 텍스트 영역의 위치 및 스크롤 값 가져오기
       const textareaRect = target.getBoundingClientRect();
       const scrollTop = target.scrollTop;
       const scrollLeft = target.scrollLeft;
+      console.log('coordinates:', coordinates);
 
       // 스크롤 값을 반영해 미니바 위치 조정
       setMiniBarPosition({
-        top: textareaRect.top + coordinates.top + scrollTop + window.scrollY - 30, // 미니바 오프셋
-        left: textareaRect.left + coordinates.left + scrollLeft + window.scrollX,
+        top:  coordinates.top + coordinates.height + window.scrollY -50, // 미니바 오프셋
+        left:  coordinates.left < 200 ? textareaRect.left +  window.scrollX  : coordinates.left + coordinates.width + window.scrollX ,
         visible: true,
       });
   } else {
@@ -247,31 +262,65 @@ return (
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         // onMouseUp={handleTextSelection} // 텍스트 드래그 후 이벤트 처리
+        onKeyDown={(e) => {
+          if (e.key === "Tab") {
+            e.preventDefault(); // 기본 탭 동작 막기
+            openDialog(); // 다이얼로그 열기
+            const bookInput = document.querySelector(
+              'input[name="bookTitle"]'
+            ) as HTMLInputElement;
+            bookInput?.focus(); // 책 선택 칸으로 포커스 이동
+          }
+        }}
       />
       <input
         type="text" 
-        placeholder="책을 선택해 주세요"
+        placeholder="이곳을 클릭해서 책을 선택해주세요"
         value={selectedBookTitle}
         onClick={openDialog}
         className="input-field"
         name="bookTitle"
         readOnly
       />
-      <textarea
-        ref={textAreaRef}
-        placeholder="내용을 입력해 주세요"
-        className="textarea-field"
-        name="text"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        onMouseUp={handleTextSelection} // 텍스트 드래그 후 이벤트 처리
-        onSelect={handleTextSelection} // 키보드로 텍스트 선택 시 이벤트 처리
-      ></textarea>
+          <div className="textarea-container">
+            <textarea
+              id="post_textarea"
+              ref={textAreaRef}
+              placeholder="내용을 입력해 주세요"
+              className={`textarea-field ${isOverlayVisible ? 'transparent' : ''}`}
+              name="text"
+              value={text}
+              onChange={(e) => {
+                if (!text) {
+                  showToast(); // 처음 입력 시 토스트 메시지 표시
+                }
+                setText(e.target.value)
+              }}
+              onMouseUp={handleTextSelection}
+              onSelect={handleTextSelection}
+              onFocus={() => setIsOverlayVisible(false)}
+            ></textarea>
+            {isOverlayVisible && (
+              <div className="textarea-overlay">
+                <span>{text.substring(0, selectionStart!)}</span>
+                <span className="highlighted">
+                  {text.substring(selectionStart!, selectionEnd!)}
+                </span>
+                <span>{text.substring(selectionEnd!)}</span>
+              </div>
+            )}
+          </div>
+
       <button type="submit" className="submit-btn">
       {isEditMode ? "수정하기" : "작성하기"}
       </button>
       {error && <Error>{error}</Error>}
     </form>
+    {isToastVisible && (
+        <div className="toast-message">
+            첨삭이 필요한 문장을 드래그하면 AI가 다듬어줘요!
+        </div>
+    )}
     </div>
     {isDialogOpen && (
     <BookSearchDialog onClose={closeDialog} onSelect={handleSelectBook} />
@@ -292,7 +341,7 @@ return (
         setIsDropdownOpen={setIsDropdownOpen}
       />
     )}
-
+    
     {/* 미니 바 */}
     {/* { MiniBarComponent(miniBarPosition, handleMiniBarAction, aiRequestText, setAiRequestText, applyGptResult, closeGptResultModal, gptResultText, isLoading, gptResultModal,isDropdownOpen,setIsDropdownOpen)} */}
   </div>
