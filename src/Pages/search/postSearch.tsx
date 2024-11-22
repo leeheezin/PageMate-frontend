@@ -168,6 +168,7 @@ const PostSearch: React.FC = () => {
             <div className="post-list">
               {posts.map((post) => (
                 <Post
+                  id={post.id}
                   key={post._id} // posts 배열에서 _id를 사용한다고 가정
                   _id={post._id}
                   userId={post.userId}
@@ -176,7 +177,7 @@ const PostSearch: React.FC = () => {
                   title={post.title}
                   text={post.text}
                   date={post.date}
-                  author={post.author}
+                  name={post.name}
                   profilePhoto={post.profilePhoto}
                   likes={post.likes}
                   comments={post.comments}
