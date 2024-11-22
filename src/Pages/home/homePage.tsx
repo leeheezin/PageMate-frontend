@@ -58,7 +58,6 @@ const handleCommentToggle = (postId: string) => {
     // 같은 포스트 클릭 시 닫고, 다른 포스트 클릭 시 열기
     setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
 };
-console.log(posts)
 if(loading) {
     return <PostSkeleton/>
 }
