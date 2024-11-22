@@ -114,7 +114,7 @@ export const loginWithKakao = createAsyncThunk(
   "user/loginWithKakao",
   async (kakaoData: { token: string; profile: any }, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/api/auth/kakao", kakaoData);
+      const response = await api.post("/auth/login/kakao", kakaoData);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response.data);

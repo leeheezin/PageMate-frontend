@@ -185,9 +185,10 @@ const Kakao = styled.div`
     height: 40px;
     width: 200px;
     font-size: 16px;
+    font-weight: bold;
     text-align: center;
     color: black;
-    background-color: #ffffff;
+    background-color: #fee500;
     border: 1px solid #d9d9d9;
     border-radius: 5px;
     cursor: pointer;
@@ -311,7 +312,7 @@ const Login: React.FC = () => {
               </GoogleOAuthProvider>
             </Google>
             <Kakao>
-              <button onClick={handleKakaoLogin}>카카오로 로그인</button>
+              <button onClick={handleKakaoLogin}>카카오 로그인</button>
             </Kakao>
           </LoginForm>
         </LoginArea>
