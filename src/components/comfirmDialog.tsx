@@ -54,20 +54,20 @@ const ConfirmButton = styled.button`
   font-size: 14px;
   cursor: pointer;
   &:hover {
-    background-color: #016b37;
+    background-color: #003300;
   }
 `;
 
 const CancelButton = styled.button`
-  background-color: white; /* 취소 버튼 배경색 */
-  color: #333;
-  border: 1px solid #ccc;
+  background-color: #9e1515; /* 취소 버튼 배경색 */
+  color: white;
+  border: none;
   border-radius: 4px;
   padding: 10px 20px;
   font-size: 14px;
   cursor: pointer;
   &:hover {
-    background-color: #f5f5f5;
+    background-color: #790707;
   }
 `;
 
