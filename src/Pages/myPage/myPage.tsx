@@ -223,6 +223,17 @@ const MyPage: React.FC = () => {
     setIsDialogOpen(false); // 다이얼로그 닫기
   };
 
+  const handleProfileDelete = async () => {
+    try{ 
+      await dispatch(uploadProfile({ profilePhoto: "delete" }));
+      setIsDialogOpen(false); 
+      alert("삭제되었습니다.")
+    }
+    catch(error:any){
+      alert("잠시 후 다시 시도해주세요")
+    }
+
+  };
   const handleBtn = (event: any) => {
     event.preventDefault();
 
@@ -249,6 +260,7 @@ const MyPage: React.FC = () => {
           닉네임 수정
         </ActionButton>
         <CloudinaryUploadWidget uploadImage={handleProfileUpdate} />
+        <ActionButton onClick={handleProfileDelete}>프로필 삭제</ActionButton>
         <ActionButton onClick={handleDeleteUser}>회원탈퇴</ActionButton>
       </Dialog>
       <MyPageArea>

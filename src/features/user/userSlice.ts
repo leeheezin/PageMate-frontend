@@ -171,6 +171,8 @@ export const uploadProfile = createAsyncThunk<
 >("user/uploadProfile", async ({ profilePhoto }, { rejectWithValue }) => {
   try {
     const response = await api.put("/user/profile", { profilePhoto });
+    console.log("🚀 ~ > ~ response.data.data:", response.data.data)
+
     return response.data.data; // 업데이트된 유저 정보 반환
   } catch (error: any) {
     return rejectWithValue(error.response?.data?.error || "Profile update failed");

@@ -246,9 +246,8 @@ const Login: React.FC = () => {
               token: authObj.access_token,
               profile: res.kakao_account.profile,
             };
-            console.log("🚀 ~ handleKakaoLogin ~ kakaoData:", kakaoData)
             
-            // dispatch(loginWithKakao(kakaoData));
+            dispatch(loginWithKakao(kakaoData));
           },
           fail: (error: any) => {
             console.error(error);
