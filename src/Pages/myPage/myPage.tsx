@@ -17,6 +17,25 @@ import CloudinaryUploadWidget from "../../utils/CloudinaryUploadWidget";
 import { useNavigate } from "react-router-dom";
 import NicknameModal from "./component/NicknameModal";
 
+
+const formatDate = (dateString?: string): string => {
+  if (!dateString) return ""; 
+
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) {
+      return "유효하지 않은 날짜"; 
+  }
+  return new Intl.DateTimeFormat("ko-KR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+  }).format(date);
+};
+
+
 const Container = styled.div`
   max-height: calc(100vh - 60px);
   display: flex;
@@ -301,20 +320,21 @@ const MyPage: React.FC = () => {
             {posts?.length > 0 ? (
               posts.map((post) => (
                 <PostComponent
-                  _id={post._id}
-                  key={post._id}
-                  userId={post.userId}
-                  bookTitle={post.bookTitle}
-                  bookAuthor={post.bookAuthor}
-                  title={post.title}
-                  text={post.text}
-                  date={"222"}
-                  author={post.author}
-                  profilePhoto={post.profilePhoto}
-                  likes={post.likes}
-                  comments={post.comments}
-                  isCommentVisible={activeCommentPostId === post._id} // 댓글 영역이 열려 있는지 여부 전달
-                  onCommentToggle={handleCommentToggle} // 댓글 토글 핸들러 전달
+                id={post.id}
+                _id={post._id}
+                key={post._id}
+                userId={post.userId}
+                bookTitle={post.bookTitle}
+                bookAuthor={post.bookAuthor}
+                title={post.title}
+                text={post.text}
+                date={formatDate(post.date)}
+                name={post.name}
+                profilePhoto={post.profilePhoto}
+                likes={post.likes}
+                comments={post.comments}
+                isCommentVisible={activeCommentPostId === post._id} // 댓글 영역이 열려 있는지 여부 전달
+                onCommentToggle={handleCommentToggle} // 댓글 토글 핸들러 전달
                   isMyPage={true}
                 />
               ))
