@@ -60,7 +60,7 @@ const MyPageArea = styled.div`
 `;
 const ProfileArea = styled.div`
   width: 100%;
-  height: 200px;
+  height: 120px;
   display: flex;
   align-items: center;
   margin-bottom: 30px;
