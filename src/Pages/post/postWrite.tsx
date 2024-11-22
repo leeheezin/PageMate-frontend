@@ -55,55 +55,55 @@ const PostWrite: React.FC = () => {
     const { user } = useSelector((state: RootState) => state.user);
 
     useEffect(() => {
-        if(!user){
-          navigate('/login');
-        }
-      }, []);
+      if(!user){
+        navigate('/login');
+      }
+    }, []);
     
 
     useEffect(() => {
-        if (postToEdit) {
-        setIsEditMode(true);
-        console.log("postToEditid", postToEdit.id);
-        }
+      if (postToEdit) {
+      setIsEditMode(true);
+      console.log("postToEditid", postToEdit.id);
+      }
     }, [postToEdit]);
 
 
+    // // 미니바가 열린 상태에서도 선택 범위를 유지
+    // useEffect(() => {
+    //   const handleClickOutside = (event: MouseEvent) => {
+    //     const target = event.target as HTMLElement;
 
-    // 미니바가 열린 상태에서도 선택 범위를 유지
-    useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-        const target = event.target as HTMLElement;
+    //     // 미니바 관련 영역 클릭 시 선택 범위 유지
+    //     if (
+    //       target.classList.contains("mini-bar") ||
+    //       target.classList.contains("mini-bar-btn") ||
+    //       target.classList.contains("mini-bar-row")
+    //     ) {
+    //       // 선택 범위 복원
+    //       if (
+    //         textAreaRef.current &&
+    //         selectionStart !== null &&
+    //         selectionEnd !== null
+    //       ) {
+    //         textAreaRef.current.setSelectionRange(selectionStart, selectionEnd);
+    //       }
+    //       event.preventDefault();
+    //       return;
+    //     }
 
-        // 미니바 관련 영역 클릭 시 선택 범위 유지
-        if (
-          target.classList.contains("mini-bar") ||
-          target.classList.contains("mini-bar-btn") ||
-          target.classList.contains("mini-bar-row")
-        ) {
-          // 선택 범위 복원
-          if (
-            textAreaRef.current &&
-            selectionStart !== null &&
-            selectionEnd !== null
-          ) {
-            textAreaRef.current.setSelectionRange(selectionStart, selectionEnd);
-          }
-          event.preventDefault();
-          return;
-        }
+    //     // 다른 영역 클릭 시 미니바 닫기 및 선택 해제
+    //     if (!target.classList.contains("post-area")) {
+    //       setMiniBarPosition((prev) => ({ ...prev, visible: false }));
+    //     }
+    //   };
 
-        // 다른 영역 클릭 시 미니바 닫기 및 선택 해제
-        if (!target.classList.contains("post-area")) {
-          setMiniBarPosition((prev) => ({ ...prev, visible: false }));
-        }
-      };
+    //   document.addEventListener("mousedown", handleClickOutside);
+    //   return () => {
+    //     document.removeEventListener("mousedown", handleClickOutside);
+    //   };
+    // }, [selectionStart, selectionEnd]);
 
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-      };
-    }, [selectionStart, selectionEnd]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
