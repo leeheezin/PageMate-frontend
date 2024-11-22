@@ -5,14 +5,17 @@ import ProfileIcon from "../../assets/images/icon-user.png";
 import PostComponent from "./component/post";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../features/store";
-import { getLikedPost, getMyPost  } from "../../features/post/postsSlice";
+import { getLikedPost, getMyPost } from "../../features/post/postsSlice";
 import { Post } from "../../features/post/postsSlice";
-import { uploadProfile, deleteUser, updateName } from "../../features/user/userSlice";
+import {
+  uploadProfile,
+  deleteUser,
+  updateName,
+} from "../../features/user/userSlice";
 import Dialog from "../../components/dialog";
 import CloudinaryUploadWidget from "../../utils/CloudinaryUploadWidget";
 import { useNavigate } from "react-router-dom";
 import NicknameModal from "./component/NicknameModal";
-
 
 const Container = styled.div`
   max-height: calc(100vh - 60px);
@@ -55,35 +58,46 @@ const Photo = styled.div<{ imageUrl: string }>`
   background-repeat: no-repeat;
 `;
 const Info = styled.div`
-  width: calc(75% - 120px);
+  width: calc(90% - 120px);
+  margin-right: 10%;
   padding-left: 20px;
   height: 120px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 `;
+const UserArea = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+`;
 const UserName = styled.div`
   font-size: 40px;
   font-weight: 500;
 `;
-const Summary = styled.div`
-  color: #014421;
-  font-size: 24px;
-  font-weight: 700;
-`;
 const Modify = styled.div`
-  margin-right: 10%;
-  width: 5%;
-  height: 120px;
   display: flex;
-  justify-content: end;
+  align-items: center;
 `;
 const Bnt = styled.button`
-  margin-top: 5px;
+  padding: 0;
   height: 40px;
   width: 40px;
   border: none;
   background-color: transparent;
+`;
+const Summary = styled.div`
+  display: flex;
+
+  @media (max-width: 690px) {
+    display: block;
+  }
+`;
+const SummaryInfo = styled.div`
+  margin-right: 10px;
+  color: #014421;
+  font-size: 24px;
+  font-weight: 700;
 `;
 const PostArea = styled.div`
   width: 100%;
@@ -122,7 +136,7 @@ const ActionButton = styled.div`
 const NoPost = styled.div`
   font-size: 28px;
   font-weight: 600;
-`
+`;
 
 const MyPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -131,7 +145,7 @@ const MyPage: React.FC = () => {
   const { myPosts, myLiked } = useSelector((state: RootState) => state.posts);
   const [highlight, setHighlight] = useState<boolean>(true);
   const [posts, setPost] = useState<Post[]>([]);
-  const [isNicknameModalOpen, setIsNicknameModalOpen] = useState(false); 
+  const [isNicknameModalOpen, setIsNicknameModalOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogPosition, setDialogPosition] = useState({
     top: "50%",
@@ -142,15 +156,15 @@ const MyPage: React.FC = () => {
     const rect = e.currentTarget.getBoundingClientRect();
     const dialogWidth = 170; // 다이얼로그 예상 너비
     const dialogHeight = 150; // 다이얼로그 예상 높이
-  
+
     // 화면 크기
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
-  
+
     // 기본 위치 (버튼의 우측 하단)
     let top = rect.bottom + window.scrollY;
     let left = rect.right + window.scrollX;
-  
+
     // 다이얼로그가 화면 밖으로 나가지 않도록 조정
     if (left + dialogWidth > viewportWidth) {
       left = rect.right - dialogWidth; // 우측 공간 부족 시 왼쪽으로 이동
@@ -158,20 +172,20 @@ const MyPage: React.FC = () => {
     if (top + dialogHeight > viewportHeight) {
       top = rect.bottom - dialogHeight; // 하단 공간 부족 시 위로 이동
     }
-  
+
     setDialogPosition({ top: `${top}px`, left: `${left}px` });
     setIsDialogOpen(true);
   };
 
-  const handleDeleteUser  = async () => {
+  const handleDeleteUser = async () => {
     try {
       await dispatch(deleteUser()).unwrap(); // unwrap()으로 성공 확인
       alert("회원 탈퇴가 완료되었습니다.");
-      navigate("/login"); 
+      navigate("/login");
     } catch (error) {
       alert(`회원 탈퇴 실패: ${error}`);
     }
-  }
+  };
   const handleOpenNicknameModal = () => {
     setIsNicknameModalOpen(true);
     setIsDialogOpen(false);
@@ -182,24 +196,23 @@ const MyPage: React.FC = () => {
   };
   const handleUpdateName = async (newName: any) => {
     try {
-      await dispatch(updateName(newName)).unwrap();; // unwrap()으로 성공 확인
+      await dispatch(updateName(newName)).unwrap(); // unwrap()으로 성공 확인
       alert("닉네임 변경이 완료되었습니다.");
     } catch (error) {
       alert(`닉네임 변경 실패: ${error}`);
     }
-  }
+  };
 
   useEffect(() => {
-    if(!user){
-      navigate('/login');
+    if (!user) {
+      navigate("/login");
     }
   }, [user]);
-  
+
   useEffect(() => {
     dispatch(getMyPost());
     dispatch(getLikedPost());
-  }, [dispatch,user]);
-  
+  }, [dispatch, user]);
 
   useEffect(() => {
     setPost(myPosts);
@@ -223,7 +236,7 @@ const MyPage: React.FC = () => {
       setPost(myLiked);
     }
   };
-  console.log('user',user)
+  console.log("user", user);
   return (
     <Container>
       <Dialog
@@ -232,24 +245,31 @@ const MyPage: React.FC = () => {
         top={dialogPosition.top}
         left={dialogPosition.left}
       >
-        <ActionButton onClick={handleOpenNicknameModal}>닉네임 수정</ActionButton>
+        <ActionButton onClick={handleOpenNicknameModal}>
+          닉네임 수정
+        </ActionButton>
         <CloudinaryUploadWidget uploadImage={handleProfileUpdate} />
         <ActionButton onClick={handleDeleteUser}>회원탈퇴</ActionButton>
       </Dialog>
       <MyPageArea>
         <ProfileArea>
-          <Photo imageUrl={user?.profilePhoto? user?.profilePhoto : ProfileIcon}></Photo>
+          <Photo
+            imageUrl={user?.profilePhoto ? user?.profilePhoto : ProfileIcon}
+          ></Photo>
           <Info>
-            <UserName>{user?.name || "unknown"}</UserName>
+            <UserArea>
+              <UserName>{user?.name || "unknown"}</UserName>
+              <Modify>
+                <Bnt onClick={handleMenu}>
+                  <ModifyIcon />
+                </Bnt>
+              </Modify>
+            </UserArea>
             <Summary>
-              내 {highlight ? "게시글" : "좋아요"} {posts.length || 0}개
+              <SummaryInfo>내 게시글 {myPosts?.length || 0}개</SummaryInfo>
+              <SummaryInfo>내 좋아요 {myLiked?.length || 0}개</SummaryInfo>
             </Summary>
           </Info>
-          <Modify>
-            <Bnt onClick={handleMenu}>
-              <ModifyIcon />
-            </Bnt>
-          </Modify>
         </ProfileArea>
         <PostArea>
           <Filter>
@@ -262,9 +282,7 @@ const MyPage: React.FC = () => {
           </Filter>
           <Posts>
             {posts?.length > 0 ? (
-              posts.map((post) => (
-                <PostComponent key={post._id} post={post} />
-              ))
+              posts.map((post) => <PostComponent key={post._id} post={post} />)
             ) : (
               <NoPost>게시글이 없습니다.</NoPost>
             )}

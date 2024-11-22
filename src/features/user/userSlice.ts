@@ -181,7 +181,7 @@ export const updateName = createAsyncThunk<
   UserData,
   UpdateNamePayload,
   { rejectValue: string }
->("user/uploadProfile", async ( name , { rejectWithValue }) => {
+>("user/updateName", async ( name , { rejectWithValue }) => {
   try {
     const response = await api.put("/user/name", { updateName:name });
     return response.data.data; // 업데이트된 유저 정보 반환

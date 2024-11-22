@@ -234,7 +234,7 @@ const Login: React.FC = () => {
       window.Kakao.init(KAKAO_JS_KEY);
     }
     window.Kakao.Auth.authorize({
-        redirectUri: "https://localhost:3000",
+        redirectUri: "http://localhost:3000",
     });
 
     window.Kakao.Auth.login({
