@@ -367,8 +367,8 @@ const MyPage: React.FC = () => {
                 title={post.title}
                 text={post.text}
                 date={formatDate(post.date)}
-                name={post.name}
-                profilePhoto={post.profilePhoto}
+                name={post.userId?.name}
+                profilePhoto={post.userId?.profilePhoto}
                 likes={post.likes}
                 comments={post.comments}
                 isCommentVisible={activeCommentPostId === post._id} // 댓글 영역이 열려 있는지 여부 전달

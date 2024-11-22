@@ -34,24 +34,25 @@ const HomePageContainer = styled.div`
 `;
 
 const HomePage: React.FC = () => {
+const limitMax = 6;
 const dispatch = useDispatch<AppDispatch>();
 const posts = useSelector((state: RootState) => state.posts.posts);
 const loading = useSelector((state: RootState) => state.posts.loading);
 const pagination = useSelector((state: RootState) => state.posts.pagination);
-const [displayedPosts, setDisplayedPosts] = useState(posts.slice(0, 5)); // 초기 5개만
+const [displayedPosts, setDisplayedPosts] = useState(posts.slice(0, 6)); 
 const [hasMore, setHasMore] = useState(true);
 const [isLoading, setIsLoading] = useState(false);
-const [activeCommentPostId, setActiveCommentPostId] = useState<string | null>(null); // 열려 있는 댓글 영역의 포스트 ID
+const [activeCommentPostId, setActiveCommentPostId] = useState<string | null>(null); 
 
 useEffect(() => {
-    dispatch(fetchPosts({ page: 1, limit: 5 }));
+    dispatch(fetchPosts({ page: 1, limit: limitMax }));
 }, [dispatch]);
 useEffect(() => {
     setHasMore(pagination.hasMore);
 }, [pagination.hasMore]);
 const fetchMorePosts = () => {
     if (loading || !pagination.hasMore) return;
-    dispatch(fetchPosts({ page: pagination.currentPage + 1, limit: 5 }));
+    dispatch(fetchPosts({ page: pagination.currentPage + 1, limit: limitMax }));
 };
 
 const handleCommentToggle = (postId: string) => {
