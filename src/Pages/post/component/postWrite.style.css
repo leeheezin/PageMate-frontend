@@ -14,6 +14,9 @@
     max-width: 765px;
     margin: 50px auto;
     padding: 15px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
     /* background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
@@ -120,3 +123,47 @@
 .mini-bar-btn:hover {
     text-decoration: underline;
 }
+
+/* CSS 파일에 추가 */
+
+/* CSS 파일에 추가 */
+
+.textarea-container {
+    position: relative;
+  }
+  
+  .textarea-field {
+    width: 100%;
+    height: 200px; /* 필요에 따라 조정 */
+    position: relative;
+    z-index: 1;
+  }
+  
+  .textarea-field.transparent {
+    color: transparent;
+    caret-color: transparent;
+  }
+  
+  .textarea-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow: auto;
+    padding: 8px; /* textarea의 패딩과 일치시킴 */
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+  }
+  
+  .highlighted {
+    background-color: lightblue; /* 기본 선택 색상과 동일하게 설정 */
+  }
+/* CSS 파일에 추가 또는 수정 */
+
