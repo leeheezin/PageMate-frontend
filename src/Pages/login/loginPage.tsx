@@ -4,9 +4,14 @@ import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { AppDispatch, RootState } from "../../features/store";
-import { clearErrors, loginWithEmail, loginWithGoogle } from "../../features/user/userSlice";
+import { clearErrors, loginWithEmail, loginWithGoogle, loginWithKakao } from "../../features/user/userSlice";
 import Logo from "../../assets/images/icon-logo1_big.png";
-
+declare global {
+    interface Window {
+      Kakao: any;
+    }
+  }
+const KAKAO_JS_KEY = process.env.REACT_APP_KAKAO_REST_API_KEY;
 const GOOGLE_ID = process.env.REACT_APP_GOOGLE_ID;
 
 const Container = styled.div`
@@ -160,11 +165,39 @@ const Google = styled.div`
   height: auto;
   width: calc(100% - 100px);
   padding-top: 25px;
+  display: flex;
+  justify-content: center;
 
   @media (max-width: 768px) {
     width: 100%;
   }
 `;
+
+const Kakao = styled.div`
+  height: auto;
+  width: calc(100% - 100px);
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+
+  button {
+    padding: 10px 20px;
+    height: 40px;
+    width: 200px;
+    font-size: 16px;
+    text-align: center;
+    color: black;
+    background-color: #ffffff;
+    border: 1px solid #d9d9d9;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #fddc3f;
+    }
+  }
+`;
+
 
 const Login: React.FC = () => {
   const { loginError, user } = useSelector((state: RootState) => state.user);
@@ -194,6 +227,35 @@ const Login: React.FC = () => {
   const handleError = () => {
     console.log("Login Failed");
   };
+
+  const handleKakaoLogin = (): void => {
+    if (!window.Kakao.isInitialized()) {
+      window.Kakao.init(KAKAO_JS_KEY);
+    }
+
+    window.Kakao.Auth.login({
+      success: (authObj: { access_token: string }) => {
+        window.Kakao.API.request({
+          url: "/v2/user/me",
+          success: (res: any) => {
+            const kakaoData = {
+              token: authObj.access_token,
+              profile: res.kakao_account.profile,
+            };
+            dispatch(loginWithKakao(kakaoData));
+          },
+          fail: (error: any) => {
+            console.error(error);
+          },
+        });
+      },
+      fail: (err: any) => {
+        console.error(err);
+      },
+    });
+  };
+
+
   useEffect(() => {
     if (loginError) {
       clearErrors();
@@ -248,6 +310,9 @@ const Login: React.FC = () => {
                 />
               </GoogleOAuthProvider>
             </Google>
+            <Kakao>
+              <button onClick={handleKakaoLogin}>카카오로 로그인</button>
+            </Kakao>
           </LoginForm>
         </LoginArea>
       </Container>

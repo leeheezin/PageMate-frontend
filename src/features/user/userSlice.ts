@@ -6,6 +6,7 @@ import {
 } from "@reduxjs/toolkit";
 import api from "../../utils/api";
 import { NavigateFunction } from "react-router-dom";
+import axios from "axios";
 
 interface UserState {
   user: UserData | null;
@@ -96,6 +97,7 @@ export const loginWithGoogle = createAsyncThunk<
   { rejectValue: string }
 >("user/loginWithGoogle", async ( token , { rejectWithValue }) => {
   try {
+    console.log("🚀 ~ > ~ token:", token)
 
     const response = await api.post("/auth/login/google", { token });
     console.log("🚀 ~ > ~ response:", response.data)
@@ -107,6 +109,18 @@ export const loginWithGoogle = createAsyncThunk<
     return rejectWithValue(error.message);
   }
 });
+
+export const loginWithKakao = createAsyncThunk(
+  "user/loginWithKakao",
+  async (kakaoData: { token: string; profile: any }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("/api/auth/kakao", kakaoData);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 
 export const loginWithToken = createAsyncThunk<
   UserData,
