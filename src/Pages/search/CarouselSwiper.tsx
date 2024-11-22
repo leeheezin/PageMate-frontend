@@ -16,6 +16,7 @@ const CarouselSwiper: React.FC<CarouselSwiperProps> = ({ covers }) => {
   //   "/images/book6.jpg",
   //   "/images/book7.jpg",
   // ]; // 이미지 배열
+  const visibleCount = 10;
 
   const [startIndex, setStartIndex] = useState(0);
 
@@ -30,8 +31,8 @@ const CarouselSwiper: React.FC<CarouselSwiperProps> = ({ covers }) => {
   };
 
   // 현재 표시할 4개의 이미지를 계산
-  const visibleCover = Array.from({ length: 4 }, (_, i) =>
-    covers[(startIndex + i) % covers.length]
+  const visibleCover = Array.from({ length: visibleCount }, (_, i) =>
+    covers[ i % covers.length] 
   );
 
   return (
@@ -39,12 +40,21 @@ const CarouselSwiper: React.FC<CarouselSwiperProps> = ({ covers }) => {
       <button className="carousel-button prev" onClick={handlePrev}>
         <img src={prevIcon} alt="Previous" className="carousel-icon" />
       </button>
+      <div className="carousel-viewport"> {/* 새로 추가된 wrapper */}
       <div className="carousel">
         {visibleCover.map((src, index) => (
-          <div className="carousel-slide" key={index}>
+          <div 
+          className="carousel-slide" 
+          key={index}
+          style={{
+            transform: `translateX(-${ startIndex * 105}%)`,
+            transition: 'transform 0.3s ease-out'
+          }}  
+          >
             <img src={src} alt={`Book ${index + 1}`} />
           </div>
         ))}
+        </div>
       </div>
       <button className="carousel-button next" onClick={handleNext}>
         <img src={nextIcon} alt="Next" className="carousel-icon" />
