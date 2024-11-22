@@ -14,14 +14,19 @@ interface QueryParams {
 export interface Post {
     _id: string;
     id: string;
-    userId: string;
+    userId: {
+        _id: string;
+        nickName: string;
+        profilePhoto: string;
+    };
     bookTitle: string;
     bookAuthor: string;
     title: string;
     text: string;
     date: string;
-    createdAt?: string;
+    createdAt: string;
     author: string;
+    name: string;
     profilePhoto: string;
     likes: string[];
     comments: Comment[];
@@ -40,6 +45,12 @@ interface PostsState {
     myLiked:Post[];
     loading: boolean;
     error: string | null;
+    pagination: {
+        totalPosts: number;
+        currentPage: number;
+        totalPages: number;
+        hasMore: boolean;
+    };
 }
 
 // 초기 상태
@@ -49,36 +60,51 @@ const initialState: PostsState = {
     myLiked:[],
     loading: false,
     error: null,
+    pagination: { 
+        totalPosts: 0,
+        currentPage: 1,
+        totalPages: 0,
+        hasMore: true,
+    },
 };
 
 // export const fetchPosts = createAsyncThunk<Post[], QueryParams | undefined>(
 // export const fetchPosts = createAsyncThunk<Post[], void, { state: RootState }>(
-export const fetchPosts = createAsyncThunk<Post[], QueryParams | undefined, { state: RootState }>(
+    export const fetchPosts = createAsyncThunk<
+    { posts: Post[]; pagination: { totalPosts: number; totalPages: number; currentPage: number; hasMore: boolean } },
+    QueryParams & { page?: number; limit?: number },
+    { state: RootState }
+  >(
     "posts/fetchPosts",
     async (queryParams = {}, { getState, rejectWithValue }) => {
-        try {
-            const state = getState(); 
-            const currentUserId = state.user.user?._id || "";
-            const response = await api.get("/post", { params: queryParams });
-            if (!response.data || !response.data.data) {
-                throw new Error("Invalid response structure");
-            }
-            console.log("API response data:", response.data); 
-
-            const posts = response.data.data;
-
-            return posts.map((post: Post) => ({
-                ...post,
-                liked: post.likes.includes(currentUserId), 
-                // 로그인된 사용자가 좋아요를 눌렀는지 확인
-            }));
-
-            // return response.data.data; 
-        } catch (error: any) {
-            return rejectWithValue(error?.message || "post data get error");
+      try {
+        const state = getState();
+        const currentUserId = state.user.user?._id || "";
+  
+        const response = await api.get("/post", { params: queryParams });
+        if (!response.data || !response.data.data) {
+          throw new Error("Invalid response structure");
         }
+  
+        const posts = response.data.data;
+        const pagination = response.data.pagination;
+  
+        return {
+          posts: posts.map((post: Post) => ({
+            ...post,
+            id: post._id,
+            name: post.userId?.nickName, // 서버에서 `name`으로 매핑된 작성자 이름
+            profilePhoto: post.userId?.profilePhoto,
+            liked: post.likes.includes(currentUserId),
+          })),
+          pagination,
+        };
+      } catch (error: any) {
+        return rejectWithValue(error?.message || "Failed to fetch posts");
+      }
     }
-);
+  );
+  
 
 
 export const createPost = createAsyncThunk<Post, NewPost>(
@@ -86,6 +112,7 @@ export const createPost = createAsyncThunk<Post, NewPost>(
     async (newPost, { rejectWithValue }) => {
         try {
             const response = await api.post("/post/write", newPost);
+            console.log(response.data.data)
             return response.data.data; 
         } catch (error: any) {
             console.log(error.response.data.error)
@@ -140,6 +167,7 @@ export const deletePost = createAsyncThunk<Post, { id: string }>(
         try {
 
             const res = await api.delete(`/post/${id}`);
+            console.log(res.data.data)
             return res.data.data;
         } catch (error: any) {
             if (error.response && error.response.data && error.response.data.error) {
@@ -195,8 +223,19 @@ const postsSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(fetchPosts.fulfilled, (state: PostsState, action: PayloadAction<Post[]>) => {
-                state.posts = action.payload;
+            .addCase(fetchPosts.fulfilled, (state, action) => {
+                const { posts, pagination } = action.payload;
+                const existingIds = new Set(state.posts.map((post) => post._id));
+                const uniquePosts = posts.filter((post) => !existingIds.has(post._id));
+
+                state.posts = [...state.posts, ...uniquePosts]; // 중복 없는 게시글 추가
+                state.pagination = {
+                    ...state.pagination,
+                    totalPosts: pagination.totalPosts,
+                    totalPages: pagination.totalPages,
+                    currentPage: pagination.currentPage,
+                    hasMore: pagination.hasMore,
+                };
                 state.loading = false;
             })
             .addCase(fetchPosts.rejected, (state, action: PayloadAction<any>) => {
@@ -212,7 +251,13 @@ const postsSlice = createSlice({
                 state.error = null;
             })
             .addCase(createPost.fulfilled, (state, action: PayloadAction<Post>) => {
-                state.posts.push(action.payload);
+                const newPost = {
+                    ...action.payload,
+                    id: action.payload._id,
+                    name: action.payload.userId.nickName,
+                    profilePhoto: action.payload.userId.profilePhoto,
+                };
+                state.posts.unshift(newPost);
                 state.loading = false;
             })
             .addCase(createPost.rejected, (state, action) => {
@@ -263,7 +308,7 @@ const postsSlice = createSlice({
                 state.error = null;
             })
             .addCase(deletePost.fulfilled, (state, action: PayloadAction<Post>) => {
-                state.posts = state.posts.filter((post) => post.id !== action.payload.id);
+                state.posts = state.posts.filter((post) => post._id !== action.payload.id);
                 state.loading = false;
             })
             .addCase(deletePost.rejected, (state, action) => {
@@ -271,7 +316,6 @@ const postsSlice = createSlice({
                 state.error = action.payload as string;
             })
             .addCase(toggleLike.pending, (state) => {
-                state.loading = true;
                 state.error = null;
             })
             .addCase(toggleLike.fulfilled, (state: PostsState, action: PayloadAction<Post>) => {
