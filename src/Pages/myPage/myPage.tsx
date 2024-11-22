@@ -332,7 +332,7 @@ const MyPage: React.FC = () => {
           ></Photo>
           <Info id="info">
             <UserArea>
-              <UserName>{user?.nickName || "unknown"}</UserName>
+              <UserName>{user?.name || "unknown"}</UserName>
               <Modify>
                 <Bnt onClick={handleMenu}>
                   <ModifyIcon />
