@@ -250,7 +250,7 @@ return (
       />
       <input
         type="text" 
-        placeholder="책을 선택해 주세요"
+        placeholder="이곳을 클릭해서 책을 선택해주세요"
         value={selectedBookTitle}
         onClick={openDialog}
         className="input-field"
