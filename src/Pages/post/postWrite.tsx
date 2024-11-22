@@ -116,7 +116,7 @@ const PostWrite: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (title && text) {
+        if (title && text && selectedBookTitle) {
             try {
                 if (isEditMode) {
                     await dispatch(
