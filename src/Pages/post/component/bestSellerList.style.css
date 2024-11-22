@@ -50,12 +50,12 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 481px) {
   .popular-books-grid {
     max-width: 80%;
   }
   .grid-container {
     grid-template-columns: repeat(3, 1fr); /* 작은 모바일 화면: 한 줄에 2개 */
-    gap:10px;
+    gap:5px;
   }
 }

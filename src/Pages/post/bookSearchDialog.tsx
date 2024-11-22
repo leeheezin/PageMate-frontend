@@ -166,7 +166,7 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
                 {loading && hasSearched && <Spinner/>}
                 {!hasSearched && (
                     <div className="popular-books-grid">
-                        <h2 className="popular-books-title">오늘의 인기 도서</h2>
+                        <h2 className="popular-books-title">베스트셀러</h2>
                         <div className="grid-container">
                             {filteredBooks.map((book, index) => (
                             <div
