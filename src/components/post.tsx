@@ -243,7 +243,7 @@ const Post: React.FC<PostProps> = ({
       // 같은 포스트 클릭 시 닫고, 다른 포스트 클릭 시 열기
       setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
     };
-    console.log(date)
+    console.log('name',name)
     return (
         <StyledPost>
         <Header>
