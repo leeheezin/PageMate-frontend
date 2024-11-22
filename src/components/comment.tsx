@@ -9,6 +9,7 @@ import { RootState, AppDispatch } from '../features/store'; // Import the types
 const CommentContainer = styled.div`
     border-top: 1px solid #D2D1D1;
     margin-top: 8px;
+    padding-top: 8px;
 `;
 
 const CommentItem = styled.div`
@@ -172,6 +173,11 @@ const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange
                     type="text" 
                     value={inputValue} 
                     onChange={handleInputChange} 
+                    onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                            handleAddComment();
+                        }
+                    }}
                     placeholder="댓글 달기" 
                     disabled={!currentUser} // 로그인하지 않은 경우 비활성화
                 />
