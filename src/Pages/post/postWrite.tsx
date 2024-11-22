@@ -45,6 +45,8 @@ const PostWrite: React.FC = () => {
     top: 0,
     left: 0,
     visible: false,});
+     // **토스트 메시지 상태 추가**
+    const [isToastVisible, setIsToastVisible] = useState(false);
     const titleInputRef = useRef<HTMLInputElement | null>(null);
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
     const [selectionStart, setSelectionStart] = useState<number | null>(null);
@@ -68,6 +70,13 @@ const PostWrite: React.FC = () => {
       }
     }, [postToEdit]);
 
+    // **토스트 메시지 타이머 관리**
+    const showToast = () => {
+      setIsToastVisible(true);
+      setTimeout(() => {
+        setIsToastVisible(false);
+      }, 3000); // 3초 후 메시지 숨김
+    };
 
     // // 미니바가 열린 상태에서도 선택 범위를 유지
     // useEffect(() => {
@@ -273,7 +282,12 @@ return (
         className="textarea-field"
         name="text"
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={(e) => {
+          if (!text) {
+            showToast(); // 처음 입력 시 토스트 메시지 표시
+          }
+          setText(e.target.value)
+        }}
         onMouseUp={handleTextSelection} // 텍스트 드래그 후 이벤트 처리
         onSelect={handleTextSelection} // 키보드로 텍스트 선택 시 이벤트 처리
       ></textarea>
@@ -282,6 +296,11 @@ return (
       </button>
       {error && <Error>{error}</Error>}
     </form>
+    {isToastVisible && (
+        <div className="toast-message">
+            첨삭이 필요한 문장을 드래그하면 AI가 다듬어줘요!
+        </div>
+    )}
     </div>
     {isDialogOpen && (
     <BookSearchDialog onClose={closeDialog} onSelect={handleSelectBook} />
@@ -302,7 +321,7 @@ return (
         setIsDropdownOpen={setIsDropdownOpen}
       />
     )}
-
+    
     {/* 미니 바 */}
     {/* { MiniBarComponent(miniBarPosition, handleMiniBarAction, aiRequestText, setAiRequestText, applyGptResult, closeGptResultModal, gptResultText, isLoading, gptResultModal,isDropdownOpen,setIsDropdownOpen)} */}
   </div>

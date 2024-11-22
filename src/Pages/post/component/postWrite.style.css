@@ -11,6 +11,7 @@
 }
 
 .form-container {
+    position: relative;
     max-width: 765px;
     margin: 50px auto;
     padding: 15px;
@@ -119,4 +120,42 @@
 
 .mini-bar-btn:hover {
     text-decoration: underline;
+}
+
+.toast-message {
+    position: absolute; /* form-container를 기준으로 위치 지정 */
+    top: -20px; /* 제목 input 박스 위로 띄우기 */
+    left: 15px; /* 제목 input과 같은 위치 */
+    background-color: white; /* 배경색 */
+    color: black; /* 텍스트 색상 */
+    padding: 5px 10px; /* 내부 여백 */
+    border-radius: 5px; /* 둥근 모서리 */
+    font-size: 12px; /* 텍스트 크기 */
+    z-index: 1000; /* 다른 요소 위에 표시 */
+    opacity: 0.9; /* 투명도 */
+    animation: fade-in-out 3s ease-in-out forwards; /* 페이드 효과 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+    transform: translateY(-10px); /* 약간 위로 올리기 */
+}
+
+@media (max-width: 481px) {
+    .toast-message {
+        left: 10px; /* 제목 input과 같은 위치 */
+    }
+}
+
+/* 페이드 인/아웃 애니메이션 */
+@keyframes fade-in-out {
+    0% {
+        opacity: 0; /* 처음에 투명 */
+    }
+    10% {
+        opacity: 0.9; /* 서서히 나타남 */
+    }
+    90% {
+        opacity: 0.9; /* 표시된 상태 유지 */
+    }
+    100% {
+        opacity: 0; /* 서서히 사라짐 */
+    }
 }
