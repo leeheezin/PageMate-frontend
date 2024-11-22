@@ -18,7 +18,7 @@ interface PostProps {
   id?: string;
     userId: {
         _id: string;
-        nickName: string;
+        name: string;
         profilePhoto: string;
   };
   bookTitle: string;
@@ -192,7 +192,6 @@ const Post: React.FC<PostProps> = ({
     const currentUser = useSelector((state: RootState) => state.user.user);
 
     const currentUserId = currentUser ? currentUser._id : null;
-      console.log(currentUser?.nickName)
     // 게시글 작성자가 현재 로그인한 사용자인지 확인
     const isOwner = userId && currentUserId === userId._id;
     
@@ -243,7 +242,7 @@ const Post: React.FC<PostProps> = ({
       // 같은 포스트 클릭 시 닫고, 다른 포스트 클릭 시 열기
       setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
     };
-    console.log(date)
+    console.log('name',name)
     return (
         <StyledPost>
         <Header>
