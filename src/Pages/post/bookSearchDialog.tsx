@@ -6,6 +6,7 @@ import "./component/bestSellerList.style.css";
 import { fetchBookSearchResult, clearBooks } from "../../features/bookSearch/bookSearchSlice";
 import { fetchBooks } from "../../features/book/bookSlice";
 import NoResult from "../../components/noresultPage";
+import Spinner from "../../components/spinner";
 interface BookSearchDialogProps {
     onClose: () => void;
     onSelect: (bookTitle: string, bookAuthor: string) => void;
@@ -148,7 +149,7 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
                         </ul>
                     </div>
                 )}
-                {loading && hasSearched && <p>로딩 중...</p>}
+                {loading && hasSearched && <Spinner/>}
                 {!hasSearched && (
                     <div className="popular-books-grid">
                         <h2 className="popular-books-title">오늘의 인기 도서</h2>
