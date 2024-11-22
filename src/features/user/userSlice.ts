@@ -6,10 +6,12 @@ import {
 } from "@reduxjs/toolkit";
 import api from "../../utils/api";
 import { NavigateFunction } from "react-router-dom";
+import axios from "axios";
 
 interface UserState {
   user: UserData | null;
   loading: boolean;
+  error: string | null;
   loginError: string | null;
   registrationError: string | null;
   success: boolean;
@@ -19,6 +21,7 @@ interface UserState {
 const initialState: UserState = {
   user: null,
   loading: false,
+  error: null,
   loginError: null,
   registrationError: null,
   success: false,
@@ -28,7 +31,6 @@ const initialState: UserState = {
 interface UserData {
   _id: string;
   name: string;
-  nickName: string;
   email: string;
   profilePhoto: string;
   createdAt: string;
@@ -43,7 +45,9 @@ interface LoginPayload {
   email: string;
   password: string;
 }
-
+interface KakaLoginPayload {
+  code: string;
+}
 interface RegisterPayload {
   email: string;
   name: string;
@@ -53,6 +57,9 @@ interface RegisterPayload {
 
 interface UpdateProfilePayload {
   profilePhoto: string;
+}
+interface UpdateNamePayload {
+  name: string;
 }
 
 export const registerUser = createAsyncThunk<
@@ -79,7 +86,6 @@ export const loginWithEmail = createAsyncThunk<
   { rejectValue: string }
 >("user/loginWithEmail", async ({ email, password }, { rejectWithValue }) => {
   try {
-
     const response = await api.post("/auth/login", { email, password });
 
     const token = response.data.token;
@@ -91,6 +97,36 @@ export const loginWithEmail = createAsyncThunk<
   }
 });
 
+export const loginWithGoogle = createAsyncThunk<
+  UserData,
+  LoginPayload,
+  { rejectValue: string }
+>("user/loginWithGoogle", async (token, { rejectWithValue }) => {
+  try {
+
+    const response = await api.post("/auth/login/google", { token });
+
+    sessionStorage.setItem("token", response.data.sessionToken);
+
+    return response.data.user;
+  } catch (error: any) {
+    return rejectWithValue(error.message);
+  }
+});
+
+export const loginWithKakao = createAsyncThunk<
+  UserData,
+  KakaLoginPayload,
+  { rejectValue: string }
+>("user/loginWithKakao", async (token, { rejectWithValue }) => {
+  try {
+    const response = await api.post("/auth/login/kakao", token);
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(error.response.data);
+  }
+});
+
 export const loginWithToken = createAsyncThunk<
   UserData,
   void,
@@ -98,7 +134,7 @@ export const loginWithToken = createAsyncThunk<
 >("user/loginWithToken", async (_, { rejectWithValue }) => {
   try {
     const response = await api.get("/user/me");
-    console.log("🚀 ~ > ~ response:", response.data.data)
+    console.log("🚀 ~ > ~ response:", response.data.data);
     console.log("토큰 로그인!");
 
     return response.data.data;
@@ -112,6 +148,20 @@ export const logout = createAsyncThunk("user/logout", async () => {
   window.location.reload();
 });
 
+export const deleteUser = createAsyncThunk<
+  UserData,
+  void,
+  { rejectValue: string }
+>("user/deleteUser", async (_, { rejectWithValue }) => {
+  try {
+    const response = await api.delete("/user");
+
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(error.message);
+  }
+});
+
 // 프로필 사진 업데이트
 export const uploadProfile = createAsyncThunk<
   UserData,
@@ -120,9 +170,28 @@ export const uploadProfile = createAsyncThunk<
 >("user/uploadProfile", async ({ profilePhoto }, { rejectWithValue }) => {
   try {
     const response = await api.put("/user/profile", { profilePhoto });
+    console.log("🚀 ~ > ~ response.data.data:", response.data.data);
+
     return response.data.data; // 업데이트된 유저 정보 반환
   } catch (error: any) {
-    return rejectWithValue(error.response?.data?.error || "Profile update failed");
+    return rejectWithValue(
+      error.response?.data?.error || "Profile update failed"
+    );
+  }
+});
+
+export const updateName = createAsyncThunk<
+  UserData,
+  UpdateNamePayload,
+  { rejectValue: string }
+>("user/updateName", async (name, { rejectWithValue }) => {
+  try {
+    const response = await api.put("/user/name", { updateName: name });
+    return response.data.data; // 업데이트된 유저 정보 반환
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.error || "Profile update failed"
+    );
   }
 });
 
@@ -131,6 +200,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     clearErrors: (state) => {
+      state.error = null;
       state.loginError = null;
       state.registrationError = null;
       state.profileUpdateError = null;
@@ -176,6 +246,40 @@ const userSlice = createSlice({
       .addCase(uploadProfile.rejected, (state, action) => {
         state.loading = false;
         state.profileUpdateError = action.payload || "Profile update failed";
+      })
+      .addCase(loginWithGoogle.pending, (state) => {
+        state.loading = true;
+        state.loginError = null;
+      })
+      .addCase(loginWithGoogle.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(loginWithGoogle.rejected, (state, action) => {
+        state.loading = false;
+        state.loginError = action.payload || "login failed";
+      })
+      .addCase(deleteUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteUser.fulfilled, (state) => {
+        state.loading = false;
+        state.user = null;
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(updateName.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateName.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(updateName.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });

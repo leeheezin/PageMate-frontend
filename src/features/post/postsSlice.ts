@@ -14,15 +14,19 @@ interface QueryParams {
 export interface Post {
     _id: string;
     id: string;
-    userId: string;
+    userId: {
+        _id: string;
+        name: string;
+        profilePhoto: string;
+    };
     bookTitle: string;
     bookAuthor: string;
     title: string;
     text: string;
     date: string;
-    createdAt?: string;
+    createdAt: string;
     author: string;
-    nickName: string;
+    name: string;
     profilePhoto: string;
     likes: string[];
     comments: Comment[];
@@ -77,13 +81,10 @@ const initialState: PostsState = {
         const state = getState();
         const currentUserId = state.user.user?._id || "";
   
-        // API 호출 (queryParams 포함)
         const response = await api.get("/post", { params: queryParams });
         if (!response.data || !response.data.data) {
           throw new Error("Invalid response structure");
         }
-  
-        console.log("API response data:", response.data);
   
         const posts = response.data.data;
         const pagination = response.data.pagination;
@@ -91,9 +92,12 @@ const initialState: PostsState = {
         return {
           posts: posts.map((post: Post) => ({
             ...post,
-            liked: post.likes.includes(currentUserId), 
+            id: post._id,
+            name: post.userId?.name, // 서버에서 `name`으로 매핑된 작성자 이름
+            profilePhoto: post.userId?.profilePhoto,
+            liked: post.likes.includes(currentUserId),
           })),
-          pagination, 
+          pagination,
         };
       } catch (error: any) {
         return rejectWithValue(error?.message || "Failed to fetch posts");
@@ -108,7 +112,7 @@ export const createPost = createAsyncThunk<Post, NewPost>(
     async (newPost, { rejectWithValue }) => {
         try {
             const response = await api.post("/post/write", newPost);
-            console.log(response.data.data._id)
+            console.log(response.data.data)
             return response.data.data; 
         } catch (error: any) {
             console.log(error.response.data.error)
@@ -164,7 +168,6 @@ export const deletePost = createAsyncThunk<Post, { id: string }>(
 
             const res = await api.delete(`/post/${id}`);
             console.log(res.data.data)
-
             return res.data.data;
         } catch (error: any) {
             if (error.response && error.response.data && error.response.data.error) {
@@ -222,12 +225,15 @@ const postsSlice = createSlice({
             })
             .addCase(fetchPosts.fulfilled, (state, action) => {
                 const { posts, pagination } = action.payload;
-                state.posts = [...state.posts, ...posts]; // 새 게시글 추가
+                const existingIds = new Set(state.posts.map((post) => post._id));
+                const uniquePosts = posts.filter((post) => !existingIds.has(post._id));
+
+                state.posts = [...state.posts, ...uniquePosts]; // 중복 없는 게시글 추가
                 state.pagination = {
                     ...state.pagination,
                     totalPosts: pagination.totalPosts,
                     totalPages: pagination.totalPages,
-                    currentPage: state.pagination.currentPage, 
+                    currentPage: pagination.currentPage,
                     hasMore: pagination.hasMore,
                 };
                 state.loading = false;
@@ -245,7 +251,13 @@ const postsSlice = createSlice({
                 state.error = null;
             })
             .addCase(createPost.fulfilled, (state, action: PayloadAction<Post>) => {
-                state.posts.push(action.payload);
+                const newPost = {
+                    ...action.payload,
+                    id: action.payload._id,
+                    name: action.payload.userId.name,
+                    profilePhoto: action.payload.userId.profilePhoto,
+                };
+                state.posts.unshift(newPost);
                 state.loading = false;
             })
             .addCase(createPost.rejected, (state, action) => {
@@ -309,9 +321,11 @@ const postsSlice = createSlice({
             .addCase(toggleLike.fulfilled, (state: PostsState, action: PayloadAction<Post>) => {
                 const updatedPost = action.payload;
                 const index = state.posts.findIndex((post) => post._id === updatedPost._id);
-            
                 if (index !== -1) {
-                    state.posts[index] = updatedPost; 
+                    state.posts[index] = {
+                        ...state.posts[index], 
+                        ...updatedPost, 
+                    };
                 }
                 state.loading = false;
             })         

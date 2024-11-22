@@ -7,27 +7,28 @@ import styled from 'styled-components';
 import { AppDispatch, RootState } from '../../features/store';
 import { fetchPosts, startLoading, stopLoading } from '../../features/post/postsSlice';
 import Post from '../../components/post';
+import PostSkeleton from '../../components/postSkeleton';
 
 const formatDate = (dateString?: string): string => {
-    if (!dateString) return "날짜 없음"; // createdAt이 없을 경우 처리
-  
-    const date: Date = new Date(dateString); 
+    if (!dateString) return ""; 
+
+    const date = new Date(dateString);
     if (isNaN(date.getTime())) {
-      return "Invalid date"; // 유효하지 않은 날짜일 경우 처리
+        return "유효하지 않은 날짜"; 
     }
-  
-    const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric', 
-      month: '2-digit', 
-      day: '2-digit', 
-      hour: '2-digit', 
-      minute: '2-digit', 
-      hour12: true, // 오후/오전 포함
-    };
-    return date.toLocaleString("ko-KR", options).replace(/(\d{4})\/(\d{2})\/(\d{2}), (\d{2}):(\d{2})/, '$1.$2.$3. $7'); 
-  };
+    return new Intl.DateTimeFormat("ko-KR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+    }).format(date);
+};
+
   
 const HomePageContainer = styled.div`
+    position: relative;
     margin: 0 auto;
     padding: 16px;
 `;
@@ -57,7 +58,9 @@ const handleCommentToggle = (postId: string) => {
     // 같은 포스트 클릭 시 닫고, 다른 포스트 클릭 시 열기
     setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
 };
-
+if(loading) {
+    return <PostSkeleton/>
+}
 return (
 <HomePageContainer>
     <InfiniteScroll
@@ -68,6 +71,7 @@ return (
     >
         {posts.map((post) => (
         <Post
+            id={post.id}
             _id={post._id}
             key={post._id}
             userId={post.userId}
@@ -75,8 +79,8 @@ return (
             bookAuthor={post.bookAuthor}
             title={post.title}
             text={post.text}
-            date={formatDate(post.createdAt)}
-            author={post.nickName}
+            date={formatDate(post.date)}
+            name={post.name}
             profilePhoto={post.profilePhoto}
             likes={post.likes}
             comments={post.comments}

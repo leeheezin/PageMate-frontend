@@ -15,19 +15,25 @@ import UserData from "../features/user/userSlice";
 
 interface PostProps {
   _id: string;
-  userId?: string;
+  id?: string;
+    userId: {
+        _id: string;
+        name: string;
+        profilePhoto: string;
+  };
   bookTitle: string;
   bookAuthor: string;
   title: string;
   text: string;
   date: string;
   createdAt?: string;
-  author: string;
+  name: string;
   profilePhoto: string | null;
   likes: string[];
   comments: { author: string; text: string }[];
   isCommentVisible?: boolean; // 댓글 영역이 열려 있는지 여부
   onCommentToggle?: (postId: string) => void; // 댓글 토글 핸들러
+  isMyPage?: boolean;
 }
 interface UserResponse {
   status: string;
@@ -118,6 +124,7 @@ const Footer = styled.div`
 `;
 const Inner = styled.div`
   display: flex;
+  flex: 5;
   gap: 10px;
 `;
 const CommentSectionContainer = styled.div`
@@ -125,14 +132,25 @@ const CommentSectionContainer = styled.div`
   margin-top: 8px;
 `;
 const BookTit = styled.div`
+  flex: 1;
   font-size: 14px;
   @media (max-width: 480px) {
     font-size: 12px;
   }
 `;
-const BTitle = styled.div``;
+const BTitle = styled.div`
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+`;
 const BAuthor = styled.div`
   color: #a4a4a4;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+
 `;
 const DialogContainer = styled.div`
 `;
@@ -154,13 +172,14 @@ const Post: React.FC<PostProps> = ({
     bookAuthor,
     text,
     date,
-    author,
+    name,
     profilePhoto,
     likes,
     createdAt,
     comments,
     isCommentVisible = false, // @@기본값 설정
     onCommentToggle,  // @@함수 전달 여부에 따라 동작 추가해야함
+    isMyPage = false,
     }) => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const navigate = useNavigate();
@@ -173,9 +192,8 @@ const Post: React.FC<PostProps> = ({
     const currentUser = useSelector((state: RootState) => state.user.user);
 
     const currentUserId = currentUser ? currentUser._id : null;
-      console.log(currentUser?.nickName)
     // 게시글 작성자가 현재 로그인한 사용자인지 확인
-    const isOwner = currentUserId === userId;
+    const isOwner = userId && currentUserId === userId._id;
     
     console.log('currentUserId:', currentUserId);
     console.log('userId:', userId);
@@ -212,6 +230,7 @@ const Post: React.FC<PostProps> = ({
         try {
             await dispatch(deletePost({ id })).unwrap();
             setLocalError(null);
+            setIsDialogOpen(false);
         } catch (error: any) {
             setLocalError(error);
             console.log(error)
@@ -223,7 +242,7 @@ const Post: React.FC<PostProps> = ({
       // 같은 포스트 클릭 시 닫고, 다른 포스트 클릭 시 열기
       setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
     };
-    console.log(author)
+    console.log('name',name)
     return (
         <StyledPost>
         <Header>
@@ -233,13 +252,13 @@ const Post: React.FC<PostProps> = ({
             </TitleDate>
             <ProfileInfo>
             <ProfilePhoto src={profilePhoto || ProfileIcon} alt="Profile" />
-            <Name>{author}</Name>
+            <Name>{name}</Name>
             {/* 게시글 작성자만 메뉴 볼수있게 조건 */}
             {currentUser && isOwner && ( 
                 <>
                     <OptionsIcon onClick={handleDialogOpen} />
                     {isDialogOpen && (
-                        <Dialog isOpen={isDialogOpen} onClose={handleDialogClose} position="absolute" top="45px">
+                        <Dialog isOpen={isDialogOpen} onClose={handleDialogClose} position="absolute" top="60px">
                             <DialogContainer>
                                 <ActionButton onClick={handleEdit}>수정</ActionButton>
                                 <ActionButton onClick={() => handleDelete(_id)}>삭제</ActionButton>
@@ -275,6 +294,7 @@ const Post: React.FC<PostProps> = ({
                     visible={isCommentVisible} 
                     postId={_id} 
                     onCommentCountChange={handleCommentCountChange} // 콜백 전달 @추가
+                    isMyPage ={isMyPage}
                     />
               </CommentSectionContainer>
           )}

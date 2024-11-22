@@ -68,7 +68,7 @@ const Dialog: React.FC<DialogProps> = ({
         left={left}
       >
         <Content>{children}</Content>
-        <CloseButton onClick={onClose}>취소</CloseButton>
+        <CloseButton onClick={onClose}>닫기</CloseButton>
       </DialogContainer>
     </Overlay>
   );
