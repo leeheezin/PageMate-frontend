@@ -233,6 +233,9 @@ const Login: React.FC = () => {
     if (!window.Kakao.isInitialized()) {
       window.Kakao.init(KAKAO_JS_KEY);
     }
+    window.Kakao.Auth.authorize({
+        redirectUri: "https://localhost:3000",
+    });
 
     window.Kakao.Auth.login({
       success: (authObj: { access_token: string }) => {
@@ -243,7 +246,9 @@ const Login: React.FC = () => {
               token: authObj.access_token,
               profile: res.kakao_account.profile,
             };
-            dispatch(loginWithKakao(kakaoData));
+            console.log("🚀 ~ handleKakaoLogin ~ kakaoData:", kakaoData)
+            
+            // dispatch(loginWithKakao(kakaoData));
           },
           fail: (error: any) => {
             console.error(error);
@@ -312,7 +317,7 @@ const Login: React.FC = () => {
               </GoogleOAuthProvider>
             </Google>
             <Kakao>
-              <button onClick={handleKakaoLogin}>카카오 로그인</button>
+              <button type="button" onClick={handleKakaoLogin}>카카오 로그인</button>
             </Kakao>
           </LoginForm>
         </LoginArea>

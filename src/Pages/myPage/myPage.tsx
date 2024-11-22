@@ -7,10 +7,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../features/store";
 import { getLikedPost, getMyPost  } from "../../features/post/postsSlice";
 import { Post } from "../../features/post/postsSlice";
-import { uploadProfile, deleteUser } from "../../features/user/userSlice";
+import { uploadProfile, deleteUser, updateName } from "../../features/user/userSlice";
 import Dialog from "../../components/dialog";
 import CloudinaryUploadWidget from "../../utils/CloudinaryUploadWidget";
 import { useNavigate } from "react-router-dom";
+import NicknameModal from "./component/NicknameModal";
+
 
 const Container = styled.div`
   max-height: calc(100vh - 60px);
@@ -129,6 +131,7 @@ const MyPage: React.FC = () => {
   const { myPosts, myLiked } = useSelector((state: RootState) => state.posts);
   const [highlight, setHighlight] = useState<boolean>(true);
   const [posts, setPost] = useState<Post[]>([]);
+  const [isNicknameModalOpen, setIsNicknameModalOpen] = useState(false); 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogPosition, setDialogPosition] = useState({
     top: "50%",
@@ -167,6 +170,22 @@ const MyPage: React.FC = () => {
       navigate("/login"); 
     } catch (error) {
       alert(`회원 탈퇴 실패: ${error}`);
+    }
+  }
+  const handleOpenNicknameModal = () => {
+    setIsNicknameModalOpen(true);
+    setIsDialogOpen(false);
+  };
+
+  const handleCloseNicknameModal = () => {
+    setIsNicknameModalOpen(false);
+  };
+  const handleUpdateName = async (newName: any) => {
+    try {
+      await dispatch(updateName(newName)).unwrap();; // unwrap()으로 성공 확인
+      alert("닉네임 변경이 완료되었습니다.");
+    } catch (error) {
+      alert(`닉네임 변경 실패: ${error}`);
     }
   }
 
@@ -213,7 +232,7 @@ const MyPage: React.FC = () => {
         top={dialogPosition.top}
         left={dialogPosition.left}
       >
-        <ActionButton>닉네임 수정</ActionButton>
+        <ActionButton onClick={handleOpenNicknameModal}>닉네임 수정</ActionButton>
         <CloudinaryUploadWidget uploadImage={handleProfileUpdate} />
         <ActionButton onClick={handleDeleteUser}>회원탈퇴</ActionButton>
       </Dialog>
@@ -252,6 +271,11 @@ const MyPage: React.FC = () => {
           </Posts>
         </PostArea>
       </MyPageArea>
+      <NicknameModal
+        isOpen={isNicknameModalOpen}
+        onClose={handleCloseNicknameModal}
+        onConfirm={handleUpdateName}
+      />
     </Container>
   );
 };

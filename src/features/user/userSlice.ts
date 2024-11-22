@@ -56,6 +56,9 @@ interface RegisterPayload {
 interface UpdateProfilePayload {
   profilePhoto: string;
 }
+interface UpdateNamePayload {
+  name: string;
+}
 
 export const registerUser = createAsyncThunk<
   UserData,
@@ -174,6 +177,19 @@ export const uploadProfile = createAsyncThunk<
   }
 });
 
+export const updateName = createAsyncThunk<
+  UserData,
+  UpdateNamePayload,
+  { rejectValue: string }
+>("user/uploadProfile", async ( name , { rejectWithValue }) => {
+  try {
+    const response = await api.put("/user/name", { updateName:name });
+    return response.data.data; // 업데이트된 유저 정보 반환
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data?.error || "Profile update failed");
+  }
+});
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -246,6 +262,17 @@ const userSlice = createSlice({
         state.user = null;
       })
       .addCase(deleteUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(updateName.pending, (state)=>{
+        state.loading = true;
+      })
+      .addCase(updateName.fulfilled, (state, action)=>{
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(updateName.rejected, (state, action)=>{
         state.loading = false;
         state.error = action.payload as string;
       })
