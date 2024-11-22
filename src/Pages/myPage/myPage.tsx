@@ -5,9 +5,9 @@ import ProfileIcon from "../../assets/images/icon-user.png";
 import PostComponent from "./component/post";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../features/store";
-import { getLikedPost, getMyPost } from "../../features/post/postsSlice";
+import { getLikedPost, getMyPost  } from "../../features/post/postsSlice";
 import { Post } from "../../features/post/postsSlice";
-import { uploadProfile } from "../../features/user/userSlice";
+import { uploadProfile, deleteUser } from "../../features/user/userSlice";
 import Dialog from "../../components/dialog";
 import CloudinaryUploadWidget from "../../utils/CloudinaryUploadWidget";
 import { useNavigate } from "react-router-dom";
@@ -160,11 +160,21 @@ const MyPage: React.FC = () => {
     setIsDialogOpen(true);
   };
 
+  const handleDeleteUser  = async () => {
+    try {
+      await dispatch(deleteUser()).unwrap(); // unwrap()으로 성공 확인
+      alert("회원 탈퇴가 완료되었습니다.");
+      navigate("/login"); 
+    } catch (error) {
+      alert(`회원 탈퇴 실패: ${error}`);
+    }
+  }
+
   useEffect(() => {
     if(!user){
       navigate('/login');
     }
-  }, []);
+  }, [user]);
   
   useEffect(() => {
     dispatch(getMyPost());
@@ -205,6 +215,7 @@ const MyPage: React.FC = () => {
       >
         <ActionButton>닉네임 수정</ActionButton>
         <CloudinaryUploadWidget uploadImage={handleProfileUpdate} />
+        <ActionButton onClick={handleDeleteUser}>회원탈퇴</ActionButton>
       </Dialog>
       <MyPageArea>
         <ProfileArea>

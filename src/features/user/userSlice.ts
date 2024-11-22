@@ -11,6 +11,7 @@ import axios from "axios";
 interface UserState {
   user: UserData | null;
   loading: boolean;
+  error:string |null;
   loginError: string | null;
   registrationError: string | null;
   success: boolean;
@@ -20,6 +21,7 @@ interface UserState {
 const initialState: UserState = {
   user: null,
   loading: false,
+  error:null,
   loginError: null,
   registrationError: null,
   success: false,
@@ -143,6 +145,21 @@ export const logout = createAsyncThunk("user/logout", async () => {
   window.location.reload();
 });
 
+
+export const deleteUser = createAsyncThunk<
+  UserData,
+  void,
+  { rejectValue: string }
+>("user/deleteUser", async (_, { rejectWithValue }) => {
+  try {
+    const response = await api.delete("/user");
+
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(error.message);
+  }
+});
+
 // 프로필 사진 업데이트
 export const uploadProfile = createAsyncThunk<
   UserData,
@@ -162,6 +179,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     clearErrors: (state) => {
+      state.error = null;
       state.loginError = null;
       state.registrationError = null;
       state.profileUpdateError = null;
@@ -219,6 +237,17 @@ const userSlice = createSlice({
       .addCase(loginWithGoogle.rejected, (state, action)=>{
         state.loading = false;
         state.loginError = action.payload || "login failed";
+      })
+      .addCase(deleteUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteUser.fulfilled, (state) => {
+        state.loading = false;
+        state.user = null;
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       })
       ;
   },

@@ -294,7 +294,7 @@ const Login: React.FC = () => {
               />
               {loginError && (
                 <ErrorMessage>
-                  아이디 혹은 비밀번호를 확인해 주세요
+                  아이디 혹은 비밀번호가 일치하지 않습니다.
                 </ErrorMessage>
               )}
               <Button type="submit">로그인</Button>
