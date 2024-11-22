@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import ProfileIcon from "../assets/images/icon-user.png";
 import { useDispatch, useSelector } from 'react-redux';
 import { addComment, fetchComments, deleteComment } from '../features/comment/commentSlice'; // Import the action
 import { RootState, AppDispatch } from '../features/store'; // Import the types
@@ -150,7 +151,7 @@ const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange
             {comments.length>0?comments.map((comment, index) => (
                 <CommentItem key={index}>
                      <ProfileImage
-                        src ={ (comment.profilePhoto || '/path/to/default/profile.png') as string } // profilePhoto가 없으면 기본 이미지
+                        src ={ (comment.profilePhoto || ProfileIcon) as string } // profilePhoto가 없으면 기본 이미지
                         alt={`${comment.author}의 프로필`}
                     />
                      <CommentContent>
