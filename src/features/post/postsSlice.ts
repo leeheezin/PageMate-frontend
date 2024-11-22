@@ -16,7 +16,7 @@ export interface Post {
     id: string;
     userId: {
         _id: string;
-        nickName: string;
+        name: string;
         profilePhoto: string;
     };
     bookTitle: string;
@@ -93,7 +93,7 @@ const initialState: PostsState = {
           posts: posts.map((post: Post) => ({
             ...post,
             id: post._id,
-            name: post.userId?.nickName, // 서버에서 `name`으로 매핑된 작성자 이름
+            name: post.userId?.name, // 서버에서 `name`으로 매핑된 작성자 이름
             profilePhoto: post.userId?.profilePhoto,
             liked: post.likes.includes(currentUserId),
           })),
@@ -254,7 +254,7 @@ const postsSlice = createSlice({
                 const newPost = {
                     ...action.payload,
                     id: action.payload._id,
-                    name: action.payload.userId.nickName,
+                    name: action.payload.userId.name,
                     profilePhoto: action.payload.userId.profilePhoto,
                 };
                 state.posts.unshift(newPost);
