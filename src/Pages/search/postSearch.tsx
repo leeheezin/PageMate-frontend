@@ -11,8 +11,7 @@ import Post from '../../components/post';
 import HomePage from "../home/homePage";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import "./postSearch.style.css"
-
-
+import PostSkeleton from "../../components/postSkeleton";
 
 const PostSearch: React.FC = () => {
   const [query, setQuery] = useState<string>("");
@@ -20,16 +19,13 @@ const PostSearch: React.FC = () => {
 
   const [activeCommentPostId, setActiveCommentPostId] = useState<string | null>(null); // 열려 있는 댓글 영역의 포스트 ID
 
-
   // Redux 상태에서 books 데이터를 가져옵니다.
   const dispatch = useDispatch<AppDispatch>();  // dispatch 타입 지정
   const { books } = useSelector((state: RootState) => state.book);
   const { posts, loading, error } = useSelector((state: RootState) => state.posts);
   
-
   const location = useLocation(); // 현재 URL 정보 가져오기
   const navigate = useNavigate(); // 네비게이션 훅 초기화
-
   
   // URL 파라미터에서 검색어 추출
   const queryParams = new URLSearchParams(location.search);
@@ -140,7 +136,7 @@ const PostSearch: React.FC = () => {
         </>
       ) : (
         <div>
-          {loading && <p>검색 중...</p>}
+          {loading && <PostSkeleton />}
           {error && <p>에러가 발생했습니다: {error}</p>}
           {!loading && searched && posts.length === 0 && (
             // <p>해당 책에 대한 결과가 없습니다.</p>

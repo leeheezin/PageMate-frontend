@@ -130,7 +130,11 @@
 }
 
 /* 책 리스트 스타일 */
-
+.book-search-skeleton {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
 .book-search-result-list-container{
     max-width: 90%;
     margin: 0 auto;

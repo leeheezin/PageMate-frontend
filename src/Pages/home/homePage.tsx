@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { AppDispatch, RootState } from '../../features/store';
 import { fetchPosts, startLoading, stopLoading } from '../../features/post/postsSlice';
 import Post from '../../components/post';
+import PostSkeleton from '../../components/postSkeleton';
 
 const formatDate = (dateString?: string): string => {
     if (!dateString) return ""; 
@@ -58,6 +59,9 @@ const handleCommentToggle = (postId: string) => {
     setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
 };
 console.log(posts)
+if(loading) {
+    return <PostSkeleton/>
+}
 return (
 <HomePageContainer>
     <InfiniteScroll
