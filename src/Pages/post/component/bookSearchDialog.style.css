@@ -13,7 +13,7 @@
 }
 
 .dialog-content {
-    background-color: #F9F4F0;
+    background-color: white;
     border-radius: 8px;
     width: 80%;
     height: 80vh;
@@ -60,7 +60,7 @@
     display: flex; /* 검색창과 버튼을 가로로 정렬 */
     align-items: center; /* 수직 중앙 정렬 */
     gap: 20px; /* 검색창과 닫기 버튼 간격 */
-    background-color: #F9F4F0;
+    background-color: white;
 }
 
 .search-container{
