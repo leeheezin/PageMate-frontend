@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { AppDispatch } from "../../features/store";
+import { AppDispatch,RootState } from "../../features/store";
 import { fetchPosts } from "../../features/post/postsSlice";
+import { logout } from "../../features/user/userSlice";
+import ConfirmDialog from "../../components/comfirmDialog";
 import iconLogo from '../../assets/images/icon-logo1.png';
 import iconLogoBig from '../../assets/images/icon-logo1_big.png';
 import iconMenu from '../../assets/images/icon-menu_black.png';
+import iconLogin from '../../assets/images/icon-login_black.png';
+import iconLogout from '../../assets/images/icon-logout_black.png';
 import iconSearch from '../../assets/images/icon-search_black.png';
 import iconClose from '../../assets/images/icon-close.png';
 import iconBack from '../../assets/images/icon-back.png'
@@ -21,6 +25,8 @@ const Navbar: React.FC = () => {
   // 검색 UI 상태 관리
   const [isSearching, setIsSearching] = useState(false);
   const [query, setQuery] = useState<string>("");
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const { user } = useSelector((state: RootState) => state.user);
 
   const handleSearchClick = () => {
     setIsSearching(true); // 검색 UI 표시
@@ -57,6 +63,11 @@ const Navbar: React.FC = () => {
     }
   };
 
+  const handleLogout = () => {
+    dispatch(logout());
+    setIsConfirmOpen(false); 
+  };
+
   // URL이 `/`일 때 검색 UI 닫기
   useEffect(() => {
     if (location.pathname === "/") {
@@ -66,6 +77,13 @@ const Navbar: React.FC = () => {
   return (
     <>
       {/* desktop 상단 navbar */}
+      <ConfirmDialog
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={handleLogout}
+      >
+        로그아웃 하시겠습니까?
+      </ConfirmDialog>
       <nav className="desktop-navbar">
         {/* 왼쪽 로고 아이콘 */}
         <button className="navbar-icon ms-3" onClick={() => navigate("/")}>
@@ -79,7 +97,7 @@ const Navbar: React.FC = () => {
       <nav className="mobile-navbar">
         {/* 왼쪽 로고 아이콘 */}
         <button className="mobile-navbar-icon ms-3" onClick={() => navigate("/")}>
-          <img src={iconLogo} alt="Logo" />
+          <img src={iconLogo} alt="Logo" className='mobile-navbar-logo' />
         </button>
         
         {/* 중앙 텍스트 */}
@@ -94,7 +112,8 @@ const Navbar: React.FC = () => {
           </button>
           {/* 햄버거 메뉴 아이콘 */}
           <button className="mobile-navbar-icon me-3">
-            <img src={iconMenu} alt="Menu" />
+            {user && <img src={iconLogin} alt="Login" className="img-sizeup" onClick={() => setIsConfirmOpen(true)} />}
+            {!user && <img src={iconLogout} alt="Logout" className="img-sizeup" onClick={() => navigate('/login')} />}
           </button>
         </div>
       </nav>
