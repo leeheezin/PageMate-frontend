@@ -247,6 +247,16 @@ return (
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         // onMouseUp={handleTextSelection} // 텍스트 드래그 후 이벤트 처리
+        onKeyDown={(e) => {
+          if (e.key === "Tab") {
+            e.preventDefault(); // 기본 탭 동작 막기
+            openDialog(); // 다이얼로그 열기
+            const bookInput = document.querySelector(
+              'input[name="bookTitle"]'
+            ) as HTMLInputElement;
+            bookInput?.focus(); // 책 선택 칸으로 포커스 이동
+          }
+        }}
       />
       <input
         type="text" 
