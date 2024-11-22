@@ -13,7 +13,7 @@
 }
 
 .dialog-content {
-    background-color: white;
+    background-color: #F9F4F0;
     border-radius: 8px;
     width: 80%;
     height: 80vh;
@@ -29,21 +29,6 @@
     scroll-behavior: smooth;
 }
 
-/* 모바일 환경을 위한 스타일 */
-@media (max-width: 461px) {
-    .dialog-overlay {
-        align-items: flex-start; /* 모바일에서 다이얼로그가 중앙 위쪽으로 */
-        padding-top: 60px; /* 상단 여백 추가 */
-    }
-    .dialog-content {
-        width: 90%; /* 화면 너비를 더 많이 차지하도록 설정 */
-        margin-right: 0; /* 오른쪽 여백 제거 */
-        margin-bottom: 0; /* 아래쪽 네비게이션 바 간섭 방지 */
-    }
-    .search-container{
-        width: 100%;
-    }
-}
 
 /* 스크롤바 숨기기 */
 .dialog-content::-webkit-scrollbar {
@@ -71,7 +56,6 @@
     position: sticky; /* 스크롤 시 고정 */
     top: 0; /* 다이얼로그 상단에 고정 */
     z-index: 100; /* 리스트 위에 렌더링되도록 설정 */
-    background-color: white; /* 검색창 배경 흰색 */
     padding: 20px 20px; /* 내부 여백 */
     display: flex; /* 검색창과 버튼을 가로로 정렬 */
     align-items: center; /* 수직 중앙 정렬 */
@@ -96,7 +80,7 @@
     padding: 10px 15px;
     font-size: 16px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 8px;
     box-sizing: border-box;
     background-color: white;
     transition: border-color 0.3s, box-shadow 0.3s;
@@ -182,4 +166,23 @@
 {
     font-size: 14px;
     color: gray;
+}
+
+/* 모바일 환경을 위한 스타일 */
+@media (max-width: 481px) {
+    .search-header {
+        padding: 20px 10px 0px 10px; /* 내부 여백 */
+    }
+    .dialog-overlay {
+        align-items: flex-start; /* 모바일에서 다이얼로그가 중앙 위쪽으로 */
+        padding-top: 60px; /* 상단 여백 추가 */
+    }
+    .dialog-content {
+        width: 90%; /* 화면 너비를 더 많이 차지하도록 설정 */
+        margin-right: 0; /* 오른쪽 여백 제거 */
+        margin-bottom: 0; /* 아래쪽 네비게이션 바 간섭 방지 */
+    }
+    .search-container{
+        width: 100%;
+    }
 }

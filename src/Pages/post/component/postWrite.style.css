@@ -4,8 +4,8 @@
     display: flex; /* Flexbox 레이아웃 */
     justify-content: center; /* 가로 중앙 정렬 */
     align-items: center; /* 세로 중앙 정렬 */
-    min-height: 80vh; /* 화면 전체 높이를 기준으로 중앙 정렬 */
-    padding: 20px; /* 모바일에서 양 끝 여백 */
+    min-height: 90vh; /* 화면 전체 높이를 기준으로 중앙 정렬 */
+    padding: 0px 20px; /* 모바일에서 양 끝 여백 */
     box-sizing: border-box; /* 패딩 포함 크기 계산 */
     position: relative;
 }
@@ -13,8 +13,7 @@
 .form-container {
     position: relative;
     max-width: 765px;
-    margin: 50px auto;
-    padding: 15px;
+    margin: 10px auto;
     /* background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
@@ -23,10 +22,10 @@
 .input-field,
 .textarea-field {
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 10px;
     box-sizing: border-box;
     font-family: Arial, sans-serif;
     resize: none;
@@ -52,7 +51,7 @@
 }
 
 .textarea-field {
-    min-height: 300px;
+    min-height: 400px;
 }
 
 .submit-btn {
@@ -65,6 +64,7 @@
     cursor: pointer;
     font-size: 16px;
     float: right;
+    font-weight: bold;
 }
 
 .submit-btn:hover {
@@ -72,17 +72,24 @@
 }
 
 @media (max-width: 481px) {
-    .form-container {
-        margin: 10px;
-        padding: 10px;
+    .post-area {
+        min-height: 80vh; /* 화면 전체 높이를 기준으로 중앙 정렬 */
+    }
+    .input-field,
+    .textarea-field {
+        margin-bottom: 7px;
     }
     .textarea-field {
-        max-height: 300px;
+        min-height: 330px;
     }
     .submit-btn {
-        width: 30%;
+        width: 25%;
         padding: 8px;
         font-size: 14px;
+        border-radius: 6px;
+    }
+    .toast-message {
+        left: 10px; /* 제목 input과 같은 위치 */
     }
 }
 
@@ -136,12 +143,6 @@
     animation: fade-in-out 3s ease-in-out forwards; /* 페이드 효과 */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
     transform: translateY(-10px); /* 약간 위로 올리기 */
-}
-
-@media (max-width: 481px) {
-    .toast-message {
-        left: 10px; /* 제목 input과 같은 위치 */
-    }
 }
 
 /* 페이드 인/아웃 애니메이션 */
