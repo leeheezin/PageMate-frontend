@@ -59,15 +59,18 @@ const MyPageArea = styled.div`
   align-items: center;
 `;
 const ProfileArea = styled.div`
-  width: 100%;
+  width: 80%;
   height: 120px;
   display: flex;
   align-items: center;
   margin-bottom: 30px;
   margin-top: 20px;
+
+  @media (max-width: 480px) {
+    height: 70px;
+  }
 `;
 const Photo = styled.div<{ imageUrl: string }>`
-  margin-left: 10%;
   height: 120px;
   width: 120px;
   border-radius: 120px;
@@ -75,15 +78,24 @@ const Photo = styled.div<{ imageUrl: string }>`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+
+  @media (max-width: 480px) {
+    height: 60px;
+    width: 60px;
+  }
+
 `;
 const Info = styled.div`
-  width: calc(90% - 120px);
-  margin-right: 10%;
+  width: calc(100% - 120px);
   padding-left: 20px;
   height: 120px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  @media (max-width: 480px) {
+    height: 60px;
+    width: calc(100% - 60px);
+  }
 `;
 const UserArea = styled.div`
   display: flex;
@@ -93,6 +105,12 @@ const UserArea = styled.div`
 const UserName = styled.div`
   font-size: 40px;
   font-weight: 500;
+  
+  @media (max-width: 480px) {
+    font-size: 20px;
+    font-weight: 600;
+  }
+  
 `;
 const Modify = styled.div`
   display: flex;
@@ -104,6 +122,16 @@ const Bnt = styled.button`
   width: 40px;
   border: none;
   background-color: transparent;
+  
+  @media (max-width: 480px) {
+    height: 30px;
+    width: 20px;
+  
+    svg{
+    height: 30px;
+    width: 30px;  
+  }
+}
 `;
 const Summary = styled.div`
   display: flex;
@@ -117,6 +145,9 @@ const SummaryInfo = styled.div`
   color: #014421;
   font-size: 24px;
   font-weight: 700;
+  @media (max-width: 480px) {
+    font-size: 16px;
+  }
 `;
 const PostArea = styled.div`
   width: 100%;
@@ -137,6 +168,9 @@ const FilterBtn = styled.button<{ highlight: boolean }>`
   background-color: ${(props) => (props.highlight ? "#014421" : "#ffffff")};
   border-radius: 5px;
   border: 1px solid #d9d9d9;
+  @media (max-width: 480px) {
+  width: 144px;
+  }
 `;
 const Posts = styled.div`
   padding-top: 20px;
@@ -292,7 +326,7 @@ const MyPage: React.FC = () => {
           <Photo
             imageUrl={user?.profilePhoto ? user?.profilePhoto : ProfileIcon}
           ></Photo>
-          <Info>
+          <Info id="info">
             <UserArea>
               <UserName>{user?.name || "unknown"}</UserName>
               <Modify>
