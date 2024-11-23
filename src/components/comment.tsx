@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import ProfileIcon from "../assets/images/icon-user.png";
+import ConfirmDialog from "./comfirmDialog";
 import { useDispatch, useSelector } from 'react-redux';
 import { addComment, fetchComments, deleteComment } from '../features/comment/commentSlice'; // Import the action
 import { RootState, AppDispatch } from '../features/store'; // Import the types
@@ -108,6 +109,8 @@ interface CommentProps {
 
 const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange, isMyPage }) => {
     const [inputValue, setInputValue] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false); // ConfirmDialog 열림 상태
+    const [selectedCommentId, setSelectedCommentId] = useState<string | null>(null); // 삭제할 댓글 ID 저장
     const { comments, loading, error } = useSelector((state: RootState) => state.comments);
     const currentUser = useSelector((state: RootState) => state.user.user); // 현재 로그인한 유저 정보
     const dispatch = useDispatch<AppDispatch>();
@@ -132,14 +135,27 @@ const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange
         }
     };
     
-    const handleDeleteComment = async (commentId: string) => {
-        try {
-            await dispatch(deleteComment({ postId, commentId })).unwrap(); // 댓글 삭제
-            dispatch(fetchComments(postId)); // 댓글 목록 새로 가져오기
-            onCommentCountChange?.(comments.length - 1); // 댓글 수 감소
-        } catch (err) {
-            console.error('댓글 삭제 중 오류 발생:', err);
+    const handleDeleteComment = async () => {
+        if (selectedCommentId) {
+            try {
+                await dispatch(deleteComment({ postId, commentId: selectedCommentId })).unwrap();
+                dispatch(fetchComments(postId));
+                onCommentCountChange?.(comments.length - 1);
+            } catch (err) {
+                console.error('댓글 삭제 중 오류 발생:', err);
+            }
+            closeDeleteConfirmDialog(); // 모달 닫기
         }
+    };
+
+    const openDeleteConfirmDialog = (commentId: string) => {
+        setSelectedCommentId(commentId); // 삭제할 댓글 ID 설정
+        setIsModalOpen(true); // 모달 열기
+    };
+
+    const closeDeleteConfirmDialog = () => {
+        setSelectedCommentId(null); // 선택된 댓글 ID 초기화
+        setIsModalOpen(false); // 모달 닫기
     };
     
     if (!visible) {
@@ -148,7 +164,9 @@ const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange
 
     return (
         <CommentContainer>
-            {comments.length>0?comments.map((comment, index) => (
+            {loading ? (
+                <div>댓글을 불러오는 중...</div> // 로딩 중 상태
+            ) :comments.length>0?comments.map((comment, index) => (
                 <CommentItem key={index}>
                      <ProfileImage
                         src ={ (comment.profilePhoto || ProfileIcon) as string } // profilePhoto가 없으면 기본 이미지
@@ -158,14 +176,14 @@ const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange
                         <CommentHeader>    
                             <Author>{comment.author}</Author>
                             <Date>{comment.commentDate
-                                ? comment.commentDate.toLocaleString()
+                                ? comment.commentDate
                                 : "방금 전"}
                             </Date>
                         </CommentHeader>
                         <Text>{comment.text}</Text>
                     </CommentContent>
                     {currentUser?._id === comment.userId && ( // 현재 유저와 댓글 작성자의 _id 비교
-                        <DeleteButton onClick={() => handleDeleteComment(comment.id)}>삭제</DeleteButton>
+                        <DeleteButton onClick={() => openDeleteConfirmDialog(comment.id)}>삭제</DeleteButton>
                     )}
                             
                 </CommentItem>
@@ -192,6 +210,16 @@ const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange
                 </SubmitButton>
             </InputContainer>)}
             {error && <p style={{ color: 'red' }}>{error}</p>}
+
+             {/* ConfirmDialog 추가 */}
+             <ConfirmDialog
+                isOpen={isModalOpen}
+                onClose={closeDeleteConfirmDialog}
+                onConfirm={handleDeleteComment}
+            >
+                댓글을 삭제하시겠습니까?
+            </ConfirmDialog>
+
         </CommentContainer>
     );
 };
