@@ -48,7 +48,7 @@ const PostSearch: React.FC = () => {
     if (urlQuery) {
       setQuery(urlQuery);
       setSearched(true);
-      fetchSearchResults();
+      // fetchSearchResults();
     }
   }, [urlQuery, dispatch]);
 

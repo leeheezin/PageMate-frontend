@@ -228,7 +228,7 @@ const postsSlice = createSlice({
                 const existingIds = new Set(state.posts.map((post) => post._id));
                 const uniquePosts = posts.filter((post) => !existingIds.has(post._id));
 
-                state.posts = [...state.posts, ...uniquePosts]; // 중복 없는 게시글 추가
+                state.posts = [...uniquePosts]; // 중복 없는 게시글 추가
                 state.pagination = {
                     ...state.pagination,
                     totalPosts: pagination.totalPosts,
