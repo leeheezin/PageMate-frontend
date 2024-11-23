@@ -7,7 +7,7 @@
   padding: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
-  z-index: 1000;
+  z-index: 10001;
 }
 
 .mini-bar-input-row {
@@ -63,6 +63,7 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   padding: 8px;
+  margin-bottom: 60px;
 }
 
 .mini-bar-dropdown-btn {
@@ -80,7 +81,7 @@
   background-color: white;
   padding: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
+  z-index: 10002;
   border-radius: 8px;
 }
 
@@ -93,6 +94,17 @@
   border-radius: 4px;
 }
 
+@media (max-width: 481px) {
+  .gpt-modal {
+    position: absolute;
+    background-color: white;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10002;
+    border-radius: 8px;
+    width: 300px;
+  }
+}
 
 .gpt-modal-textarea:focus-visible {
   outline: none;
@@ -169,13 +181,22 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-
+  z-index: 10001;
+}
+@media (max-width: 481px) {
+.context-menu {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  z-index: 10001;
+}
 }
 
 .context-section {
   display: flex;
   flex-direction: column;
   width: 100%;
+  z-index: 10001;
 }
 
 .ai-button {

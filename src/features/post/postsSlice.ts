@@ -225,6 +225,10 @@ const postsSlice = createSlice({
             })
             .addCase(fetchPosts.fulfilled, (state, action) => {
                 const { posts, pagination } = action.payload;
+                const existingIds = new Set(state.posts.map((post) => post._id));
+                const uniquePosts = posts.filter((post) => !existingIds.has(post._id));
+
+                state.posts = [...uniquePosts]; // 중복 없는 게시글 추가
             
                 // 기존 데이터 업데이트 로직
                 const updatedPosts = state.posts.map((existingPost) => {

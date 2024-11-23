@@ -53,11 +53,9 @@
 .popular-books-container {
   display: flex;
   align-items: center;
-  margin-top: 20px;
-  max-width: 1200px;
-  /* 중앙 정렬 */
-  margin-left: auto;
-  margin-right: auto;
+  margin: 20px;
+  justify-content: center;
+
 }
 
 .today-popular {
@@ -77,14 +75,7 @@
 .today-popular p {
   margin: 0;
   white-space: pre-line;
-  font-size: 30px;
-}
-
-.popular-books-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
+  font-size: 1.9rem;
 }
 
 .carousel-container {
@@ -97,21 +88,29 @@
   display: flex;
   overflow: hidden;
   position: relative;
+  
 }
 
 .carousel-slide {
   flex-shrink: 0;
-  width: 200px; /* Adjust to fit 4 slides */
-  height: 300px;
+  width: clamp(150px, 20vw, 200px); /* 최소 150px, 기본 20vw, 최대 200px */
+  aspect-ratio: 2 / 3; /* 2:3 비율 고정 */
   margin-right: 10px;
-  transition: transform 0.5s ease-in-out;
+  overflow: hidden; /* 이미지를 잘라내기 위해 추가 */
 }
+
 
 .carousel-slide img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+
+.carousel-viewport {
+  width: 830px;
+  overflow: hidden; /* 중요: 영역을 벗어나는 내용을 숨김 */
+}
+
 
 .carousel-button {
   position: absolute;

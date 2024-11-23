@@ -86,8 +86,6 @@ const MiniBar: React.FC<MiniBarProps> = ({
               </div>
             </div>
 
-
-
             {/* <div className="mini-bar-action-row">
               <button className="mini-bar-btn" onClick={toggleDropdown}>
                 문체 변경
