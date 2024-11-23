@@ -35,6 +35,7 @@ interface PostProps {
   isCommentVisible?: boolean; // 댓글 영역이 열려 있는지 여부
   onCommentToggle?: (postId: string) => void; // 댓글 토글 핸들러
   isMyPage?: boolean;
+  showMore?: boolean;
 }
 interface UserResponse {
   status: string;
@@ -174,6 +175,19 @@ const ActionButton = styled.div`
 const MobileBound = styled.div`
   height: 60px;
 `
+const MoreButton = styled.button`
+  background: none;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  color: #0066cc;
+  font-size: 14px;
+  text-decoration: underline;
+  
+  &:hover {
+    color: #004c99;
+  }
+`;
 const Post: React.FC<PostProps> = ({
     userId,
     _id,
@@ -191,6 +205,8 @@ const Post: React.FC<PostProps> = ({
     onCommentToggle,  // @@함수 전달 여부에 따라 동작 추가해야함
     isMyPage = false,
     }) => {
+
+    const [showMore, setShowMore] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
@@ -284,7 +300,8 @@ const Post: React.FC<PostProps> = ({
             </ProfileInfo>
 
         </Header>
-        <Content>{text}</Content>
+        <Content>{(text.length >= 200 && showMore) ? text : `${text.slice(0, 200)}  ...`}</Content>
+        {(text.length >=200 && !showMore) && <MoreButton onClick={() => setShowMore(true)}>더 보기</MoreButton>}
         <Footer>
           <Inner>
             <LikeButton postId={_id } />
