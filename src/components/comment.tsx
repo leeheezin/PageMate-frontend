@@ -148,7 +148,9 @@ const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange
 
     return (
         <CommentContainer>
-            {comments.length>0?comments.map((comment, index) => (
+            {loading ? (
+                <div>댓글을 불러오는 중...</div> // 로딩 중 상태
+            ) :comments.length>0?comments.map((comment, index) => (
                 <CommentItem key={index}>
                      <ProfileImage
                         src ={ (comment.profilePhoto || ProfileIcon) as string } // profilePhoto가 없으면 기본 이미지
