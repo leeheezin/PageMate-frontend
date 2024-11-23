@@ -1,7 +1,7 @@
 import { useState } from "react";
 import prevIcon from "../../assets/images/icon-left.png";
 import nextIcon from "../../assets/images/icon-right.png";
-
+import "./postSearch.style.css"
 interface CarouselSwiperProps {
   covers: string[];
 }
@@ -39,7 +39,10 @@ const CarouselSwiper: React.FC<CarouselSwiperProps> = ({ covers }) => {
       <button className="carousel-button prev" onClick={handlePrev}>
         <img src={prevIcon} alt="Previous" className="carousel-icon" />
       </button>
+      <h3 className="today-popular-text">오늘의 인기 도서</h3>
+
       <div className="carousel">
+
         {visibleCover.map((src, index) => (
           <div className="carousel-slide" key={index}>
             <img src={src} alt={`Book ${index + 1}`} />
