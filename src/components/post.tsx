@@ -12,6 +12,7 @@ import { AppDispatch, RootState } from "../features/store";
 import { deletePost, getLikedPost, getMyPost } from "../features/post/postsSlice";
 import { current } from "@reduxjs/toolkit";
 import UserData from "../features/user/userSlice";
+import ConfirmDialog from "./comfirmDialog";
 
 interface PostProps {
   _id: string;
@@ -54,6 +55,8 @@ const StyledPost = styled.div`
   margin: auto;
   margin-bottom: 28px;
   padding: 16px 19px;
+  min-height: 200px;
+  overflow: visible; 
 
   @media (max-width: 480px) {
     max-width: 358px;
@@ -62,7 +65,6 @@ const StyledPost = styled.div`
   }
 `;
 const Header = styled.div`
-  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -191,6 +193,7 @@ const Post: React.FC<PostProps> = ({
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
     const [localError, setLocalError] = useState<string | null>(null);
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
     // @추가
     const [activeCommentPostId, setActiveCommentPostId] = useState<string | null>(null); // 열려 있는 댓글 영역의 포스트 ID
@@ -200,9 +203,7 @@ const Post: React.FC<PostProps> = ({
     // 게시글 작성자가 현재 로그인한 사용자인지 확인
     const isOwner = userId && currentUserId === userId._id;
     
-    console.log('currentUserId:', currentUserId);
-    console.log('userId:', userId);
-    console.log('isOwner:', isOwner);
+
     
     //@추가 - 댓글 수 관리
     const [commentCount, setCommentCount] = useState(comments.length); // 댓글 수 상태 추가
@@ -235,6 +236,7 @@ const Post: React.FC<PostProps> = ({
             await dispatch(deletePost({ id })).unwrap();
             setLocalError(null);
             setIsDialogOpen(false);
+            setIsConfirmOpen(false)
             if(isMyPage){
               dispatch(getLikedPost())
               dispatch(getMyPost())
@@ -250,10 +252,12 @@ const Post: React.FC<PostProps> = ({
       // 같은 포스트 클릭 시 닫고, 다른 포스트 클릭 시 열기
       setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
     };
-    console.log('name',name)
     return (
-        <StyledPost >
-        <Header >
+        <StyledPost>
+          <ConfirmDialog isOpen={isConfirmOpen} onClose={()=> setIsConfirmOpen(false)}onConfirm={() => handleDelete(_id)}>
+            삭제하시겠습니까?
+          </ConfirmDialog>
+        <Header>
             <TitleDate>
             <Title>{title}</Title>
             <Date>{date}</Date>
@@ -269,7 +273,7 @@ const Post: React.FC<PostProps> = ({
                         <Dialog isOpen={isDialogOpen} onClose={handleDialogClose} top="0" right="15px">
                             <DialogContainer>
                                 <ActionButton onClick={handleEdit}>수정</ActionButton>
-                                <ActionButton onClick={() => handleDelete(_id)}>삭제</ActionButton>
+                                <ActionButton onClick={() => setIsConfirmOpen(true)}>삭제</ActionButton>
                             </DialogContainer>
                         </Dialog>
                     )}

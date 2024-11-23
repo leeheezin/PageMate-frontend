@@ -17,6 +17,7 @@ const CarouselSwiper: React.FC<CarouselSwiperProps> = ({ covers }) => {
   //   "/images/book7.jpg",
   // ]; // 이미지 배열
   const visibleCount = 10;
+   
 
   const [startIndex, setStartIndex] = useState(0);
 
