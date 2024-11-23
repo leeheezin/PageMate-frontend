@@ -47,7 +47,7 @@ const Date = styled.span`
 const Text = styled.p`
     margin: 4px 0 0 0;
     font-size: 14px;
-    color: #014421;
+    color: #000;
 `;
 
 const CommentHeader = styled.div`
