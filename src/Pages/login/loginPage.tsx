@@ -2,15 +2,26 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from "@react-oauth/google";
+import KakaoIcon from "../../assets/images/kakao_login_medium_narrow.png";
+import GoogleIcon from "../../assets/images/web_light_sq_ctn@2x.png"
+import {
+  GoogleOAuthProvider,
+  GoogleLogin,
+  CredentialResponse,
+} from "@react-oauth/google";
 import { AppDispatch, RootState } from "../../features/store";
-import { clearErrors, loginWithEmail, loginWithGoogle, loginWithKakao } from "../../features/user/userSlice";
+import {
+  clearErrors,
+  loginWithEmail,
+  loginWithGoogle,
+  loginWithKakao,
+} from "../../features/user/userSlice";
 import Logo from "../../assets/images/icon-logo1_big.png";
 declare global {
-    interface Window {
-      Kakao: any;
-    }
+  interface Window {
+    Kakao: any;
   }
+}
 const KAKAO_JS_KEY = process.env.REACT_APP_KAKAO_REST_API_KEY;
 const GOOGLE_ID = process.env.REACT_APP_GOOGLE_ID;
 
@@ -163,7 +174,7 @@ const SignUpLink = styled(Link)`
 `;
 const Google = styled.div`
   height: auto;
-  width: calc(100% - 100px);
+  width: 300px;
   padding-top: 25px;
   display: flex;
   justify-content: center;
@@ -172,33 +183,44 @@ const Google = styled.div`
     width: 100%;
   }
 `;
-
+const GoogleContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 200px;
+  height: 100%;
+  background-image: url(${GoogleIcon});
+  background-repeat: no-repeat; /* 이미지 반복 방지 */
+  background-size: contain; /* 이미지 크기 조정 */
+  background-position: center; /* 이미지 중앙 정렬 */
+`;
+const GoogleFakeContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 300px;
+  height: 100%;
+  background-color: gray;
+  opacity: 0;
+`;
 const Kakao = styled.div`
   height: auto;
-  width: calc(100% - 100px);
+  width: 300px;
   margin-top: 15px;
   display: flex;
   justify-content: center;
 
   button {
-    padding: 10px 20px;
-    height: 40px;
-    width: 200px;
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    color: black;
-    background-color: #fee500;
-    border: 1px solid #d9d9d9;
+    display: flex; /* 플렉스박스를 사용하여 내용 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    justify-content: center; /* 가로 중앙 정렬 */
+    height: 38px;
+    overflow: hidden;
+    width: 190px;
     border-radius: 5px;
+    background-color: #fee500;
+    border: 1px solid black;
     cursor: pointer;
-
-    &:hover {
-      background-color: #fddc3f;
-    }
   }
 `;
-
 
 const Login: React.FC = () => {
   const { loginError, user } = useSelector((state: RootState) => state.user);
@@ -234,7 +256,6 @@ const Login: React.FC = () => {
     window.location.href = link;
   };
 
-
   useEffect(() => {
     if (loginError) {
       clearErrors();
@@ -244,8 +265,8 @@ const Login: React.FC = () => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const code = params.get("code"); // 'code' 파라미터 값 추출
-    if (code){
-      dispatch(loginWithKakao({code}))
+    if (code) {
+      dispatch(loginWithKakao({ code }));
     }
   }, []);
 
@@ -291,14 +312,22 @@ const Login: React.FC = () => {
             </InputArea>
             <Google>
               <GoogleOAuthProvider clientId={GOOGLE_ID || ""}>
-                <GoogleLogin
-                  onSuccess={handleGoogleLogin}
-                  onError={handleError}
-                />
+                <GoogleContainer id="asdfasdf">
+                  <GoogleFakeContainer>
+                    <GoogleLogin
+                      onSuccess={handleGoogleLogin}
+                      onError={handleError}
+                      size="large"
+                      width="50px"
+                    />
+                  </GoogleFakeContainer>
+                </GoogleContainer>
               </GoogleOAuthProvider>
             </Google>
             <Kakao>
-              <button type="button" onClick={handleKakaoLogin}>카카오 로그인</button>
+              <button type="button" onClick={handleKakaoLogin}>
+                <img src={KakaoIcon}></img>
+              </button>
             </Kakao>
           </LoginForm>
         </LoginArea>
