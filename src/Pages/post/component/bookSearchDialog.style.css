@@ -16,17 +16,21 @@
     background-color: white;
     border-radius: 8px;
     width: 80%;
-    height: 80vh;
+    height: 72vh;
     max-width: 1000px;
     max-height: 80vh; /* 화면 높이의 80%로 제한 */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    padding: 0 20px 20px; /* 헤더와 리스트 여백 설정 */
+    padding: 0 20px 40px; /* 헤더와 리스트 여백 설정 */
     animation: fadeIn 0.3s ease;
     overflow-y: auto; /* 세로 스크롤 활성화 */
     box-sizing: border-box; /* 패딩과 border를 박스 크기에 포함 */
     position: relative; /* 검색창 기준이 되도록 설정 */
     margin-right: 60px;
     scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    justify-content: center;
 }
 
 
@@ -61,6 +65,7 @@
     align-items: center; /* 수직 중앙 정렬 */
     gap: 20px; /* 검색창과 닫기 버튼 간격 */
     background-color: white;
+    width: 85%;
 }
 
 .search-container{
@@ -80,10 +85,10 @@
     margin-top: 10px;
     padding: 10px 15px;
     font-size: 16px;
-    border: 1px solid #ccc;
+    border: 1px solid #878787;
     border-radius: 8px;
     box-sizing: border-box;
-    background-color: white;
+    background-color: #F2F2F2;
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
@@ -122,7 +127,7 @@
 }
 .book-search-result-list-container{
     max-width: 90%;
-    margin: 0 auto;
+    /* margin: 0 auto; */
 }
 
 .dialog-content ul {
