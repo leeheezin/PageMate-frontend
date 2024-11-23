@@ -20,7 +20,7 @@ const Overlay = styled.div<{ isOpen: boolean }>`
   left: 0;
   justify-content: center;
   align-items: center;
-  z-index: 10000;
+  z-index: 10001;
 `;
 
 const DialogContainer = styled.div<{ top: string; left: string }>`
@@ -33,7 +33,7 @@ const DialogContainer = styled.div<{ top: string; left: string }>`
   position: absolute;
   top: ${({ top }) => top};
   left: ${({ left }) => left};
-  z-index: 10001;
+  z-index: 10000;
   display: flex;
   flex-direction: column;
   gap: 20px;

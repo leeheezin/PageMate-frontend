@@ -29,7 +29,7 @@ const formatDate = (dateString?: string): string => {
   
 const HomePageContainer = styled.div`
     position: relative;
-    margin: 0 auto;
+    margin: 0 auto 50px;
     padding: 16px;
 `;
 

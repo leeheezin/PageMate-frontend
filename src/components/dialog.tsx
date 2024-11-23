@@ -19,6 +19,8 @@ const Overlay = styled.div<{ isOpen: boolean }>`
   bottom: 0;
   left: 0;
   align-items: center;
+  height: 100%;
+  width: 100%;
   z-index: 10000;
 `;
 
@@ -28,6 +30,7 @@ const DialogContainer = styled.div<{ top: string; left: string; right: string;}>
   max-width: 200px;
   border-radius: 8px;
   padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   position: absolute; 
   top: ${({ top }) => top};
   left: ${({ left }) => left};
