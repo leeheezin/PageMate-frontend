@@ -17,8 +17,6 @@ const CarouselSwiper: React.FC<CarouselSwiperProps> = ({ covers }) => {
   //   "/images/book6.jpg",
   //   "/images/book7.jpg",
   // ]; // 이미지 배열
-  const visibleCount = 10;
-   
 
   const [startIndex, setStartIndex] = useState(0);
 
@@ -46,11 +44,11 @@ const CarouselSwiper: React.FC<CarouselSwiperProps> = ({ covers }) => {
       <button className="carousel-button prev" onClick={handlePrev}>
         <img src={prevIcon} alt="Previous" className="carousel-icon" />
       </button>
-      <div className="carousel-viewport"> {/* 새로 추가된 wrapper */}
       <h3 className="today-popular-text">오늘의 인기 도서</h3>
-      <div className="carousel">
-        {visibleCover.map((src, index) => (
 
+      <div className="carousel">
+
+        {visibleCover.map((src, index) => (
           <div className="carousel-slide" key={index}>
             <img src={src} alt={`Book ${index + 1}`} />
           </div>
@@ -65,13 +63,12 @@ const CarouselSwiper: React.FC<CarouselSwiperProps> = ({ covers }) => {
           //   <img src={src} alt={`Book ${index + 1}`} />
           // </div>
         ))}
-        </div>
       </div>
       <button className="carousel-button next" onClick={handleNext}>
         <img src={nextIcon} alt="Next" className="carousel-icon" />
       </button>
     </div>
-  );
-};
+  )
+}
 
 export default CarouselSwiper;
