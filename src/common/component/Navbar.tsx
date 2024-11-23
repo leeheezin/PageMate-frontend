@@ -126,23 +126,26 @@ const Navbar: React.FC = () => {
             <button onClick={handleSearchCloseClick}>
               <img src={iconBack} alt="Back" className="navbar-back-icon" />
             </button>
+            <div className='search-input-area'>
 
-            {/* 검색 입력 박스 */}
-            <input
-              type="text"
-              placeholder="도서 제목으로 리뷰 검색"
-              value={query}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}  // 엔터 키 감지
-              className="nav-search-input"
-            />
-            {/* 검색 아이콘 */}
-            <FontAwesomeIcon icon={faSearch} className="nav-search-icon" />
-            
-            {/* 닫기 아이콘 */}
-            <button onClick={handleSearchCloseClick} className="nav-icon">
-              <img src={iconClose} alt="Close" />
-            </button>
+              {/* 검색 입력 박스 */}
+              <input
+                type="text"
+                placeholder="도서 제목으로 리뷰 검색"
+                value={query}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}  // 엔터 키 감지
+                className="nav-search-input"
+              />
+              {/* 검색 아이콘 */}
+              <FontAwesomeIcon icon={faSearch} className="nav-search-icon" />
+              
+              {/* 닫기 아이콘 */}
+              <button onClick={handleSearchCloseClick} className="nav-icon">
+                <img src={iconClose} alt="Close" />
+              </button>
+
+            </div>
           </div>
         </div>
       )}
