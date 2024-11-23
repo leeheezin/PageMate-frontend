@@ -16,7 +16,8 @@ import Dialog from "../../components/dialog";
 import CloudinaryUploadWidget from "../../utils/CloudinaryUploadWidget";
 import { useNavigate } from "react-router-dom";
 import NicknameModal from "./component/NicknameModal";
-
+import ConfirmDialog from "../../components/comfirmDialog"
+import AlertModal from "../../components/AlertModal";
 
 const formatDate = (dateString?: string): string => {
   if (!dateString) return ""; 
@@ -208,11 +209,17 @@ const MyPage: React.FC = () => {
   const [activeCommentPostId, setActiveCommentPostId] = useState<string | null>(
     null
   ); // 열려 있는 댓글 영역의 포스트 ID
-
   const [dialogPosition, setDialogPosition] = useState({
     top: "50%",
     left: "50%",
   });
+
+  const [confirmAction, setConfirmAction] = useState<(() => Promise<void>) | null>(null); // 실행할 동작
+  const [confirmMessage, setConfirmMessage] = useState(""); // 컨펌 메시지
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false); // 컨펌 다이얼로그 상태
+
+  const [alertMessage, setAlertMessage] = useState(""); // 알림 메시지 상태
+  const [isAlertOpen, setIsAlertOpen] = useState(false); // 알림 모달 상태
 
   const handleMenu = (e: React.MouseEvent<HTMLButtonElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -239,59 +246,51 @@ const MyPage: React.FC = () => {
     setIsDialogOpen(true);
   };
 
+  const showAlert = (message: string) => {
+    setAlertMessage(message);
+    setIsAlertOpen(true);
+  };
+
   const handleDeleteUser = async () => {
     try {
       await dispatch(deleteUser()).unwrap(); // unwrap()으로 성공 확인
-      alert("회원 탈퇴가 완료되었습니다.");
+      showAlert("회원 탈퇴가 완료되었습니다.");
       navigate("/login");
     } catch (error) {
-      alert(`회원 탈퇴 실패: ${error}`);
+      showAlert(`회원 탈퇴 실패: ${error}`);
     }
   };
+
   const handleOpenNicknameModal = () => {
     setIsNicknameModalOpen(true);
     setIsDialogOpen(false);
   };
-
   const handleCloseNicknameModal = () => {
     setIsNicknameModalOpen(false);
   };
+
   const handleUpdateName = async (newName: any) => {
     try {
       await dispatch(updateName(newName)).unwrap(); // unwrap()으로 성공 확인
-      alert("닉네임 변경이 완료되었습니다.");
+      showAlert("닉네임 변경이 완료되었습니다.");
     } catch (error) {
-      alert(`닉네임 변경 실패: ${error}`);
+      showAlert(`닉네임 변경 실패: ${error}`);
     }
   };
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    }
-  }, [user]);
-
-  useEffect(() => {
-    dispatch(getMyPost());
-    dispatch(getLikedPost());
-  }, [dispatch, user]);
-
-  useEffect(() => {
-    setPost(myPosts);
-  }, [myPosts]);
 
   const handleProfileUpdate = async (url: string) => {
     await dispatch(uploadProfile({ profilePhoto: url }));
     setIsDialogOpen(false); // 다이얼로그 닫기
   };
 
+
   const handleProfileDelete = async () => {
     try {
       await dispatch(uploadProfile({ profilePhoto: "delete" }));
       setIsDialogOpen(false);
-      alert("삭제되었습니다.");
+      showAlert("삭제되었습니다.");
     } catch (error: any) {
-      alert("잠시 후 다시 시도해주세요");
+      showAlert("잠시 후 다시 시도해주세요");
     }
   };
   const handleBtn = (event: any) => {
@@ -311,6 +310,38 @@ const MyPage: React.FC = () => {
     // 같은 포스트 클릭 시 닫고, 다른 포스트 클릭 시 열기
     setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
   };
+
+
+  const handleConfirmDialog = (message: string, action: () => Promise<void>) => {
+    setConfirmMessage(message);
+    setConfirmAction(() => action); // 실행할 동작 설정
+    setIsConfirmDialogOpen(true);
+  };
+
+  const executeConfirmAction = async () => {
+    if (confirmAction) {
+      await confirmAction(); // 실행할 동작 실행
+    }
+    setIsConfirmDialogOpen(false); // 컨펌 다이얼로그 닫기
+  };
+
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user]);
+
+  useEffect(() => {
+    dispatch(getMyPost());
+    dispatch(getLikedPost());
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    setPost(myPosts);
+  }, [myPosts]);
+
+
   return (
     <Container>
       <Dialog
@@ -323,9 +354,26 @@ const MyPage: React.FC = () => {
           닉네임 수정
         </ActionButton>
         <CloudinaryUploadWidget uploadImage={handleProfileUpdate} />
-        <ActionButton onClick={handleProfileDelete}>프로필 삭제</ActionButton>
-        <ActionButton onClick={handleDeleteUser}>회원탈퇴</ActionButton>
+        <ActionButton onClick={() =>
+            handleConfirmDialog("프로필 사진을 삭제하시겠습니까?", handleProfileDelete)
+          }>프로필 삭제</ActionButton>
+        <ActionButton onClick={() =>
+            handleConfirmDialog("정말로 회원 탈퇴를 진행하시겠습니까?", handleDeleteUser)
+          }>회원탈퇴</ActionButton>
       </Dialog>
+
+      <ConfirmDialog
+        isOpen={isConfirmDialogOpen}
+        onClose={() => setIsConfirmDialogOpen(false)}
+        onConfirm={executeConfirmAction}
+      >
+        <p>{confirmMessage}</p>
+      </ConfirmDialog>
+      <AlertModal
+        isOpen={isAlertOpen}
+        message={alertMessage}
+        onClose={() => setIsAlertOpen(false)}
+      />
       <MyPageArea>
         <ProfileArea>
           <Photo
@@ -388,6 +436,11 @@ const MyPage: React.FC = () => {
         onClose={handleCloseNicknameModal}
         onConfirm={handleUpdateName}
       />
+      {/* <ConfirmDialog
+        isOpen={isDialogOpen}
+        onClose={handleCloseDialog}
+        onConfirm={handleConfirm}
+      /> */}
     </Container>
   );
 };
