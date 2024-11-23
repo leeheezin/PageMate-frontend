@@ -25,7 +25,7 @@ const Overlay = styled.div<{ isOpen: boolean }>`
 const DialogContainer = styled.div<{ top: string; left: string; right: string;}>`
   background: #fff;
   width: 100%;
-  max-width: 200px;
+  max-width: 180px;
   border-radius: 8px;
   padding: 20px;
   position: absolute; 
