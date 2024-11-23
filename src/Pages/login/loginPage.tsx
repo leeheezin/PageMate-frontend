@@ -23,6 +23,7 @@ declare global {
   }
 }
 const KAKAO_JS_KEY = process.env.REACT_APP_KAKAO_REST_API_KEY;
+const REDIRECT_URI = process.env.REACT_APP_KAKAO_REDIRECT_URI;
 const GOOGLE_ID = process.env.REACT_APP_GOOGLE_ID;
 
 const Container = styled.div`
@@ -228,7 +229,7 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const link = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_JS_KEY}&redirect_uri=http://localhost:3000/login&response_type=code`;
+  const link = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_JS_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
   const handleEvent = (event: any) => {
     event.preventDefault();
