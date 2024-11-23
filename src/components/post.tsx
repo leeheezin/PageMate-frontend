@@ -35,6 +35,7 @@ interface PostProps {
   isCommentVisible?: boolean; // 댓글 영역이 열려 있는지 여부
   onCommentToggle?: (postId: string) => void; // 댓글 토글 핸들러
   isMyPage?: boolean;
+  showMore?: boolean;
 }
 interface UserResponse {
   status: string;
@@ -143,6 +144,7 @@ const Content = styled.p`
   color: #014421;
   font-size: 20px;
   margin: 0 0 auto;
+  white-space: pre-wrap;
   @media (max-width: 480px) {
     font-size: 16px;
   }
@@ -202,7 +204,15 @@ const ActionButton = styled.div`
 `;
 const MobileBound = styled.div`
   height: 60px;
-`
+`;
+
+const SeeMore = styled.span`
+  color : #a4a4a4;
+  font-size: 0.9rem;
+`;
+
+const MAX_CONTENT_LENGTH = 100; // 최대 표시 글자 수
+
 const Post: React.FC<PostProps> = ({
     userId,
     _id,
@@ -220,12 +230,15 @@ const Post: React.FC<PostProps> = ({
     onCommentToggle,  // @@함수 전달 여부에 따라 동작 추가해야함
     isMyPage = false,
     }) => {
+
+    const [showMore, setShowMore] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
     const [localError, setLocalError] = useState<string | null>(null);
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [isContentExpanded, setIsContentExpanded] = useState(false); // "더 보기" 토글 상태
+
     // @추가
     const [activeCommentPostId, setActiveCommentPostId] = useState<string | null>(null); // 열려 있는 댓글 영역의 포스트 ID
       
@@ -233,12 +246,6 @@ const Post: React.FC<PostProps> = ({
     const currentUserId = currentUser ? currentUser._id : null;
     // 게시글 작성자가 현재 로그인한 사용자인지 확인
     const isOwner = userId && currentUserId === userId._id;
-    const shouldShowMoreButton = text.split(" ").length > 10; // 단어 수 기준
-
-    const handleExpandToggle = () => {
-      setIsExpanded(!isExpanded); // 펼치기/접기 상태 변경
-    };
-  
     
     //@추가 - 댓글 수 관리
     const [commentCount, setCommentCount] = useState(comments.length); // 댓글 수 상태 추가
@@ -282,10 +289,9 @@ const Post: React.FC<PostProps> = ({
         }
     };
     
-    //@@ 추가
-    const handleCommentToggle = (postId: string) => {
-      // 같은 포스트 클릭 시 닫고, 다른 포스트 클릭 시 열기
-      setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
+    // "더 보기" 버튼 클릭 핸들러
+    const handleReadMoreToggle = () => {
+      setIsContentExpanded(!isContentExpanded);
     };
     return (
         <StyledPost>
@@ -317,16 +323,20 @@ const Post: React.FC<PostProps> = ({
             </ProfileInfo>
 
         </Header>
-        <ContentContainer>
-          <ContentWrapper $isExpanded={isExpanded}>
-            {text}
-          </ContentWrapper>
-          {shouldShowMoreButton && (
-            <MoreButton onClick={handleExpandToggle}>
-              {isExpanded ? "접기" : "더보기"}
-            </MoreButton>
-          )}
-        </ContentContainer>
+        <Content>
+                {isContentExpanded || text.length <= MAX_CONTENT_LENGTH
+                    ? text
+                    : `${text.slice(0, MAX_CONTENT_LENGTH)}...`}
+                {/* "더 보기" 또는 "간략히" 버튼 */}
+                {text.length > MAX_CONTENT_LENGTH && (
+                    <SeeMore
+                        onClick={handleReadMoreToggle}
+                        style={{ cursor: "pointer", marginLeft: "8px" }}
+                    >
+                        {isContentExpanded ? "간략히" : "더 보기"}
+                    </SeeMore>
+                )}
+            </Content>
         <Footer>
           <Inner>
             <LikeButton postId={_id } />

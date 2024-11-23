@@ -2,6 +2,7 @@ import axios, { AxiosInstance } from "axios";
 
 const SERVER_ADDRESS = process.env.REACT_APP_SERVER_ADDRESS
 
+console.log("SERVER_ADDRESS",SERVER_ADDRESS)
 
 const api: AxiosInstance = axios.create({
   baseURL: `${SERVER_ADDRESS}`,

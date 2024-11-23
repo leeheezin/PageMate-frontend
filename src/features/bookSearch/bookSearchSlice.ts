@@ -70,7 +70,7 @@ const bookSearchSlice = createSlice({
                 }
 
                 // 추가 데이터 여부 확인
-                state.hasMore = results.length > 0;
+                state.hasMore = !action.payload.meta.isEnd;
                 state.page = action.payload.meta.page; // 현재 페이지 업데이트
             })
             .addCase(fetchBookSearchResult.rejected, (state, action) => {
