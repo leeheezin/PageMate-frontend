@@ -31,12 +31,9 @@ const formatDate = (dateString?: string): string => {
 };
 
 const HomePageContainer = styled.div`
-  position: relative;
-  margin: 0 auto;
-  padding: 16px;
-  overflow: hidden; /* 스크롤바 숨기기 */
-
-
+    position: relative;
+    margin: 0 auto 50px;
+    padding: 16px;
 `;
 
 const HomePage: React.FC = () => {

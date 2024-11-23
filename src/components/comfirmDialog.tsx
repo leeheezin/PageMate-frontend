@@ -20,7 +20,7 @@ const Overlay = styled.div<{ isOpen: boolean }>`
   left: 0;
   justify-content: center;
   align-items: center;
-  z-index: 10000;
+  z-index: 10001;
 `;
 
 const DialogContainer = styled.div`
