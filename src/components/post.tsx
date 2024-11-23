@@ -114,6 +114,7 @@ const Content = styled.p`
   color: #014421;
   font-size: 20px;
   margin: 0 0 auto;
+  white-space: pre-wrap;
   @media (max-width: 480px) {
     font-size: 16px;
   }
