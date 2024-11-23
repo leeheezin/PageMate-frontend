@@ -51,13 +51,11 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchPosts({ page: 1, limit: limitMax }));
-    console.log("posts",posts)
 }, [dispatch]);
 useEffect(() => {
     setHasMore(pagination.hasMore);
 }, [pagination.hasMore]);
 const fetchMorePosts = () => {
-    console.log("posts",posts)
     if (loading || !pagination.hasMore) return;
     dispatch(fetchPosts({ page: pagination.currentPage + 1, limit: limitMax }));
   };
