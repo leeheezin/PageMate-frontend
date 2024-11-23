@@ -20,25 +20,25 @@ const Overlay = styled.div<{ isOpen: boolean }>`
   left: 0;
   justify-content: center;
   align-items: center;
-  z-index: 10000;
+  z-index: 10001;
 `;
 
-const DialogContainer = styled.div<{ top: string; left: string }>`
+const DialogContainer = styled.div`
   background: #fff;
   width: 100%;
   max-width: 300px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  position: absolute;
-  top: ${({ top }) => top};
-  left: ${({ left }) => left};
+  position: fixed; /* fixed로 변경하여 화면 중앙에 고정 */
+  top: 50%; /* 화면 중앙에 위치 */
+  left: 50%;
+  transform: translate(-50%, -50%); /* 정확한 중앙 정렬 */
   z-index: 10001;
   display: flex;
   flex-direction: column;
   gap: 20px;
 `;
-
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -76,7 +76,7 @@ const Content = styled.div`
   color: #333;
 `;
 
-const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
+const ComfirmDialog: React.FC<ConfirmDialogProps> = ({
   isOpen,
   onClose,
   onConfirm,
@@ -86,11 +86,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 }) => {
   return (
     <Overlay isOpen={isOpen} onClick={onClose}>
-      <DialogContainer
-        onClick={(e) => e.stopPropagation()}
-        top={top}
-        left={left}
-      >
+      <DialogContainer onClick={(e) => e.stopPropagation()}>
         <Content>{children}</Content>
         <ButtonContainer>
           <CancelButton onClick={onClose}>취소</CancelButton>
@@ -101,4 +97,4 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   );
 };
 
-export default ConfirmDialog;
+export default ComfirmDialog;

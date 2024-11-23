@@ -13,7 +13,7 @@
 }
 
 .dialog-content {
-    background-color: #F9F4F0;
+    background-color: white;
     border-radius: 8px;
     width: 80%;
     height: 72vh;
@@ -64,12 +64,13 @@
     display: flex; /* 검색창과 버튼을 가로로 정렬 */
     align-items: center; /* 수직 중앙 정렬 */
     gap: 20px; /* 검색창과 닫기 버튼 간격 */
-    width:85%;
+    background-color: white;
+    width: 85%;
 }
 
 .search-container{
     margin: 0 auto;
-    width: 95%;
+    width: 80%;
     display: flex; /* Flexbox 활성화 */
     align-items: center; /* 세로축 정렬 */
     gap: 20px; /* 입력 박스와 버튼 간의 간격 */
@@ -180,7 +181,7 @@
 /* 모바일 환경을 위한 스타일 */
 @media (max-width: 481px) {
     .search-header {
-        padding: 20px 10px 0px 10px; /* 내부 여백 */
+        padding: 10px 10px 0px 10px; /* 내부 여백 */
     }
     .dialog-overlay {
         align-items: flex-start; /* 모바일에서 다이얼로그가 중앙 위쪽으로 */
