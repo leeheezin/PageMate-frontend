@@ -7,7 +7,7 @@ import BookSearchDialog from "./bookSearchDialog";
 import { AppDispatch, RootState } from "../../features/store";
 import { styleChange, contentCorrection, spellingCorrection ,aiRequest } from "../../features/gpt/gptSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faMagicWandSparkles } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TextareaSelectionBounds } from "textarea-selection-bounds";
 import MiniBar from "./miniBar";
@@ -80,7 +80,7 @@ const PostWrite: React.FC = () => {
       setIsToastVisible(true);
       setTimeout(() => {
         setIsToastVisible(false);
-      }, 3000); // 3초 후 메시지 숨김
+      }, 7000); // 7초 후 메시지 숨김
     };
 
     // // 미니바가 열린 상태에서도 선택 범위를 유지
@@ -283,6 +283,12 @@ return (
         readOnly
       />
           <div className="textarea-container">
+            {isToastVisible && (
+                <div className="toast-message">
+                  <FontAwesomeIcon icon={faMagicWandSparkles} className="icon-margin" />
+                    첨삭이 필요한 문장을 드래그하면 AI가 다듬어줘요!
+                </div>
+            )}
             <textarea
               id="post_textarea"
               ref={textAreaRef}
@@ -316,11 +322,7 @@ return (
       </button>
       {error && <Error>{error}</Error>}
     </form>
-    {isToastVisible && (
-        <div className="toast-message">
-            첨삭이 필요한 문장을 드래그하면 AI가 다듬어줘요!
-        </div>
-    )}
+    
     </div>
     {isDialogOpen && (
     <BookSearchDialog onClose={closeDialog} onSelect={handleSelectBook} />
