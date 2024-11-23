@@ -7,13 +7,13 @@ interface Comment {
     author: string;
     commentText: string;
     isDeleted: boolean;
-    commentDate: Date;
+    commentDate: string;
     profilePhoto: string;
   }
   
   interface CommentState {
     comments: {
-        commentDate: Date; id: string; author: string; text: string; userId: string; profilePhoto: string; 
+        commentDate: string; id: string; author: string; text: string; userId: string; profilePhoto: string; 
 }[];
     loading: boolean;
     error: string | null;
@@ -93,7 +93,7 @@ const commentSlice = createSlice({
                     author: comment.author, // userId를 author로 변환
                     text: comment.commentText, // commentText를 text로 변환
                     userId: comment.userId,
-                    commentDate: new Date(comment.commentDate),
+                    commentDate: new Date(comment.commentDate).toLocaleString("ko-KR") , // 한국표준시 적용한 문자열로 변환,
                     profilePhoto: comment.profilePhoto,
                 }));
             })

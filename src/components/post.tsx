@@ -9,7 +9,7 @@ import Dialog from "./dialog";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../features/store";
-import { deletePost } from "../features/post/postsSlice";
+import { deletePost, getLikedPost, getMyPost } from "../features/post/postsSlice";
 import { current } from "@reduxjs/toolkit";
 import UserData from "../features/user/userSlice";
 import ConfirmDialog from "./comfirmDialog";
@@ -169,7 +169,9 @@ const ActionButton = styled.div`
         background: #e2e6ea;
     }
 `;
-
+const MobileBound = styled.div`
+  height: 60px;
+`
 const Post: React.FC<PostProps> = ({
     userId,
     _id,
@@ -201,9 +203,7 @@ const Post: React.FC<PostProps> = ({
     // 게시글 작성자가 현재 로그인한 사용자인지 확인
     const isOwner = userId && currentUserId === userId._id;
     
-    console.log('currentUserId:', currentUserId);
-    console.log('userId:', userId);
-    console.log('isOwner:', isOwner);
+
     
     //@추가 - 댓글 수 관리
     const [commentCount, setCommentCount] = useState(comments.length); // 댓글 수 상태 추가
@@ -237,6 +237,10 @@ const Post: React.FC<PostProps> = ({
             setLocalError(null);
             setIsDialogOpen(false);
             setIsConfirmOpen(false)
+            if(isMyPage){
+              dispatch(getLikedPost())
+              dispatch(getMyPost())
+            }
         } catch (error: any) {
             setLocalError(error);
             console.log(error)
@@ -248,7 +252,6 @@ const Post: React.FC<PostProps> = ({
       // 같은 포스트 클릭 시 닫고, 다른 포스트 클릭 시 열기
       setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
     };
-    console.log('name',name)
     return (
         <StyledPost>
           <ConfirmDialog isOpen={isConfirmOpen} onClose={()=> setIsConfirmOpen(false)}onConfirm={() => handleDelete(_id)}>

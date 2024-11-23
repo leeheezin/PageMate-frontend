@@ -35,9 +35,14 @@ const PostSearch: React.FC = () => {
   const fetchSearchResults = () => {
     // 검색 데이터를 가져오는 로직
     if (urlQuery) {
-      dispatch(fetchPosts({ bookTitle: urlQuery }));
+      dispatch(fetchPosts({ bookTitle: urlQuery  }));
     }
   };
+
+  useEffect(() => {
+    // state.posts  초기화 
+    dispatch(fetchPosts({ bookTitle: "" }));
+  }, []);
 
   // 검색어가 변경되거나 URL이 업데이트될 때 실행
   useEffect(() => {
@@ -80,7 +85,7 @@ const PostSearch: React.FC = () => {
     setSearched(true); // 검색 버튼 클릭 시 검색 상태로 변경
     try {
       // Redux에 검색 기능이 있는 경우
-      await dispatch(fetchPosts({ bookTitle: query }));
+      await dispatch(fetchPosts({ bookTitle: query ,search: true }));
       // onSearch(query); // 검색어를 상위 컴포넌트로 전달
     } catch (error) {
       console.error("검색 중 오류 발생:", error);
