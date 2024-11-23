@@ -16,8 +16,8 @@
     background-color: white;
     border-radius: 8px;
     width: 80%;
-    height: 72vh;
-    max-width: 1000px;
+    height: 80vh;
+    max-width: 800px;
     max-height: 80vh; /* 화면 높이의 80%로 제한 */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     padding: 0 20px 40px; /* 헤더와 리스트 여백 설정 */

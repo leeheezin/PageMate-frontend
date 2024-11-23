@@ -2,6 +2,7 @@ import { useState } from "react";
 import prevIcon from "../../assets/images/icon-left.png";
 import nextIcon from "../../assets/images/icon-right.png";
 import "./postSearch.style.css"
+
 interface CarouselSwiperProps {
   covers: string[];
 }
@@ -30,9 +31,13 @@ const CarouselSwiper: React.FC<CarouselSwiperProps> = ({ covers }) => {
   };
 
   // 현재 표시할 4개의 이미지를 계산
+  // const visibleCover = Array.from({ length: visibleCount }, (_, i) =>
+  //   covers[ i % covers.length] 
+  // );
   const visibleCover = Array.from({ length: 4 }, (_, i) =>
     covers[(startIndex + i) % covers.length]
   );
+
 
   return (
     <div className="carousel-container">
@@ -47,13 +52,23 @@ const CarouselSwiper: React.FC<CarouselSwiperProps> = ({ covers }) => {
           <div className="carousel-slide" key={index}>
             <img src={src} alt={`Book ${index + 1}`} />
           </div>
+          // <div 
+          // className="carousel-slide" 
+          // key={index}
+          // style={{
+          //   transform: `translateX(-${ startIndex * 105}%)`,
+          //   transition: 'transform 0.3s ease-out'
+          // }}  
+          // >
+          //   <img src={src} alt={`Book ${index + 1}`} />
+          // </div>
         ))}
       </div>
       <button className="carousel-button next" onClick={handleNext}>
         <img src={nextIcon} alt="Next" className="carousel-icon" />
       </button>
     </div>
-  );
-};
+  )
+}
 
 export default CarouselSwiper;
