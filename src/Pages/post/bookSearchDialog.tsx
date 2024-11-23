@@ -115,9 +115,9 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
                             onChange={(e) => setSearchTerm(e.target.value)}
                             onKeyDown={handleKeyDown}
                         />
-                        <button onClick={handleClose} className="dialog-close-btn">
+                        {/* <button onClick={handleClose} className="dialog-close-btn">
                             ✕
-                        </button>
+                        </button> */}
                     </div>
                 </div>
 
