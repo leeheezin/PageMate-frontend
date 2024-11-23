@@ -109,7 +109,36 @@ const Title = styled.h4`
     font-size: 20px;
   }
 `;
-
+const ContentContainer = styled.div`
+  display: inline-flex; 
+  align-items: flex-end; 
+  gap: 5px; 
+  max-width: 100%;
+  overflow: hidden;
+  margin: 0 0 auto;
+`;
+const ContentWrapper = styled.div<{ $isExpanded: boolean }>` 
+  position: relative;
+  display: -webkit-box;
+  -webkit-line-clamp: ${({ $isExpanded }) => ($isExpanded ? "none" : "5")}; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1; 
+`;
+const MoreButton = styled.button`
+  background: none;
+  border: none;
+  color: #bfbfbf;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  text-decoration: underline;
+  white-space: nowrap; 
+  &:hover {
+    color: darkblue;
+  }
+`;
 const Content = styled.p`
   color: #014421;
   font-size: 20px;
@@ -123,6 +152,7 @@ const Footer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 6px;
   gap: 5px;
 `;
 const Inner = styled.div`
@@ -195,7 +225,7 @@ const Post: React.FC<PostProps> = ({
     const dispatch = useDispatch<AppDispatch>();
     const [localError, setLocalError] = useState<string | null>(null);
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-
+    const [isExpanded, setIsExpanded] = useState(false);
     // @추가
     const [activeCommentPostId, setActiveCommentPostId] = useState<string | null>(null); // 열려 있는 댓글 영역의 포스트 ID
       
@@ -203,8 +233,12 @@ const Post: React.FC<PostProps> = ({
     const currentUserId = currentUser ? currentUser._id : null;
     // 게시글 작성자가 현재 로그인한 사용자인지 확인
     const isOwner = userId && currentUserId === userId._id;
-    
+    const shouldShowMoreButton = text.split(" ").length > 10; // 단어 수 기준
 
+    const handleExpandToggle = () => {
+      setIsExpanded(!isExpanded); // 펼치기/접기 상태 변경
+    };
+  
     
     //@추가 - 댓글 수 관리
     const [commentCount, setCommentCount] = useState(comments.length); // 댓글 수 상태 추가
@@ -283,7 +317,16 @@ const Post: React.FC<PostProps> = ({
             </ProfileInfo>
 
         </Header>
-        <Content>{text}</Content>
+        <ContentContainer>
+          <ContentWrapper $isExpanded={isExpanded}>
+            {text}
+          </ContentWrapper>
+          {shouldShowMoreButton && (
+            <MoreButton onClick={handleExpandToggle}>
+              {isExpanded ? "접기" : "더보기"}
+            </MoreButton>
+          )}
+        </ContentContainer>
         <Footer>
           <Inner>
             <LikeButton postId={_id } />

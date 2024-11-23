@@ -21,7 +21,7 @@ const StyledSkeletonPost = styled.div`
   background-color: #fff;
   border-radius: 16px;
   margin: auto;
-  margin: 16px 16px 44px 16px;
+  margin: 16px 16px 28px 16px;
   padding: 16px;
   // max-width: 846px;
 `;
@@ -49,14 +49,14 @@ const PostSkeleton: React.FC = () => {
     <StyledSkeletonPost>
       <Header>
         <div>
-          <Skeleton width={200} height={24} />
-          <Skeleton width={100} height={12} style={{ marginTop: 8 }} />
+          <Skeleton width={180} height={24} />
+          <Skeleton width={100} height={12}  />
         </div>
         <div>
           <Skeleton circle width={40} height={40} />
         </div>
       </Header>
-      <Skeleton count={2} height={20} style={{ marginBottom: "16px" }} />
+      <Skeleton count={2} height={20}  />
       <Footer>
         <Skeleton width={50} height={32} />
         <Skeleton width={120} height={20} />
