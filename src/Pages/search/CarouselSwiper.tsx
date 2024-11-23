@@ -1,6 +1,7 @@
 import { useState } from "react";
 import prevIcon from "../../assets/images/icon-left.png";
 import nextIcon from "../../assets/images/icon-right.png";
+import "./postSearch.style.css"
 
 interface CarouselSwiperProps {
   covers: string[];
@@ -32,9 +33,13 @@ const CarouselSwiper: React.FC<CarouselSwiperProps> = ({ covers }) => {
   };
 
   // 현재 표시할 4개의 이미지를 계산
-  const visibleCover = Array.from({ length: visibleCount }, (_, i) =>
-    covers[ i % covers.length] 
+  // const visibleCover = Array.from({ length: visibleCount }, (_, i) =>
+  //   covers[ i % covers.length] 
+  // );
+  const visibleCover = Array.from({ length: 4 }, (_, i) =>
+    covers[(startIndex + i) % covers.length]
   );
+
 
   return (
     <div className="carousel-container">
@@ -42,18 +47,23 @@ const CarouselSwiper: React.FC<CarouselSwiperProps> = ({ covers }) => {
         <img src={prevIcon} alt="Previous" className="carousel-icon" />
       </button>
       <div className="carousel-viewport"> {/* 새로 추가된 wrapper */}
+      <h3 className="today-popular-text">오늘의 인기 도서</h3>
       <div className="carousel">
         {visibleCover.map((src, index) => (
-          <div 
-          className="carousel-slide" 
-          key={index}
-          style={{
-            transform: `translateX(-${ startIndex * 105}%)`,
-            transition: 'transform 0.3s ease-out'
-          }}  
-          >
+
+          <div className="carousel-slide" key={index}>
             <img src={src} alt={`Book ${index + 1}`} />
           </div>
+          // <div 
+          // className="carousel-slide" 
+          // key={index}
+          // style={{
+          //   transform: `translateX(-${ startIndex * 105}%)`,
+          //   transition: 'transform 0.3s ease-out'
+          // }}  
+          // >
+          //   <img src={src} alt={`Book ${index + 1}`} />
+          // </div>
         ))}
         </div>
       </div>
