@@ -167,7 +167,9 @@ const ActionButton = styled.div`
         background: #e2e6ea;
     }
 `;
-
+const MobileBound = styled.div`
+  height: 60px;
+`
 const Post: React.FC<PostProps> = ({
     userId,
     _id,
@@ -246,8 +248,8 @@ const Post: React.FC<PostProps> = ({
     };
     console.log('name',name)
     return (
-        <StyledPost>
-        <Header>
+        <StyledPost >
+        <Header >
             <TitleDate>
             <Title>{title}</Title>
             <Date>{date}</Date>

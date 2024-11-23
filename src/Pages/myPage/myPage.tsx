@@ -179,7 +179,8 @@ const FilterBtn = styled.button<{ highlight: boolean }>`
 const Posts = styled.div`
   padding-top: 20px;
   width: 80%;
-  min-height: 100px;
+  height: auto;
+  padding-bottom: 60px;
 `;
 const ActionButton = styled.div`
   padding: 9px;
@@ -354,7 +355,7 @@ const MyPage: React.FC = () => {
               좋아요 게시글
             </FilterBtn>
           </Filter>
-          <Posts>
+          <Posts id="adsf">
             {posts?.length > 0 ? (
               posts.map((post) => (
                 <PostComponent
