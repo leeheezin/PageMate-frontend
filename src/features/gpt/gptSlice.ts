@@ -147,12 +147,10 @@ const gptSlice = createSlice({
         .addCase(spellingCorrection.fulfilled, (state, action) => {
             state.loading = false;
             state.gptResultText = action.payload;
-            console.log("success payload :",action.payload)
         })
         .addCase(spellingCorrection.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload ?? null;
-            console.log("spellingCorrection error",action.payload)
         })
         .addCase(aiRequest.pending, (state) => {
             state.loading = true;

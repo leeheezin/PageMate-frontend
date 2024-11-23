@@ -250,7 +250,7 @@ const Login: React.FC = () => {
     dispatch(loginWithGoogle(googleData.credential));
   };
   const handleError = () => {
-    console.log("Login Failed");
+    // console.log("Login Failed");
   };
 
   const handleKakaoLogin = () => {

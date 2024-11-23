@@ -260,7 +260,7 @@ const Post: React.FC<PostProps> = ({
     };
     
     const handleEdit = () => {
-        console.log("Navigating with post ID:", _id);
+        // console.log("Navigating with post ID:", _id);
         navigate("/post/write", {
             state: {
                 post: {
@@ -285,7 +285,6 @@ const Post: React.FC<PostProps> = ({
             }
         } catch (error: any) {
             setLocalError(error);
-            console.log(error)
         }
     };
     
