@@ -9,7 +9,7 @@ import Dialog from "./dialog";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../features/store";
-import { deletePost } from "../features/post/postsSlice";
+import { deletePost, getLikedPost, getMyPost } from "../features/post/postsSlice";
 import { current } from "@reduxjs/toolkit";
 import UserData from "../features/user/userSlice";
 
@@ -167,7 +167,9 @@ const ActionButton = styled.div`
         background: #e2e6ea;
     }
 `;
-
+const MobileBound = styled.div`
+  height: 60px;
+`
 const Post: React.FC<PostProps> = ({
     userId,
     _id,
@@ -231,6 +233,10 @@ const Post: React.FC<PostProps> = ({
             await dispatch(deletePost({ id })).unwrap();
             setLocalError(null);
             setIsDialogOpen(false);
+            if(isMyPage){
+              dispatch(getLikedPost())
+              dispatch(getMyPost())
+            }
         } catch (error: any) {
             setLocalError(error);
             console.log(error)
@@ -243,8 +249,8 @@ const Post: React.FC<PostProps> = ({
       setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
     };
     return (
-        <StyledPost>
-        <Header>
+        <StyledPost >
+        <Header >
             <TitleDate>
             <Title>{title}</Title>
             <Date>{date}</Date>
