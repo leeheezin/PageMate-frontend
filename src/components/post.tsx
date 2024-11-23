@@ -9,7 +9,7 @@ import Dialog from "./dialog";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../features/store";
-import { deletePost } from "../features/post/postsSlice";
+import { deletePost, getLikedPost, getMyPost } from "../features/post/postsSlice";
 import { current } from "@reduxjs/toolkit";
 import UserData from "../features/user/userSlice";
 
@@ -235,6 +235,10 @@ const Post: React.FC<PostProps> = ({
             await dispatch(deletePost({ id })).unwrap();
             setLocalError(null);
             setIsDialogOpen(false);
+            if(isMyPage){
+              dispatch(getLikedPost())
+              dispatch(getMyPost())
+            }
         } catch (error: any) {
             setLocalError(error);
             console.log(error)
