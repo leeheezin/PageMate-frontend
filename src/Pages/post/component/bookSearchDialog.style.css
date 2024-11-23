@@ -126,14 +126,24 @@
     margin-bottom: 15px;
 }
 .book-search-result-list-container{
-    max-width: 90%;
+    /* max-width: 90%; */
     /* margin: 0 auto; */
+
+    width: 65%; /* 부모 요소의 너비를 100%로 설정 */
+    max-width: 600px; /* 최대 너비 설정 */
+    margin: 0 auto; /* 중앙 정렬 */
+    box-sizing: border-box; /* padding과 border를 너비에 포함시켜 계산 */
+
 }
 
 .dialog-content ul {
     list-style: none;
     margin: 0;
     padding: 0;
+
+    width: 100%; /* ul의 너비를 부모 컨테이너에 맞게 설정 */
+    box-sizing: border-box; /* padding을 포함하여 계산 */
+
 }
 
 .dialog-content ul li {
