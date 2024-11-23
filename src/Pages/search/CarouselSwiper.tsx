@@ -44,7 +44,6 @@ const CarouselSwiper: React.FC<CarouselSwiperProps> = ({ covers }) => {
       <button className="carousel-button prev" onClick={handlePrev}>
         <img src={prevIcon} alt="Previous" className="carousel-icon" />
       </button>
-      <div className="carousel-viewport"> {/* 새로 추가된 wrapper */}
       <h3 className="today-popular-text">오늘의 인기 도서</h3>
 
       <div className="carousel">
@@ -69,7 +68,7 @@ const CarouselSwiper: React.FC<CarouselSwiperProps> = ({ covers }) => {
         <img src={nextIcon} alt="Next" className="carousel-icon" />
       </button>
     </div>
-  );
-};
+  )
+}
 
 export default CarouselSwiper;
