@@ -158,7 +158,7 @@ const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange
                         <CommentHeader>    
                             <Author>{comment.author}</Author>
                             <Date>{comment.commentDate
-                                ? comment.commentDate.toLocaleString()
+                                ? comment.commentDate
                                 : "방금 전"}
                             </Date>
                         </CommentHeader>
