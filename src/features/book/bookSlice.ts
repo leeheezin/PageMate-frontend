@@ -29,7 +29,6 @@ export const fetchBooks = createAsyncThunk<Book[], void, { rejectValue: string }
     async (_, { rejectWithValue }) => {
         try {
             const response = await api.get("/book/bestsellers");
-            console.log("response", response.data);
             return response.data.data.item; // API 응답 구조에 맞게 수정
         } catch (error: any) {
             console.error("Error fetching books:", error);

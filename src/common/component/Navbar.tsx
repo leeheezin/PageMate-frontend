@@ -33,7 +33,6 @@ const Navbar: React.FC = () => {
   };
 
   const handleSearchCloseClick = () => {
-    // console.log('query', query)
     if(!query) {
       setIsSearching(false); // 검색 UI 숨기기
       if (location.search.includes("?bookTitle")) {

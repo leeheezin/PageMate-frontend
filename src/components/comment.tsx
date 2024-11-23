@@ -127,7 +127,7 @@ const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange
 
     const handleAddComment = async () => {
         if (inputValue.trim() !== '') {
-            console.log("inputValue",inputValue);
+            // console.log("inputValue",inputValue);
             await dispatch(addComment({ postId, text: inputValue })); // 댓글 추가 후
             setInputValue('');
             dispatch(fetchComments(postId)); // 댓글 목록 새로 가져오기

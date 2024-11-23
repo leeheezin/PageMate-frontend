@@ -12,7 +12,6 @@ import PrivateRoute from "./privateRoute";
 
 const AppRoutes: React.FC = () => {
     const handleSearch = (keyword: string) => {
-        console.log("keyword", keyword);
 
     }
     const {user} = useSelector((state:RootState)=> state.user);
