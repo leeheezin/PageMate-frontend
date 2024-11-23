@@ -110,7 +110,36 @@ const Title = styled.h4`
     font-size: 20px;
   }
 `;
-
+const ContentContainer = styled.div`
+  display: inline-flex; 
+  align-items: flex-end; 
+  gap: 5px; 
+  max-width: 100%;
+  overflow: hidden;
+  margin: 0 0 auto;
+`;
+const ContentWrapper = styled.div<{ $isExpanded: boolean }>` 
+  position: relative;
+  display: -webkit-box;
+  -webkit-line-clamp: ${({ $isExpanded }) => ($isExpanded ? "none" : "5")}; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1; 
+`;
+const MoreButton = styled.button`
+  background: none;
+  border: none;
+  color: #bfbfbf;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  text-decoration: underline;
+  white-space: nowrap; 
+  &:hover {
+    color: darkblue;
+  }
+`;
 const Content = styled.p`
   color: #014421;
   font-size: 20px;
@@ -125,6 +154,7 @@ const Footer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 6px;
   gap: 5px;
 `;
 const Inner = styled.div`
