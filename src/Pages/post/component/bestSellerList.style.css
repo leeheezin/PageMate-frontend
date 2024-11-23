@@ -1,0 +1,67 @@
+.popular-books-grid {
+  max-width: 75%;
+  border-radius: 8px;
+  margin: 0 auto;
+}
+
+.popular-books-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 데스크탑 기본 설정 */
+  gap: 16px;
+}
+
+.book-card {
+  cursor: pointer;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+
+  /* Flexbox 설정 추가 */
+  display: flex;
+  justify-content: center; /* 가로 정렬 */
+  align-items: center; /* 세로 정렬 */
+  height: 100%; /* 부모의 높이를 가득 채움 */
+}
+
+.book-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.book-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: repeat(4, 1fr); /* 모바일 화면: 한 줄에 3개 */
+  }
+}
+
+@media (max-width: 481px) {
+  .popular-books-grid {
+    max-width: 80%;
+  }
+  .grid-container {
+    grid-template-columns: repeat(3, 1fr); /* 작은 모바일 화면: 한 줄에 2개 */
+    gap:5px;
+  }
+  .popular-books-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 16px;
+    color: #333;
+  }
+}

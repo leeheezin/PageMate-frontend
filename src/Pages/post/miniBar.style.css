@@ -1,0 +1,245 @@
+.mini-bar {
+  width: 150px;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  padding: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  z-index: 10001;
+}
+
+.mini-bar-input-row {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  /* padding: 12px; */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  z-index: 1000;
+
+  /* margin-bottom: 8px; */
+}
+
+.mini-bar-input {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  margin-right: 8px;
+}
+
+.mini-bar-btn-request {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.mini-bar-action-row {
+  display: flex;
+  gap: 8px;
+}
+
+.mini-bar-btn {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mini-bar-dropdown {
+  margin-top: 8px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 60px;
+}
+
+.mini-bar-dropdown-btn {
+  display: block;
+  padding: 8px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+}
+
+.gpt-modal {
+  position: absolute;
+  background-color: white;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10002;
+  border-radius: 8px;
+}
+
+.gpt-modal-textarea {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 5px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+@media (max-width: 481px) {
+  .gpt-modal {
+    position: absolute;
+    background-color: white;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10002;
+    border-radius: 8px;
+    width: 300px;
+  }
+}
+
+.gpt-modal-textarea:focus-visible {
+  outline: none;
+  border-color: #878787;
+  box-shadow: 0 0 5px #ccc;
+
+}
+.gpt-modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ai-submit-btn {
+  width: 15%;
+  padding: 5px 0;
+  background-color: #014421; /* 버튼 색상 */
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  float: right;
+}
+
+.ai-submit-btn:hover {
+  background-color: #003300; /* 호버 시 버튼 색상 */
+}
+
+.cancle {
+  background-color: #9e1515;
+  margin-right: 5px;
+}
+
+.cancle:hover{
+  background-color: #790707;
+
+}
+
+
+
+
+/* new style */
+.minibar {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
+  width: 300px;
+}
+
+.minibar-input {
+  width: 250px;
+  padding: 8px;
+  font-size: 13px;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  box-shadow: 0 4px 8px rgba(0.5, 0, 0, 0);
+
+
+  background-color: white;
+  /* padding: 12px; */
+  /* border-radius: 8px; */
+  z-index: 1000;
+}
+
+.context-menu {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  z-index: 10001;
+}
+@media (max-width: 481px) {
+.context-menu {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  z-index: 10001;
+}
+}
+
+.context-section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  z-index: 10001;
+}
+
+.ai-button {
+  all: unset; /* 모든 기본 스타일 초기화 */
+  display: inline; /* 텍스트처럼 표시되도록 인라인 요소로 설정 */
+  background: none; /* 배경 제거 */
+  border: none; /* 테두리 제거 */
+  padding: 0; /* 패딩 제거 */
+  font: inherit; /* 부모의 글꼴 크기 및 스타일 상속 */
+  color: inherit; /* 부모의 텍스트 색상 상속 */
+  cursor: text; /* 텍스트 커서로 설정 */
+  text-align: left; /* 텍스트 정렬 */
+  margin-left: 3px;
+  font-size: 13px;
+}
+.ai-button:hover {
+  background-color: #eaeaea;
+  border-radius: 5px;
+}
+.mb-five {
+  margin-bottom: 5px;
+
+}
+.section-title {
+  font-weight: bold;
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+button {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  margin: 4px 0;
+}
+
+
+.gpt-modal-line {
+  border: none;
+  border-top: 1px solid #878787;
+  margin: 8px 0;
+}

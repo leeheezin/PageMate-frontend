@@ -1,8 +1,3 @@
-/* .swiper {
-  width: 100%;
-  height: 100%;
-} */
-
 .swiper-slide {
   height: 50vh;
   text-align: center;
@@ -17,8 +12,6 @@
 
 .swiper-slide img {
   display: block;
-  /* width: 100%;
-  height: 100%; */
   object-fit: cover;
 }
 
@@ -90,7 +83,6 @@
   display: none;
 }
 
-
 /* 반응형 스타일: 모바일 화면에서만 적용 */
 @media (max-width: 480px) {
   /* 데스크탑 사이드바를 숨기고 모바일 푸터를 표시 */
@@ -134,8 +126,6 @@
   }
 }
 
-
-
 .desktop-navbar {
   background-color: var(--bg-color);
   position: fixed;
@@ -158,12 +148,16 @@
 }
 
 .navbar-icon img {
-  width: 40px;
-  /* height: 28px; */
+  width: 50px;
+  margin-top: 10px;
 }
 
 .fontup {
   font-size: 2em !important;
+}
+
+.img-sizeup {
+  width: 30px !important;
 }
 
 /* mobile Navbar style */
@@ -191,6 +185,10 @@
 .mobile-navbar-icon img {
   width: 28px;
 }
+.mobile-navbar-logo{
+  width: 35px !important;
+  margin-top: 5px;
+}
 
 /* 중앙 텍스트 */
 .navbar-title {
@@ -201,13 +199,132 @@
   font-size: 1.7rem;
   font-weight: bold;
   text-align: center;
-  pointer-events: none; /* 중앙 텍스트 클릭 방지 */
+  cursor: pointer;
 }
 
 .navbar-right {
   display: flex;
   align-items: center;
 }
+
+/* 검색 UI 스타일 */
+.search-ui {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--bg-color);
+  z-index: 9999;
+}
+
+.search-input-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 10px 10px 0 10px;
+}
+
+
+
+
+.search-input-area {
+  position: relative; /* 내부 요소 위치 지정 가능 */
+  display: flex;
+  align-items: center;
+  width: 100%; /* 원하는 크기로 조정 */
+  max-width: 400px; /* 검색창 최대 너비 */
+}
+
+.nav-search-input {
+  width: 100%; /* 검색창이 부모 영역을 채우도록 */
+  padding: 10px 40px; /* 아이콘 공간 확보 */
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.nav-search-icon {
+  position: absolute;
+  left: 10px; /* 왼쪽 끝에 배치 */
+  color: #888;
+  font-size: 18px;
+  pointer-events: none; /* 클릭되지 않도록 */
+}
+
+.nav-icon {
+  position: absolute;
+  right: 10px; /* 오른쪽 끝에 배치 */
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-icon img {
+  width: 16px;
+  height: 16px;
+}
+
+
+
+
+
+
+
+/* .nav-search-input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-left: 10px;
+  padding-left: 40px;
+  width: 327px;
+} */
+.nav-search-input:focus {
+  outline: none;
+  border-color: #878787;
+  box-shadow: 0 0 5px #ccc;
+}
+
+.nav-search-input::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+.nav-search-input:focus::placeholder {
+  color: transparent; /* 포커스 상태에서 placeholder 숨기기 */
+}
+
+.nav-search-icon {
+  position: absolute;
+  /* margin-left: 3.5rem; */
+  font-size: 22px;
+  color: #878787;
+}
+.nav-icon {
+  position: absolute;
+  /* margin-left: 18.5rem; */
+  color: #878787;
+}
+.nav-search-icon img,
+.nav-icon img {
+  width: 25px;
+  height: 25px;
+}
+.navbar-back-icon {
+  height: 30px;
+
+}
+.search-input-box button.nav-search-icon,
+.search-input-box button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
 
 @media (min-width: 481px) {
   .mobile-navbar {
