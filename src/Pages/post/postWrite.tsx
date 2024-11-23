@@ -169,19 +169,28 @@ const handleTextSelection = (
       const bounds = new TextareaSelectionBounds(target);
       const coordinates = bounds.getBounds();
 
-
       // 텍스트 영역의 위치 및 스크롤 값 가져오기
       const textareaRect = target.getBoundingClientRect();
       const scrollTop = target.scrollTop;
       const scrollLeft = target.scrollLeft;
       console.log('coordinates:', coordinates);
 
+      // 플랫폼의 너비 가져오기
+
       // 스크롤 값을 반영해 미니바 위치 조정
-      setMiniBarPosition({
-        top:  coordinates.top + coordinates.height + window.scrollY -50, // 미니바 오프셋
-        left:  coordinates.left < 200 ? textareaRect.left +  window.scrollX  : coordinates.left + coordinates.width + window.scrollX ,
-        visible: true,
-      });
+      if (window.innerWidth >= 481) {
+        setMiniBarPosition({
+          top:  coordinates.top + coordinates.height + window.scrollY -50, // 미니바 오프셋
+          left:  coordinates.left < 200 ? textareaRect.left +  window.scrollX  : coordinates.left + coordinates.width + window.scrollX ,
+          visible: true,
+        });
+      } else {
+        setMiniBarPosition({
+          top:  coordinates.top + coordinates.height + window.scrollY -50, // 미니바 오프셋
+          left:  textareaRect.left +  window.scrollX ,
+          visible: true,
+        });
+      }
   } else {
       setMiniBarPosition((prev) => ({ ...prev, visible: false }));
   }
@@ -316,7 +325,6 @@ return (
               </div>
             )}
           </div>
-
       <button type="submit" className="submit-btn">
       {isEditMode ? "수정하기" : "작성하기"}
       </button>
