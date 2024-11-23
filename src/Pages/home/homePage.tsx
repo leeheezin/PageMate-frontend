@@ -53,6 +53,7 @@ useEffect(() => {
 const fetchMorePosts = () => {
     if (loading || !pagination.hasMore) return;
     dispatch(fetchPosts({ page: pagination.currentPage + 1, limit: limitMax }));
+    console.log("more")
 };
 
 const handleCommentToggle = (postId: string) => {

@@ -72,7 +72,7 @@ const initialState: PostsState = {
 // export const fetchPosts = createAsyncThunk<Post[], void, { state: RootState }>(
     export const fetchPosts = createAsyncThunk<
     { posts: Post[]; pagination: { totalPosts: number; totalPages: number; currentPage: number; hasMore: boolean } },
-    QueryParams & { page?: number; limit?: number },
+    QueryParams & { page?: number; limit?: number; search?: boolean },
     { state: RootState }
   >(
     "posts/fetchPosts",
@@ -85,6 +85,7 @@ const initialState: PostsState = {
         if (!response.data || !response.data.data) {
           throw new Error("Invalid response structure");
         }
+
   
         const posts = response.data.data;
         const pagination = response.data.pagination;
@@ -105,8 +106,6 @@ const initialState: PostsState = {
     }
   );
   
-
-
 export const createPost = createAsyncThunk<Post, NewPost>(
     "posts/createPost",
     async (newPost, { rejectWithValue }) => {
@@ -177,6 +176,7 @@ export const deletePost = createAsyncThunk<Post, { id: string }>(
         }
     }
 );
+
 export const toggleLike = createAsyncThunk<Post, { postId: string; userId: string }, { state: RootState }>(
     "posts/toggleLike",
     async ({ postId, userId }, { getState, rejectWithValue }) => {
@@ -205,7 +205,6 @@ export const toggleLike = createAsyncThunk<Post, { postId: string; userId: strin
 
 
 
-
 const postsSlice = createSlice({
     name: "posts",
     initialState,
@@ -227,9 +226,13 @@ const postsSlice = createSlice({
                 const { posts, pagination } = action.payload;
                 const existingIds = new Set(state.posts.map((post) => post._id));
                 const uniquePosts = posts.filter((post) => !existingIds.has(post._id));
+                const queryParams = action.meta.arg;
 
-                state.posts = [...uniquePosts]; // 중복 없는 게시글 추가
-            
+                if(queryParams.search){
+                    state.posts = [...uniquePosts];
+                }else{
+                    state.posts = [...state.posts, ...uniquePosts]; // 중복 없는 게시글 추가
+                }
                 // 기존 데이터 업데이트 로직
                 const updatedPosts = state.posts.map((existingPost) => {
                     const updatedPost = posts.find((newPost) => newPost._id === existingPost._id);
