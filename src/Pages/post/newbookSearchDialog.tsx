@@ -6,9 +6,8 @@ import "./component/bestSellerList.style.css";
 import { fetchBookSearchResult, clearBooks } from "../../features/bookSearch/bookSearchSlice";
 import { fetchBooks } from "../../features/book/bookSlice";
 import NoResult from "../../components/noresultPage";
-import Spinner from "../../components/spinner";
 import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+import styled from "styled-components";
 
 interface BookSearchDialogProps {
     onClose: () => void;
@@ -115,9 +114,9 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
                             onChange={(e) => setSearchTerm(e.target.value)}
                             onKeyDown={handleKeyDown}
                         />
-                        {/* <button onClick={handleClose} className="dialog-close-btn">
+                        <button onClick={handleClose} className="dialog-close-btn">
                             ✕
-                        </button> */}
+                        </button>
                     </div>
                 </div>
 
@@ -163,10 +162,10 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
                         </ul>
                     </div>
                 )}
-                {loading && hasSearched && <Spinner/>}
+                {loading && hasSearched && <p>로딩 중...</p>}
                 {!hasSearched && (
                     <div className="popular-books-grid">
-                        <h2 className="popular-books-title">베스트셀러</h2>
+                        <h2 className="popular-books-title">오늘의 인기 도서</h2>
                         <div className="grid-container">
                             {filteredBooks.map((book, index) => (
                             <div

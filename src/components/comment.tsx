@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import ProfileIcon from "../assets/images/icon-user.png";
 import { useDispatch, useSelector } from 'react-redux';
 import { addComment, fetchComments, deleteComment } from '../features/comment/commentSlice'; // Import the action
 import { RootState, AppDispatch } from '../features/store'; // Import the types
@@ -9,6 +10,7 @@ import { RootState, AppDispatch } from '../features/store'; // Import the types
 const CommentContainer = styled.div`
     border-top: 1px solid #D2D1D1;
     margin-top: 8px;
+    padding-top: 8px;
 `;
 
 const CommentItem = styled.div`
@@ -149,7 +151,7 @@ const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange
             {comments.length>0?comments.map((comment, index) => (
                 <CommentItem key={index}>
                      <ProfileImage
-                        src ={ (comment.profilePhoto || '/path/to/default/profile.png') as string } // profilePhoto가 없으면 기본 이미지
+                        src ={ (comment.profilePhoto || ProfileIcon) as string } // profilePhoto가 없으면 기본 이미지
                         alt={`${comment.author}의 프로필`}
                     />
                      <CommentContent>
@@ -174,6 +176,11 @@ const Comment: React.FC<CommentProps> = ({ visible, postId, onCommentCountChange
                     type="text" 
                     value={inputValue} 
                     onChange={handleInputChange} 
+                    onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                            handleAddComment();
+                        }
+                    }}
                     placeholder="댓글 달기" 
                     disabled={!currentUser} // 로그인하지 않은 경우 비활성화
                 />

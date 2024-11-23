@@ -16,7 +16,7 @@ export interface Post {
     id: string;
     userId: {
         _id: string;
-        nickName: string;
+        name: string;
         profilePhoto: string;
     };
     bookTitle: string;
@@ -93,7 +93,7 @@ const initialState: PostsState = {
           posts: posts.map((post: Post) => ({
             ...post,
             id: post._id,
-            name: post.userId?.nickName, // 서버에서 `name`으로 매핑된 작성자 이름
+            name: post.userId?.name, // 서버에서 `name`으로 매핑된 작성자 이름
             profilePhoto: post.userId?.profilePhoto,
             liked: post.likes.includes(currentUserId),
           })),
@@ -229,6 +229,19 @@ const postsSlice = createSlice({
                 const uniquePosts = posts.filter((post) => !existingIds.has(post._id));
 
                 state.posts = [...uniquePosts]; // 중복 없는 게시글 추가
+            
+                // 기존 데이터 업데이트 로직
+                const updatedPosts = state.posts.map((existingPost) => {
+                    const updatedPost = posts.find((newPost) => newPost._id === existingPost._id);
+                    return updatedPost ? { ...existingPost, ...updatedPost } : existingPost;
+                });
+            
+                // 새로 추가된 게시글만 추가
+                const newPosts = posts.filter((newPost) => 
+                    !state.posts.some((existingPost) => existingPost._id === newPost._id)
+                );
+            
+                state.posts = [...updatedPosts, ...newPosts];
                 state.pagination = {
                     ...state.pagination,
                     totalPosts: pagination.totalPosts,
@@ -237,7 +250,7 @@ const postsSlice = createSlice({
                     hasMore: pagination.hasMore,
                 };
                 state.loading = false;
-            })
+            })            
             .addCase(fetchPosts.rejected, (state, action: PayloadAction<any>) => {
                 state.loading = false;
                 state.error = action.payload;
@@ -254,7 +267,7 @@ const postsSlice = createSlice({
                 const newPost = {
                     ...action.payload,
                     id: action.payload._id,
-                    name: action.payload.userId.nickName,
+                    name: action.payload.userId.name,
                     profilePhoto: action.payload.userId.profilePhoto,
                 };
                 state.posts.unshift(newPost);
@@ -321,9 +334,11 @@ const postsSlice = createSlice({
             .addCase(toggleLike.fulfilled, (state: PostsState, action: PayloadAction<Post>) => {
                 const updatedPost = action.payload;
                 const index = state.posts.findIndex((post) => post._id === updatedPost._id);
-            
                 if (index !== -1) {
-                    state.posts[index] = updatedPost; 
+                    state.posts[index] = {
+                        ...state.posts[index], 
+                        ...updatedPost, 
+                    };
                 }
                 state.loading = false;
             })         

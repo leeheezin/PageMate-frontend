@@ -4,15 +4,16 @@
     display: flex; /* Flexbox 레이아웃 */
     justify-content: center; /* 가로 중앙 정렬 */
     align-items: center; /* 세로 중앙 정렬 */
-    min-height: 80vh; /* 화면 전체 높이를 기준으로 중앙 정렬 */
-    padding: 20px; /* 모바일에서 양 끝 여백 */
+    min-height: 90vh; /* 화면 전체 높이를 기준으로 중앙 정렬 */
+    padding: 0px 20px; /* 모바일에서 양 끝 여백 */
     box-sizing: border-box; /* 패딩 포함 크기 계산 */
     position: relative;
 }
 
 .form-container {
+    position: relative;
     max-width: 765px;
-    margin: 50px auto;
+    margin: 10px auto;
     padding: 15px;
     display: flex;
     flex-direction: column;
@@ -25,10 +26,10 @@
 .input-field,
 .textarea-field {
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 10px;
     box-sizing: border-box;
     font-family: Arial, sans-serif;
     resize: none;
@@ -54,7 +55,7 @@
 }
 
 .textarea-field {
-    min-height: 300px;
+    min-height: 400px;
 }
 
 .submit-btn {
@@ -67,6 +68,7 @@
     cursor: pointer;
     font-size: 16px;
     float: right;
+    font-weight: bold;
 }
 
 .submit-btn:hover {
@@ -74,17 +76,24 @@
 }
 
 @media (max-width: 481px) {
-    .form-container {
-        margin: 10px;
-        padding: 10px;
+    .post-area {
+        min-height: 80vh; /* 화면 전체 높이를 기준으로 중앙 정렬 */
+    }
+    .input-field,
+    .textarea-field {
+        margin-bottom: 7px;
     }
     .textarea-field {
-        max-height: 300px;
+        min-height: 330px;
     }
     .submit-btn {
-        width: 30%;
+        width: 25%;
         padding: 8px;
         font-size: 14px;
+        border-radius: 6px;
+    }
+    .toast-message {
+        left: 10px; /* 제목 input과 같은 위치 */
     }
 }
 
@@ -124,6 +133,41 @@
     text-decoration: underline;
 }
 
+.icon-margin{
+    margin-right: 8px; /* 아이콘과 텍스트 사이 여백 */
+}
+
+.toast-message {
+    position: absolute; /* textarea-container 기준으로 배치 */
+    top: -35px; /* 텍스트박스 위로 띄움 */
+    left: 0; /* 왼쪽 정렬 */
+    background-color: var(--sub-color); /* 배경색 */
+    color: black; /* 텍스트 색상 */
+    font-weight: bold;
+    padding: 5px 10px; /* 내부 여백 */
+    border-radius: 5px; /* 둥근 모서리 */
+    font-size: 12px; /* 텍스트 크기 */
+    z-index: 1000; /* 다른 요소 위에 표시 */
+    opacity: 1; /* 투명도 */
+    animation: fade-in-out 7s ease-in-out forwards; /* 페이드 효과 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+}
+
+/* 페이드 인/아웃 애니메이션 */
+@keyframes fade-in-out {
+    0% {
+        opacity: 0; /* 처음에 투명 */
+    }
+    10% {
+        opacity: 0.9; /* 서서히 나타남 */
+    }
+    90% {
+        opacity: 1; /* 표시된 상태 유지 */
+    }
+    100% {
+        opacity: 0; /* 서서히 사라짐 */
+    }
+}
 /* CSS 파일에 추가 */
 
 /* CSS 파일에 추가 */

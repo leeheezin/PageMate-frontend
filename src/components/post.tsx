@@ -18,7 +18,7 @@ interface PostProps {
   id?: string;
     userId: {
         _id: string;
-        nickName: string;
+        name: string;
         profilePhoto: string;
   };
   bookTitle: string;
@@ -126,6 +126,9 @@ const Inner = styled.div`
   display: flex;
   flex: 5;
   gap: 10px;
+  @media (max-width: 480px) {
+    flex: 3;
+  }
 `;
 const CommentSectionContainer = styled.div`
   width: 100%;
@@ -136,6 +139,7 @@ const BookTit = styled.div`
   font-size: 14px;
   @media (max-width: 480px) {
     font-size: 12px;
+    flex: 2;
   }
 `;
 const BTitle = styled.div`
@@ -190,9 +194,7 @@ const Post: React.FC<PostProps> = ({
     const [activeCommentPostId, setActiveCommentPostId] = useState<string | null>(null); // 열려 있는 댓글 영역의 포스트 ID
       
     const currentUser = useSelector((state: RootState) => state.user.user);
-
     const currentUserId = currentUser ? currentUser._id : null;
-      console.log(currentUser?.nickName)
     // 게시글 작성자가 현재 로그인한 사용자인지 확인
     const isOwner = userId && currentUserId === userId._id;
     
@@ -205,9 +207,8 @@ const Post: React.FC<PostProps> = ({
     const handleCommentCountChange = (newCount: number) => {
         setCommentCount(newCount); // 댓글 수 업데이트
     };
-
     const handleDialogOpen = () => {
-        setIsDialogOpen(true);
+      setIsDialogOpen(true);
     };
     const handleDialogClose = () => {   
         setIsDialogOpen(false);
@@ -243,7 +244,7 @@ const Post: React.FC<PostProps> = ({
       // 같은 포스트 클릭 시 닫고, 다른 포스트 클릭 시 열기
       setActiveCommentPostId((prevId) => (prevId === postId ? null : postId));
     };
-    console.log(date)
+    console.log('name',name)
     return (
         <StyledPost>
         <Header>
@@ -257,9 +258,9 @@ const Post: React.FC<PostProps> = ({
             {/* 게시글 작성자만 메뉴 볼수있게 조건 */}
             {currentUser && isOwner && ( 
                 <>
-                    <OptionsIcon onClick={handleDialogOpen} />
+                    <OptionsIcon onClick={handleDialogOpen}/>
                     {isDialogOpen && (
-                        <Dialog isOpen={isDialogOpen} onClose={handleDialogClose} position="absolute" top="60px">
+                        <Dialog isOpen={isDialogOpen} onClose={handleDialogClose} top="0" right="15px">
                             <DialogContainer>
                                 <ActionButton onClick={handleEdit}>수정</ActionButton>
                                 <ActionButton onClick={() => handleDelete(_id)}>삭제</ActionButton>

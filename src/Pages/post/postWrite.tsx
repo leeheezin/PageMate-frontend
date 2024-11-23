@@ -7,7 +7,7 @@ import BookSearchDialog from "./bookSearchDialog";
 import { AppDispatch, RootState } from "../../features/store";
 import { styleChange, contentCorrection, spellingCorrection ,aiRequest } from "../../features/gpt/gptSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faMagicWandSparkles } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TextareaSelectionBounds } from "textarea-selection-bounds";
 import MiniBar from "./miniBar";
@@ -48,6 +48,8 @@ const PostWrite: React.FC = () => {
     top: 0,
     left: 0,
     visible: false,});
+     // **토스트 메시지 상태 추가**
+    const [isToastVisible, setIsToastVisible] = useState(false);
     const titleInputRef = useRef<HTMLInputElement | null>(null);
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
     const [selectionStart, setSelectionStart] = useState<number | null>(null);
@@ -73,6 +75,13 @@ const PostWrite: React.FC = () => {
       }
     }, [postToEdit]);
 
+    // **토스트 메시지 타이머 관리**
+    const showToast = () => {
+      setIsToastVisible(true);
+      setTimeout(() => {
+        setIsToastVisible(false);
+      }, 7000); // 7초 후 메시지 숨김
+    };
 
     // // 미니바가 열린 상태에서도 선택 범위를 유지
     // useEffect(() => {
@@ -110,7 +119,7 @@ const PostWrite: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (title && text) {
+        if (title && text && selectedBookTitle) {
             try {
                 if (isEditMode) {
                     await dispatch(
@@ -262,10 +271,20 @@ return (
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         // onMouseUp={handleTextSelection} // 텍스트 드래그 후 이벤트 처리
+        onKeyDown={(e) => {
+          if (e.key === "Tab") {
+            e.preventDefault(); // 기본 탭 동작 막기
+            openDialog(); // 다이얼로그 열기
+            const bookInput = document.querySelector(
+              'input[name="bookTitle"]'
+            ) as HTMLInputElement;
+            bookInput?.focus(); // 책 선택 칸으로 포커스 이동
+          }
+        }}
       />
       <input
         type="text" 
-        placeholder="책을 선택해 주세요"
+        placeholder="이곳을 클릭해서 책을 선택해주세요"
         value={selectedBookTitle}
         onClick={openDialog}
         className="input-field"
@@ -273,6 +292,12 @@ return (
         readOnly
       />
           <div className="textarea-container">
+            {isToastVisible && (
+                <div className="toast-message">
+                  <FontAwesomeIcon icon={faMagicWandSparkles} className="icon-margin" />
+                    첨삭이 필요한 문장을 드래그하면 AI가 다듬어줘요!
+                </div>
+            )}
             <textarea
               id="post_textarea"
               ref={textAreaRef}
@@ -280,7 +305,12 @@ return (
               className={`textarea-field ${isOverlayVisible ? 'transparent' : ''}`}
               name="text"
               value={text}
-              onChange={(e) => setText(e.target.value)}
+              onChange={(e) => {
+                if (!text) {
+                  showToast(); // 처음 입력 시 토스트 메시지 표시
+                }
+                setText(e.target.value)
+              }}
               onMouseUp={handleTextSelection}
               onSelect={handleTextSelection}
               onFocus={() => setIsOverlayVisible(false)}
@@ -300,6 +330,7 @@ return (
       </button>
       {error && <Error>{error}</Error>}
     </form>
+    
     </div>
     {isDialogOpen && (
     <BookSearchDialog onClose={closeDialog} onSelect={handleSelectBook} />
@@ -320,7 +351,7 @@ return (
         setIsDropdownOpen={setIsDropdownOpen}
       />
     )}
-
+    
     {/* 미니 바 */}
     {/* { MiniBarComponent(miniBarPosition, handleMiniBarAction, aiRequestText, setAiRequestText, applyGptResult, closeGptResultModal, gptResultText, isLoading, gptResultModal,isDropdownOpen,setIsDropdownOpen)} */}
   </div>

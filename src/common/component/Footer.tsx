@@ -4,15 +4,15 @@ import iconPostAdd from "../../assets/images/icon-add_white.png";
 import iconSearch from "../../assets/images/icon-search_white.png";
 import iconHome from "../../assets/images/icon-home_white.png";
 import iconMypage from "../../assets/images/icon-mypage_white.png";
-import iconMenu from "../../assets/images/icon-menu_white.png";
+import iconLogin from '../../assets/images/icon-login_white.png';
+import iconLogout from '../../assets/images/icon-logout_white.png';
 import "../style/common.style.css";
-import Dialog from "../../components/dialog";
+import ConfirmDialog from "../../components/comfirmDialog";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { AppDispatch,RootState } from "../../features/store";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/user/userSlice";
-import ConfirmDialog from "../../components/comfirmDialog";
 
 const ActionButton = styled.div`
   padding: 9px;
@@ -70,18 +70,9 @@ const Footer: React.FC = () => {
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={handleLogout}
       >
-        로그아웃하시겠습니까?
+        로그아웃 하시겠습니까?
       </ConfirmDialog>
       <div className="sidebar">
-        <Dialog
-          isOpen={isDialogOpen}
-          onClose={() => setIsDialogOpen(false)}
-          top={dialogPosition.top}
-          left={dialogPosition.left}
-        >
-          {user && <ActionButton onClick={() => setIsConfirmOpen(true)}>로그아웃</ActionButton>}
-          {!user && <ActionButton onClick={() => navigate('/login')}>로그인</ActionButton>}
-        </Dialog>
         {/* 상단 버튼들 */}
         <div className="top-buttons">
           <button className="icon-button" onClick={() => navigate("/")}>
@@ -110,7 +101,8 @@ const Footer: React.FC = () => {
         {/* 하단 햄버거 버튼 */}
         <div onClick={handleMenu} className="bottom-button">
           <button className="icon-button">
-            <img src={iconMenu} alt="Menu" className="img-sizeup"/>
+            {user && <img src={iconLogin} alt="Login" className="img-sizeup" onClick={() => setIsConfirmOpen(true)} />}
+            {!user && <img src={iconLogout} alt="Logout" className="img-sizeup" onClick={() => navigate('/login')} />}
           </button>
         </div>
       </div>

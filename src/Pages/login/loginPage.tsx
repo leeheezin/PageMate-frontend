@@ -206,6 +206,7 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const link = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_JS_KEY}&redirect_uri=http://localhost:3000/login&response_type=code`;
 
   const handleEvent = (event: any) => {
     event.preventDefault();
@@ -229,35 +230,8 @@ const Login: React.FC = () => {
     console.log("Login Failed");
   };
 
-  const handleKakaoLogin = (): void => {
-    if (!window.Kakao.isInitialized()) {
-      window.Kakao.init(KAKAO_JS_KEY);
-    }
-    window.Kakao.Auth.authorize({
-        redirectUri: "http://localhost:3000",
-    });
-
-    window.Kakao.Auth.login({
-      success: (authObj: { access_token: string }) => {
-        window.Kakao.API.request({
-          url: "/v2/user/me",
-          success: (res: any) => {
-            const kakaoData = {
-              token: authObj.access_token,
-              profile: res.kakao_account.profile,
-            };
-            
-            dispatch(loginWithKakao(kakaoData));
-          },
-          fail: (error: any) => {
-            console.error(error);
-          },
-        });
-      },
-      fail: (err: any) => {
-        console.error(err);
-      },
-    });
+  const handleKakaoLogin = () => {
+    window.location.href = link;
   };
 
 
@@ -266,6 +240,14 @@ const Login: React.FC = () => {
       clearErrors();
     }
   }, [dispatch]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code"); // 'code' 파라미터 값 추출
+    if (code){
+      dispatch(loginWithKakao({code}))
+    }
+  }, []);
 
   useEffect(() => {
     if (user) {
