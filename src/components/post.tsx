@@ -35,6 +35,7 @@ interface PostProps {
   isCommentVisible?: boolean; // 댓글 영역이 열려 있는지 여부
   onCommentToggle?: (postId: string) => void; // 댓글 토글 핸들러
   isMyPage?: boolean;
+  showMore?: boolean;
 }
 interface UserResponse {
   status: string;
@@ -199,6 +200,8 @@ const Post: React.FC<PostProps> = ({
     onCommentToggle,  // @@함수 전달 여부에 따라 동작 추가해야함
     isMyPage = false,
     }) => {
+
+    const [showMore, setShowMore] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();

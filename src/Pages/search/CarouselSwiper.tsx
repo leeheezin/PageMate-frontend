@@ -50,18 +50,17 @@ const CarouselSwiper: React.FC<CarouselSwiperProps> = ({ covers }) => {
 
         {visibleCover.map((src, index) => (
           <div className="carousel-slide" key={index}>
-            <img src={src} alt={`Book ${index + 1}`} />
+            <div className="book-cover-wrapper">
+              <img 
+                className="book-cover"
+                src={src} 
+                alt="도서 표지"
+                onLoad={(e) => {
+                  e.currentTarget.classList.add('loaded');
+                }}
+              />
+            </div>
           </div>
-          // <div 
-          // className="carousel-slide" 
-          // key={index}
-          // style={{
-          //   transform: `translateX(-${ startIndex * 105}%)`,
-          //   transition: 'transform 0.3s ease-out'
-          // }}  
-          // >
-          //   <img src={src} alt={`Book ${index + 1}`} />
-          // </div>
         ))}
       </div>
       <button className="carousel-button next" onClick={handleNext}>
