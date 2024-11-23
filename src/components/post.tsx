@@ -55,8 +55,9 @@ const StyledPost = styled.div`
   margin: auto;
   margin-bottom: 28px;
   padding: 16px 19px;
-  min-height: 200px;
-  overflow: visible; 
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
 
   @media (max-width: 480px) {
     max-width: 358px;
@@ -112,7 +113,7 @@ const Title = styled.h4`
 const Content = styled.p`
   color: #014421;
   font-size: 20px;
-  margin-bottom: 16px;
+  margin: 0 0 auto;
   @media (max-width: 480px) {
     font-size: 16px;
   }
