@@ -106,6 +106,10 @@ const Title = styled.h4`
   font-size: 24px;
   text-align: left;
   margin: 0;
+  word-wrap: break-word; 
+  word-break: break-all;
+  overflow-wrap: break-word;
+  overflow: hidden;
   @media (max-width: 480px) {
     font-size: 20px;
   }
@@ -145,6 +149,10 @@ const Content = styled.p`
   font-size: 20px;
   margin: 0 0 auto;
   white-space: pre-wrap;
+  word-wrap: break-word; 
+  word-break: break-all;
+  overflow-wrap: break-word;
+  overflow: hidden;
   @media (max-width: 480px) {
     font-size: 16px;
   }
