@@ -116,9 +116,10 @@
 
 /* 책 리스트 스타일 */
 .book-search-skeleton {
+    max-width: 60%;
     display: flex;
     justify-content: center;
-    margin-bottom: 15px;
+    margin: 0 50px 15px 50px;
 }
 .book-search-result-list-container{
     max-width: 65%;
@@ -180,6 +181,10 @@
     }
     .book-search-result-list-container {
         max-width:100%;
+    }
+    .book-search-skeleton {
+        width: 100%;
+        margin: 10px 60px 0px 50px;
     }
     .search-header {
         padding: 10px 10px 0px 10px; /* 내부 여백 */
