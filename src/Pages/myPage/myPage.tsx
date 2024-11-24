@@ -358,7 +358,7 @@ const MyPage: React.FC = () => {
             handleConfirmDialog("프로필 사진을 삭제하시겠습니까?", handleProfileDelete)
           }>프로필 삭제</ActionButton>
         <ActionButton onClick={() =>
-            handleConfirmDialog("정말로 회원 탈퇴를 진행하시겠습니까?", handleDeleteUser)
+            handleConfirmDialog("회원 탈퇴를 진행하시겠습니까?", handleDeleteUser)
           }>회원탈퇴</ActionButton>
       </Dialog>
 
