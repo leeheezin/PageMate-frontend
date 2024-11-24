@@ -23,11 +23,13 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
     const scrollContainerRef = useRef<HTMLDivElement | null>(null); // 스크롤 컨테이너 참조
     const dispatch = useDispatch<AppDispatch>();
     const { books, loading, error, page, hasMore } = useSelector((state: any) => state.bookSearch);
-    const { books: books2 } = useSelector((state: RootState) => state.book);
+    const { books: books2, loading: loading2} = useSelector((state: RootState) => state.book);
 
     // 데이터 필터링
     const isMobile = window.innerWidth <= 480; // 모바일 환경인지 확인
     const filteredBooks = isMobile ? books2.slice(0, 9) : books2; // 모바일에서 9개 제한
+    const bookCout = isMobile ? 9 : 10;
+    const skeletonWidth = isMobile? 100 : 120;
 
     // 베스트셀러 데이터 로드
     useEffect(() => {
@@ -168,20 +170,28 @@ const BookSearchDialog: React.FC<BookSearchDialogProps> = ({ onClose, onSelect }
                     <div className="popular-books-grid">
                         <h2 className="popular-books-title">베스트셀러</h2>
                         <div className="grid-container">
-                            {filteredBooks.map((book, index) => (
-                            <div
-                                className="book-card"
-                                key={index}
-                                onClick={() =>
-                                    handleSelectBook(book.title, book.author || "저자 정보 없음")
-                                } // 책 클릭 시 제목과 저자를 부모로 전달
-                            >
-                                <img
-                                    src={book.cover || "/path/to/default/cover.jpg"}
-                                    alt={book.title || `Book ${index + 1}`}
-                                />
-                            </div>
-                            ))}
+                               { loading2 ?
+                                    Array(bookCout).fill(null).map((_, index) => (
+                                    <div className="book-card-skeleton" key={index}>
+                                        <Skeleton width={100} height={skeletonWidth} style={{margin:0}}/>
+                                    </div>
+                                    ))
+                                  :
+                                  filteredBooks.map((book, index) => (
+                                    <div
+                                        className="book-card"
+                                        key={index}
+                                        onClick={() =>
+                                            handleSelectBook(book.title, book.author || "저자 정보 없음")
+                                        }
+                                    >
+                                        <img
+                                            src={book.cover || "/path/to/default/cover.jpg"}
+                                            alt={book.title || `Book ${index + 1}`}
+                                        />
+                                    </div>
+                                    ))
+                              }
                         </div>
                     </div>
                 )}

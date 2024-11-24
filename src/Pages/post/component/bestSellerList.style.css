@@ -32,6 +32,18 @@
   height: 100%; /* 부모의 높이를 가득 채움 */
 }
 
+.book-card-skeleton {
+  background-color: #ebebeb;
+  --highlight-color: transparent;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  height: 100%; 
+}
+
 .book-card:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
