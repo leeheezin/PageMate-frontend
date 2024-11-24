@@ -111,10 +111,8 @@ export const createPost = createAsyncThunk<Post, NewPost>(
     async (newPost, { rejectWithValue }) => {
         try {
             const response = await api.post("/post/write", newPost);
-            console.log(response.data.data)
             return response.data.data; 
         } catch (error: any) {
-            console.log(error.response.data.error)
             return rejectWithValue(error.response.data.error);
         }
     }
@@ -166,7 +164,6 @@ export const deletePost = createAsyncThunk<Post, { id: string }>(
         try {
 
             const res = await api.delete(`/post/${id}`);
-            console.log(res.data.data)
             return res.data.data;
         } catch (error: any) {
             if (error.response && error.response.data && error.response.data.error) {
@@ -311,7 +308,6 @@ const postsSlice = createSlice({
                 if (index !== -1) {
                     state.posts[index] = action.payload; 
                 }
-                console.log(action.payload)
                 state.loading = false;
                 state.error = null;
             })

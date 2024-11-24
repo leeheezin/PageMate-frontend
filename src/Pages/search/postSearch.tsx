@@ -80,7 +80,6 @@ const PostSearch: React.FC = () => {
       return;
     }
   
-    // console.log('query',query)
     navigate(`/search?bookTitle=${encodeURIComponent(query)}`);
     setSearched(true); // 검색 버튼 클릭 시 검색 상태로 변경
     try {
@@ -95,7 +94,6 @@ const PostSearch: React.FC = () => {
 
   // books에서 cover만 추출하여 CarouselSwiper로 전달
   const covers = books.map((book) => book.cover);
-  // console.log('posts', posts);
   
   const handleCommentToggle = (postId: string) => {
     // 같은 포스트 클릭 시 닫고, 다른 포스트 클릭 시 열기

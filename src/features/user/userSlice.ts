@@ -136,8 +136,8 @@ export const loginWithToken = createAsyncThunk<
 >("user/loginWithToken", async (_, { rejectWithValue }) => {
   try {
     const response = await api.get("/user/me");
-    console.log("🚀 ~ > ~ response:", response.data.data);
-    console.log("토큰 로그인!");
+    // console.log("🚀 ~ > ~ response:", response.data.data);
+    // console.log("토큰 로그인!");
 
     return response.data.data;
   } catch (error: any) {
@@ -172,7 +172,7 @@ export const uploadProfile = createAsyncThunk<
 >("user/uploadProfile", async ({ profilePhoto }, { rejectWithValue }) => {
   try {
     const response = await api.put("/user/profile", { profilePhoto });
-    console.log("🚀 ~ > ~ response.data.data:", response.data.data);
+    // console.log("🚀 ~ > ~ response.data.data:", response.data.data);
 
     return response.data.data; // 업데이트된 유저 정보 반환
   } catch (error: any) {

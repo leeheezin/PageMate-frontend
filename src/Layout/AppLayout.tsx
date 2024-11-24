@@ -17,7 +17,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   useEffect(() => {
     const token = sessionStorage.getItem("token");
     if (token) {
-      console.log("토큰 로그인!");
       dispatch(loginWithToken());
     }
   }, [dispatch]);

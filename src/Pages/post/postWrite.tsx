@@ -71,7 +71,6 @@ const PostWrite: React.FC = () => {
     useEffect(() => {
       if (postToEdit) {
       setIsEditMode(true);
-      console.log("postToEditid", postToEdit.id);
       }
     }, [postToEdit]);
 
@@ -92,11 +91,6 @@ const PostWrite: React.FC = () => {
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
         const target = event.target as HTMLElement;
-        
-        console.log("mini-bar", target.closest('.mini-bar')); 
-        console.log("gpt-modal", target.closest('.gpt-modal'));
-        console.log("mini-bar-input-row", target.closest('.mini-bar-input-row'));
-        console.log("IsOverlayVisible", isOverlayVisible);
 
         if (
             target.closest('.mini-bar') || 
@@ -173,7 +167,6 @@ const handleTextSelection = (
       const textareaRect = target.getBoundingClientRect();
       const scrollTop = target.scrollTop;
       const scrollLeft = target.scrollLeft;
-      console.log('coordinates:', coordinates);
 
       // 플랫폼의 너비 가져오기
 
@@ -228,7 +221,6 @@ const handleMiniBarAction = (action: string, style?: string, aiRequestText?: str
     setGptResultModal(true);
     dispatch(aiRequest({aiRequestText:aiRequestText,review_object:review_object })).finally(() => setIsLoading(false));
   }
-  console.log(`${action}: ${selectedText}`);
 };
 
 const closeGptResultModal = () => {

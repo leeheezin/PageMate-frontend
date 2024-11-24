@@ -35,6 +35,7 @@ interface PostProps {
   isCommentVisible?: boolean; // 댓글 영역이 열려 있는지 여부
   onCommentToggle?: (postId: string) => void; // 댓글 토글 핸들러
   isMyPage?: boolean;
+  showMore?: boolean;
 }
 interface UserResponse {
   status: string;
@@ -109,7 +110,36 @@ const Title = styled.h4`
     font-size: 20px;
   }
 `;
-
+const ContentContainer = styled.div`
+  display: inline-flex; 
+  align-items: flex-end; 
+  gap: 5px; 
+  max-width: 100%;
+  overflow: hidden;
+  margin: 0 0 auto;
+`;
+const ContentWrapper = styled.div<{ $isExpanded: boolean }>` 
+  position: relative;
+  display: -webkit-box;
+  -webkit-line-clamp: ${({ $isExpanded }) => ($isExpanded ? "none" : "5")}; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1; 
+`;
+const MoreButton = styled.button`
+  background: none;
+  border: none;
+  color: #bfbfbf;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  text-decoration: underline;
+  white-space: nowrap; 
+  &:hover {
+    color: darkblue;
+  }
+`;
 const Content = styled.p`
   color: #014421;
   font-size: 20px;
@@ -124,6 +154,7 @@ const Footer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 6px;
   gap: 5px;
 `;
 const Inner = styled.div`
@@ -199,6 +230,8 @@ const Post: React.FC<PostProps> = ({
     onCommentToggle,  // @@함수 전달 여부에 따라 동작 추가해야함
     isMyPage = false,
     }) => {
+
+    const [showMore, setShowMore] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
@@ -227,7 +260,7 @@ const Post: React.FC<PostProps> = ({
     };
     
     const handleEdit = () => {
-        console.log("Navigating with post ID:", _id);
+        // console.log("Navigating with post ID:", _id);
         navigate("/post/write", {
             state: {
                 post: {
@@ -252,7 +285,6 @@ const Post: React.FC<PostProps> = ({
             }
         } catch (error: any) {
             setLocalError(error);
-            console.log(error)
         }
     };
     
